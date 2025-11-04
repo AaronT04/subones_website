@@ -27,7 +27,7 @@ function CranialNonmetrics() {
             {info.map((row, i) => (
                 <Table.Row key={i}>
                     <Table.RowHeaderCell>{row[0]}</Table.RowHeaderCell>
-                    <Table.Cell>
+                    <Table.Cell className="w-200">
                         <Select.Root
                         value={api.cranial_nonmetrics.find((r) => r.nonmetric_name === row[0])?.value_str}
                         onValueChange={(value) => {updateField("cranial_nonmetrics", {
@@ -36,7 +36,7 @@ function CranialNonmetrics() {
                             value_str: value
                         }, "nonmetric_name"
                         )}}>
-                            <Select.Trigger />
+                            <Select.Trigger/>
                             <Select.Content>
                                 {Array.isArray(row[1]) ? (
                                     row[1].map((option, j) =>
