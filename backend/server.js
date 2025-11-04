@@ -19,12 +19,15 @@ app.use(express.json());
 //app.use(applyRateLimit);
 
 // Attach routes
-app.use('/api', loginRoutes);
-app.use('/api', boneRoutes);
-app.use('/api', inventoryRoutes);
-app.use('/api', metricsRoutes);
-app.use('/api', miscRoutes);
-app.use('/api', verifyEmailRoutes);
+app.use('/', [
+  loginRoutes,
+  boneRoutes,
+  inventoryRoutes,
+  metricsRoutes,
+  miscRoutes,
+  verifyEmailRoutes
+]);
+
 useCrudRoutes(app); // this one dynamically registers tables
 
 const port = 7286;

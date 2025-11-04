@@ -8,7 +8,7 @@ const {captchaHandler} = require('../middleware/captcha');
 const SECRET_KEY = process.env.JWT_SECRET || 'SecretKey';
 
 // Register
-router.post('/register', async (req, res) => {
+router.post('/api/register', async (req, res) => {
   try {
     await captchaHandler(req, res);
     const { name, email, password, roles } = req.body;
@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', (req, res) => {
+router.post('/api/login', (req, res) => {
   console.log('api route hit');
   const { email, password } = req.body;
   db.query('SELECT * FROM user WHERE email = ?', [email], async (err, rows) => {
