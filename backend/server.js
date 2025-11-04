@@ -32,7 +32,3 @@ const port = 7286;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
-
-app.post('/api/login', async (req, res) => {
-    console.log("login api hit");
-})
