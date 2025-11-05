@@ -3,7 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const {db} = require('./db');
 const loginRoutes = require('./routes/login');
-const boneRoutes = require('./routes/bones');
+const boneEditorRoutes = require('./routes/bone-editor');
+const dashboardRoutes = require('./routes/dashboard');
 const inventoryRoutes = require('./routes/inventory');
 const metricsRoutes = require('./routes/metrics');
 const miscRoutes = require('./routes/misc');
@@ -16,14 +17,15 @@ app.use(cors());
 app.use(express.json());
 
 // Shared helpers
-//app.use(applyRateLimit);
+//app.use(applyRateLimit); //hangs indefinitely
 
 // Attach routes
 app.use('/', [
   loginRoutes,
-  boneRoutes,
+  boneEditorRoutes,
   inventoryRoutes,
   metricsRoutes,
+  dashboardRoutes,
   miscRoutes,
   verifyEmailRoutes
 ]);

@@ -1,8 +1,9 @@
 */node_modules
-/out
+*/out
 .env.*
 */.next
 .deploy
 *.conf
 *.sql
-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+Dashboard Code
+.DS_Store

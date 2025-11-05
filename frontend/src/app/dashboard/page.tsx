@@ -18,9 +18,9 @@ useEffect(() => {
 
   return (
     <div>
-       <Header></Header>
+       <Header/>
       <div className="container mx-auto py-20">
-        <Main></Main>
+        <Main/>
       </div>
     </div>
   )

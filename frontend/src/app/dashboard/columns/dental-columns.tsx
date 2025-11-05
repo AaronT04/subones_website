@@ -1,9 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-
-import { MoreHorizontal } from "lucide-react"
-import { ArrowUpDown } from "lucide-react"
+import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -15,15 +13,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Dental = {
-  id: string
+  id: number
   menuID: string
   name: string
   museum: string
   user: string
 }
+
+const includesCI = (a: unknown, b: unknown) =>
+  String(a ?? "").toLowerCase().includes(String(b ?? "").toLowerCase())
 
 export const dentalColumns: ColumnDef<Dental>[] = [
   {
@@ -34,66 +33,71 @@ export const dentalColumns: ColumnDef<Dental>[] = [
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        onCheckedChange={(v) => row.toggleSelected(!!v)}
         aria-label="Select row"
       />
     ),
     enableSorting: false,
     enableHiding: false,
   },
-  
+
   {
     accessorKey: "id",
-    header: () => <div className="text-right">ID</div>,
-    cell: ({ row }) => {
-      const id = parseFloat(row.getValue("id"))
-      return <div className="text-right font-medium">{id}</div>
+    header: () => (
+      <div className="text-right">
+        <Button variant="ghost">
+          ID
+          <ArrowUpDown className="ml-2 h-4 w-4"/>
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => <div className="text-right font-medium">{row.getValue("id")}</div>,
+    filterFn: (row, _id, value) => {
+      const v = String(value ?? "").trim()
+      if (v === "") return true
+      const idNum = Number(row.getValue("id"))
+      if (Number.isNaN(idNum)) return false
+      if (/^\d+$/.test(v)) return idNum === Number(v)
+      return String(idNum).startsWith(v)
     },
   },
+
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return <div className="text-left ml-3 font-medium">{row.getValue("name")}</div>
-    },
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        Name
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => <div className="text-left ml-3 font-medium">{row.getValue("name")}</div>,
+    filterFn: (row, _id, value) => includesCI(row.getValue("name"), value),
   },
+
   {
     accessorKey: "museum",
     header: () => <div className="text-left">Museum</div>,
-    cell: ({ row }) => {
-      return <div className="text-left font-medium">{row.getValue("museum")}</div>
-    },
+    cell: ({ row }) => <div className="text-left font-medium">{row.getValue("museum")}</div>,
   },
+
   {
     accessorKey: "user",
     header: () => <div className="text-left">User</div>,
-    cell: ({ row }) => {
-      return <div className="text-left font-medium">{row.getValue("user")}</div>
-    },
+    cell: ({ row }) => <div className="text-left font-medium">{row.getValue("user")}</div>,
+    filterFn: (row, _id, value) => includesCI(row.getValue("user"), value),
   },
- 
+
   {
     id: "actions",
     cell: ({ row }) => {
       const entry = row.original
- 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -104,9 +108,7 @@ export const dentalColumns: ColumnDef<Dental>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(entry.menuID)}
-            >
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(entry.menuID)}>
               Copy Entry ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -114,7 +116,6 @@ export const dentalColumns: ColumnDef<Dental>[] = [
           </DropdownMenuContent>
         </DropdownMenu>
       )
-    }, 
+    },
   },
-  
 ]

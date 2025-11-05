@@ -28,7 +28,7 @@ router.post('/api/register', async (req, res) => {
 
 // Login
 router.post('/api/login', (req, res) => {
-  console.log('api route hit');
+  //console.log('api route hit');
   const { email, password } = req.body;
   db.query('SELECT * FROM user WHERE email = ?', [email], async (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
