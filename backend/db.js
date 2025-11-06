@@ -20,9 +20,6 @@ connection.on('error', err => {
 });
 
 const db = connection;
-
 const pdb = connection.promise();
-
-
 
 module.exports = { db, pdb };

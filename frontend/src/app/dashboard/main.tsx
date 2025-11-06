@@ -4,15 +4,34 @@
 import { api } from "./api"
 
 async function getIndData(): Promise<Individual[]> {
-  return api.get<Individual[]>("/api/list/individuals");
+  try {
+    const result = api.get<Individual[]>("/api/list/individuals");
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
+  
 }
 
 async function getBoneData(): Promise<Bone[]> {
-  return api.get<Bone[]>("/api/list/bones");
+  try {
+    const result = api.get<Bone[]>("/api/list/bones");
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
 }
 
 async function getDentalData(): Promise<Dental[]> {
-  return api.get<Dental[]>("/api/list/dental");
+  try {
+    const result = api.get<Dental[]>("/api/list/dental");
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
 }
 
 import { useRouter } from 'next/navigation';
@@ -42,20 +61,43 @@ export default function Main(){
   const confirm = useConfirmDialog();
 
   useEffect(() => {
-    async function fetchData() {
-      const [ind, bone, dental] = await Promise.all([
+  let cancelled = false;
+
+  async function fetchData() {
+    try {
+      const [ind, bone, dental] = await Promise.allSettled([
         getIndData(),
         getBoneData(),
         getDentalData(),
       ]);
-      setIndData(ind);
-      setBoneData(bone);
-      setDentalData(dental);
+
+      if (cancelled) return;
+
+      setIndData(ind.status === "fulfilled" ? ind.value : []);
+      setBoneData(bone.status === "fulfilled" ? bone.value : []);
+      setDentalData(dental.status === "fulfilled" ? dental.value : []);
+    } catch (err) {
+      console.error("Unexpected error fetching data:", err);
+    } finally {
+      if (!cancelled) setLoading(false);
+    }
+  }
+
+  // Safety timeout: stop loading even if backend is unresponsive
+  const timeout = setTimeout(() => {
+    if (!cancelled) {
+      console.warn("Fetch timeout: backend may be down, showing empty data");
       setLoading(false);
     }
+  }, 6000); // 6 seconds fallback
 
-    fetchData();
-  }, []);
+  fetchData();
+
+  return () => {
+    cancelled = true;
+    clearTimeout(timeout);
+  };
+}, []);
 
   if (loading) {
     return <div className="p-4">Loading...</div>;
@@ -64,7 +106,7 @@ export default function Main(){
   const confirmAddIndividual = async() => {
     const confirmed = await confirm({
       title:"",
-      description:"This will create an entire skeleton. Are you sure you want to continue?",
+      description:"This will create an entire skeleton. Are you sure you want to continue? (It doesn't really matter though you can do whatever you want it's your life)",
       confirmText:"OK",
       cancelText:"Cancel"
     })
