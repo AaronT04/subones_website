@@ -4,11 +4,21 @@ import {taphonomy_options} from "./taphonomy-options-list";
 import HorizontalRadioButton from "@/components/ui/HorizontalRadioButton";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useBoneData } from "./context/BoneDataContext";
+import { useConfirmDialog } from '@/components/confirm-dialog-context';
 
 function Taphonomy(props) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
+    let [boneCond, setBoneCond] = useState("");
     const { measurements, setMeasurements } = useBoneData();
+    const confirm = useConfirmDialog();
 
     // Initialize taphonomy structure in measurements if it doesn't exist
     useEffect(() => {
@@ -34,6 +44,15 @@ function Taphonomy(props) {
         curation_modifications: [],
         cultural_modifications: []
     };
+
+    const showBoneConditionInfo = async() => {
+        const confirmed = await confirm({
+        title:"",
+        description:"bone condition info...",
+        confirmText:"OK"
+        })
+        return;
+    }
 
     const handleCheckboxChange = (category: string, value: string, checked: boolean) => {
         console.log('handleCheckboxChange called:', { category, value, checked });
@@ -151,11 +170,29 @@ function Taphonomy(props) {
     return(
     <div>
         <div className = "[padding-inline:10px]">
-            <label htmlFor="bone-cond">Bone Condition: </label>
-            <div className="mt-1 flex gap-2 text-left">
-                <Input className="w-1/4" id="bone-cond"/>
-                <Button className="bg-maroon hover:bg-maroon/90">?</Button>
+            <div className="flex items-center">
+                <label htmlFor="bone-cond">Bone Condition: </label>
+                <Select value={boneCond} onValueChange={(value) => setBoneCond(value)}>
+                        <SelectTrigger className="h-[40px] w-[100px] max-w-sm bg-white ml-[20]">
+                            <SelectValue placeholder="Select condition" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="0">Stage 0</SelectItem>
+                            <SelectItem value="1">Stage 1</SelectItem>
+                            <SelectItem value="2">Stage 2</SelectItem>
+                            <SelectItem value="3">Stage 3</SelectItem>
+                            <SelectItem value="4">Stage 4</SelectItem>
+                            <SelectItem value="5">Stage 5</SelectItem>
+                        </SelectContent>
+                </Select>
+                <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={showBoneConditionInfo}>?</Button>
             </div>
+                {/*
+            <div className="mt-1 flex gap-2 text-left">
+                {<Input className="w-1/4" id="bone-cond"/>
+                
+                <Button className="bg-maroon hover:bg-maroon/90">?</Button>
+            </div>*/}
             <div className="flex mt-4 gap-2">
                 <input type="checkbox"/>
                 <p className = "" >Surface Exposure </p>
