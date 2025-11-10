@@ -11,10 +11,30 @@ router.post('/api/bones/complete', async (req, res) => {
     
     // Determine which table to use based on bone type
     const axialBones = ['sacrum', 'cervical_vertebrae', 'thoracic_vertebrae', 'lumbar_vertebrae'];
+    const cranialBones = ['cranium'];
+    const mandibleBones = ['mandible'];
+    
     const isAxialBone = axialBones.includes(boneType);
-    const measurementsTable = isAxialBone ? 'axial_measurements' : 'appendicular_measurements';
+    const isCranialBone = cranialBones.includes(boneType);
+    const isMandibleBone = mandibleBones.includes(boneType);
+    
+    let measurementsTable;
+    let useSpecimenId = false; // Flag to determine if we use specimen_id or bone_id
+    
+    if (isAxialBone) {
+      measurementsTable = 'axial_measurements';
+    } else if (isCranialBone) {
+      measurementsTable = 'cranium_measurements';
+      useSpecimenId = true;
+    } else if (isMandibleBone) {
+      measurementsTable = 'mandible_measurements';
+      useSpecimenId = true;
+    } else {
+      measurementsTable = 'appendicular_measurements';
+    }
     
     console.log('Using table:', measurementsTable);
+    console.log('Using specimen_id:', useSpecimenId);
     
     // Step 1: Get museum abbreviation for specimen_name
     const [museumResult] = await db.promise().query(
@@ -73,7 +93,9 @@ router.post('/api/bones/complete', async (req, res) => {
     console.log('Inserted bone with auto-generated ID:', boneId);
     
     // Step 4: Process measurements and handle vertebrae ranges
-    const columnsToInsert = {
+    const columnsToInsert = useSpecimenId ? {
+      specimen_id: specimenId
+    } : {
       bone_id: boneId,
       bone_name: boneName
     };
@@ -82,6 +104,34 @@ router.post('/api/bones/complete', async (req, res) => {
     Object.keys(measurements).forEach(key => {
       const value = measurements[key];
       if (value === '' || value === null || value === undefined) {
+        return;
+      }
+      
+      // Handle cranium measurements - use exact column names from table
+      if (isCranialBone) {
+        // Convert measurement key to match database column format
+        let columnName = key
+          .toLowerCase()
+          .replace(/\s+/g, '_')
+          .replace(/\(/g, '')
+          .replace(/\)/g, '')
+          .replace(/-/g, '_');
+        
+        columnsToInsert[columnName] = parseFloat(value);
+        return;
+      }
+      
+      // Handle mandible measurements - use exact column names from table
+      if (isMandibleBone) {
+        // Convert measurement key to match database column format
+        let columnName = key
+          .toLowerCase()
+          .replace(/\s+/g, '_')
+          .replace(/\(/g, '')
+          .replace(/\)/g, '')
+          .replace(/-/g, '_');
+        
+        columnsToInsert[columnName] = parseFloat(value);
         return;
       }
       
@@ -124,7 +174,7 @@ router.post('/api/bones/complete', async (req, res) => {
         return;
       }
       
-      if (!isAxialBone) {
+      if (!isAxialBone && !isCranialBone && !isMandibleBone) {
         let cleanName = key
           .replace(/\([^)]*\)/g, '')
           .replace(/\//g, ' ')
