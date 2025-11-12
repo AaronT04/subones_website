@@ -2,7 +2,13 @@ import { Button } from "@/components/ui/button";
 import "@/app/globals.css";
 import {useState, useEffect} from 'react'
 import { Input } from "@/components/ui/input";
-import { Select } from "@radix-ui/themes";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectValue,
+  SelectItem
+} from "@/components/ui/select"
 import { loadMuseums } from "@/app/skeleton-editor/api/loadMuseums";
 import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
 
@@ -46,7 +52,7 @@ function Field() {
 
             <div className="flex items-center justify-between space-x-2">
                 <p>Museum: </p>
-                <Select.Root
+                <Select
                 value={currentValue}
                 onValueChange={(value) => {
                     const selected = museums.find(m => String(m.museum_id) === value);
@@ -54,33 +60,37 @@ function Field() {
                     updateField("specimen", "museum_name", selected?.museum_name || ""); // Save name for display convenience
                 }}
                 >
-                <Select.Trigger className="h-[40px] w-2/3 max-w-sm bg-white" />
-                <Select.Content>
+                <SelectTrigger>
+                    <SelectValue/>
+                </SelectTrigger>
+                <SelectContent>
                     {museums.map(museum => (
-                    <Select.Item key={museum.museum_id} value={String(museum.museum_id)}>
+                    <SelectItem key={museum.museum_id} value={String(museum.museum_id)}>
                         {museum.museum_name}
-                    </Select.Item>
+                    </SelectItem>
                     ))}
-                </Select.Content>
-                </Select.Root>
+                </SelectContent>
+                </Select>
             </div>
 
             <div className="flex items-center justify-between space-x-2">
                 <p>Sex: </p>
                 
-                <Select.Root
+                <Select
                     value={api.specimen.sex}
                     onValueChange={(value) => updateField("specimen", "sex", value)}
                 >
-                    <Select.Trigger />
-                    <Select.Content>
-                        <Select.Item value="male">Male</Select.Item>
-                        <Select.Item value="female">Female</Select.Item>
-                        <Select.Item value="?male">?Male</Select.Item>
-                        <Select.Item value="?female">?Female</Select.Item>
-                        <Select.Item value="unknown">Unknown</Select.Item>
-                    </Select.Content>
-                </Select.Root>
+                    <SelectTrigger>
+                        <SelectValue/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="?male">?Male</SelectItem>
+                        <SelectItem value="?female">?Female</SelectItem>
+                        <SelectItem value="unknown">Unknown</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             <div className="flex items-center justify-between space-x-2">

@@ -33,14 +33,13 @@ export type Measurement = {
 
 export type Inventory = {
     inv_entry_name: string
-    value?: number
+    value?: string
     taphonomy_id?: number
     isChecked: boolean
 }
 
 export type Taphonomy = {
     bone_name: string,
-    taphonomy_id: number,
     bone_condition: number,
     surface_exposure: boolean,
     bone_color: string,
@@ -63,7 +62,7 @@ export type EditSkeletonAPI = {
     specimen: Specimen
     locality: Locality
     taxonomy: Taxonomy
-    taphonomy_all: Taphonomy[]
+    taphonomy: Taphonomy[]
     metrics_cranium: Measurement[]
     metrics_mandible: Measurement[]
     postcranial_metrics: Measurement[]
@@ -98,7 +97,7 @@ export const DEFAULT_EDIT_SKELETON_API: EditSkeletonAPI = {
         locality: "",
         region: "",
     },
-  taphonomy_all: [],
+  taphonomy: [],
   metrics_cranium: [],
   metrics_mandible: [],
   postcranial_metrics: [],

@@ -2,16 +2,23 @@ import { useState } from "react";
 import { Table, TextField } from "@radix-ui/themes";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { cranial_inventory_list, CranialInventoryList, CranialInventoryRow } from "./cranial-inventory-list";
-import Taphonomy from "./Taphonomy"
+import Taphonomy from "./SmallTaphonomy"
 import "./InventoryStyles.css"
-import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
-import { excludeCategoriesFromTaphonomy } from "./cranial-inventory-list";
+import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "./cranial-inventory-list";
+import InventorySelect from "@/components/InventorySelect";
+import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
 
 export default function CranialInventory() {
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
   const [selectedBone, setSelectedBone] = useState("")
 
-  const {api, updateField} = useEditSkeletonAPI();
+
+  function buildEntryName(row: CranialInventoryRow, label?: string): string {
+      const parts: string[] = [];
+      if (row.boneName) parts.push(row.boneName); // e.g., "L", "R"
+      if (label) parts.push(label); // e.g., "Prox 1/3"
+      return parts.join(" ").trim();
+    }
 
   function getCheckboxLabels(numBoxes: number): string[] {
     if (numBoxes === 1) return [];
@@ -24,32 +31,9 @@ export default function CranialInventory() {
     const numBoxes : number = bone.numBoxes;
     const labels = getCheckboxLabels(bone.numBoxes);
     const entryName = (idx) => labels[idx] ? bone.boneName + " " + labels[idx] : bone.boneName;
-    const apiInstance = (idx) => api.cranial_inventory.find((inv) => inv.inv_entry_name === entryName(idx))
+    //const apiInstance = (idx) => api.cranial_inventory.find((inv) => inv.inv_entry_name === entryName(idx))
     return Array.from({ length: numBoxes }).map((_, idx) => (
-      <Checkbox.Root
-        key={idx}
-        className="w-6 h-6 mx-2 border border-gray-400 rounded flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-        checked={apiInstance(idx)?.isChecked || false}
-        onCheckedChange={() => updateField("cranial_inventory", {
-          inv_entry_name: entryName(idx),
-          isChecked: apiInstance(idx) == undefined ? true : !apiInstance(idx)?.isChecked
-        }, "inv_entry_name")}
-      >
-        <Checkbox.Indicator>
-          <svg
-            className="w-4 h-4 text-blue-600"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </Checkbox.Indicator>
-      </Checkbox.Root>
+        <InventorySelect apiPath={["cranial_inventory", `${entryName(idx)}`]} />
     ));
   }
 
@@ -62,7 +46,7 @@ export default function CranialInventory() {
             <Table.Header>
               <Table.ColumnHeaderCell className="table-header-cell bone">Bone</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="table-header-cell inventory">Inventory Options</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="table-header-cell edit">Edit Information</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="table-header-cell edit">Taphonomy</Table.ColumnHeaderCell>
             </Table.Header>
             <Table.Body>
               {cranial_inventory_list.contents.map((bone, i) => {
@@ -72,11 +56,9 @@ export default function CranialInventory() {
                   <Table.Row
                     key={i}
                     onMouseEnter={() => setHoveredRowIndex(i)}
-                    onMouseLeave={() => setHoveredRowIndex(null)}
                     className="align-top" // Ensure vertical alignment at top
                   >
                     <Table.RowHeaderCell className="table-row-header-cell bone">{bone.boneName}</Table.RowHeaderCell>
-                    {bone.boneName != "Teeth" ?
                     <Table.Cell className="table-cell inventory">
                       <div className="flex flex-col items-center">
                         {/* Labels row */}
@@ -100,28 +82,14 @@ export default function CranialInventory() {
                         </div>
                       </div>
                     </Table.Cell>
-                    : //for teeth row only
-                  
-                    <Table.Cell className="table-cell inventory">
-                        <div className = "flex flex-col items-center gap-1">
-                            <p>Enter number of teeth:</p>
-                            <TextField.Root className="w-20" type="number" 
-                            value={api.cranial_inventory.find((inv) => inv.inv_entry_name === "num_teeth")?.value || ''}
-                            onChange={(e) =>
-                            updateField("cranial_inventory", {
-                              inv_entry_name: "num_teeth",
-                              value: Number(e.target.value),
-                              isChecked: true
-                            },
-                              "inv_entry_name")}/>
-                        </div>
-                        
-                    </Table.Cell>
-                    }
                     <Table.Cell className="table-cell edit flex justify-center items-center">
-                      {hoveredRowIndex === i && (
-                        <button className="w-10"
-                                onClick={() => setSelectedBone(bone.boneName)}>Edit</button>
+                      {hoveredRowIndex === i && !excludeCategoriesFromTaphonomy(bone) && (
+                        <TaphonomyDropdown 
+                          doesNotRequireBoneSide={doesNotRequireBoneSideDropdown(bone)}
+                          filteredDropdownTags={["L", "R"]}
+                          onEditClick={() => setSelectedBone(buildEntryName(bone))}
+                          onSideClick={(side) => setSelectedBone(buildEntryName(bone, side))}
+                          />
                       )}
                     </Table.Cell>
                   </Table.Row>

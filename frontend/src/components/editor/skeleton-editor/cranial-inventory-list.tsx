@@ -15,7 +15,7 @@ export const cranial_inventory_list = {
         { boneName: "Sphenoid", numBoxes: 1 },
         { boneName: "Zygomatic", numBoxes: 2 },
         { boneName: "Maxilla", numBoxes: 2 },
-        { boneName: "Mandible", numBoxes: 3 },
+        { boneName: "Mandible", numBoxes: 2 },
         //{ boneName: "Teeth", numBoxes: 0 }
     ]
 }
@@ -27,3 +27,11 @@ export const excludeCategoriesFromTaphonomy = (row: CranialInventoryRow) => {
     ];
     return exclude.some(term => row.boneName.includes(term));
 };
+export const doesNotRequireBoneSideDropdown = (row: CranialInventoryRow) => { 
+  let rowName = row.boneName ;
+  let exclude = [
+    "Occipital",
+    "Sphenoid"
+  ];
+  return exclude.some(term => rowName.includes(term));
+}

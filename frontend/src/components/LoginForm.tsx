@@ -106,8 +106,6 @@ export default function LoginForm(props : FormProps){
                         setEmail(testEmail);
                         setPassword(testPassword);
                         handleSignIn(testEmail, testPassword);
-                        //setLoading(true); 
-                        //router.push("/dashboard")
                         }}>
                         I don't care, just take me to the site  
                     </button>

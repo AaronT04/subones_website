@@ -88,25 +88,27 @@ function makeRowsWithParentInfo(
 // --- Normal group rows ---
 const vertebrae_rows: PostcranialRow[] = [
   ...makeRowsWithParentInfo("Vertebrae", [
-    ["C1", "LR"],
-    ["C2", "LR"],
-    ["C3-C6", "LRSel", { min: 0, max: 4 }],
-    ["T1-T9", "LRSel", { min: 0, max: 4 }],
-    ["C7", "LR"],
-    ["T10", "LR"],
-    ["T11", "LR"],
-    ["T12", "LR"],
-    ["L1", "LR"],
-    ["L2", "LR"],
-    ["L3", "LR"],
-    ["L4", "LR"],
-    ["L5", "LR"]
+    ["C1", "Single"],
+    ["C2", "Single"],
+    ["C3-C6", "SingleNum", { min: 0, max: 4 }],
+    ["C7", "Single"],
+    ["T1-T9", "SingleNum", { min: 0, max: 4 }],
+    ["T10", "Single"],
+    ["T11", "Single"],
+    ["T12", "Single"],
+    ["L1", "Single"],
+    ["L2", "Single"],
+    ["L3", "Single"],
+    ["L4", "Single"],
+    ["L5", "Single"]
   ]),
+  /*
   make_header("Unidentifiable Vertebrae"),
   ...makeRowsWithParentInfo("Unidentifiable Vertebrae", [
     ["Thoracic - Unidentifiable", "SingleNum", { min: 0, max: 12 }],
     ["Lumbar - Unidentifiable", "SingleNum", { min: 0, max: 12 }]
   ])
+    */
 ]
 
 const ribs_rows: PostcranialRow[] = makeRowsWithParentInfo("Ribs", [
@@ -123,8 +125,8 @@ const axgeneral_rows: PostcranialRow[] = [
   make_row("Illium", "LR"),
   make_row("Ischium", "LR"),
   make_row("Pubis", "LR"),
-  make_row("Acetabulum", "LR"),
-  make_row("Auricular Surf", "LR")
+  //make_row("Acetabulum", "LR"),
+  //make_row("Auricular Surf", "LR")
 ]
 
 const hyoid_rows: PostcranialRow[] = [make_row("Hyoid", "LBodyR")]
@@ -149,6 +151,7 @@ function make_appgeneral_rows(bone: string): PostcranialRow[] {
 }
 
 const appgeneral_rows: PostcranialRow[] = [
+  /*
   make_header("Humerus"),
   ...make_appgeneral_rows("Humerus"),
   make_header("Radius"),
@@ -163,6 +166,15 @@ const appgeneral_rows: PostcranialRow[] = [
   ...make_appgeneral_rows("Tibia"),
   make_header("Fibula"),
   ...make_appgeneral_rows("Fibula")
+  */
+  make_row("Humerus", "LR"),
+  make_row("Radius", "LR"),
+  make_row("Ulna", "LR"),
+  make_row("Femur", "LR"),
+  make_row("Patella", "LR"),
+  make_row("Tibia", "LR"),
+  make_row("Fibula", "LR"),
+
 ]
 
 const shoulder_rows: PostcranialRow[] = makeRowsWithParentInfo("", [
@@ -191,10 +203,10 @@ const carpal_rows: PostcranialRow[] = makeRowsWithParentInfo(
   carpal_names.map((name) => [name, "LRQ"] as const)
 ).concat(make_row("Unidentifiable", "SingleNum", undefined, "Carpals"))
 
-const metacarpal_names = ["1", "2", "3", "4", "5", "Unidentifiable"]
+const metacarpal_names = ["1", "2", "3", "4", "5"]
 const metacarpal_rows: PostcranialRow[] = makeRowsWithParentInfo(
   "Metacarpals",
-  metacarpal_names.map((name) => [name, "LRN", { min: 0, max: 10 }] as const)
+  metacarpal_names.map((name) => [name, "LRQ"] as const)
 ).concat(make_row("Unidentifiable", "SingleNum", undefined, "Metacarpals"))
 
 const tarsal_names = ["Calcaneus", "Talus", "Cuboid", "1st Cuneiform", "2nd Cuneiform", "3rd Cuneiform", "Navicular"]
@@ -203,10 +215,10 @@ const tarsal_rows: PostcranialRow[] = makeRowsWithParentInfo(
   tarsal_names.map((name) => [name, "LRQ"] as const)
 ).concat(make_row("Unidentifiable", "SingleNum", undefined, "Tarsals"))
 
-const metatarsal_names = ["1", "2", "3", "4", "5", "Unidentifiable"]
+const metatarsal_names = ["1", "2", "3", "4", "5"]
 const metatarsal_rows: PostcranialRow[] = makeRowsWithParentInfo(
   "Metatarsals",
-  metatarsal_names.map((name) => [name, "LRN", { min: 0, max: 10 }] as const)
+  metatarsal_names.map((name) => [name, "LRQ"] as const)
 ).concat(make_row("Unidentifiable", "SingleNum", undefined, "Metatarsals"))
 
 const phalanges_rows: PostcranialRow[] = [
@@ -252,9 +264,7 @@ export const excludeCategoriesFromTaphonomy = (row: PostcranialRow) => {
     let exclude =
     [
     "Unidentifiable",
-    "Metacarpals",
-    "Metatarsals",
-    "Phalanges"
+    "-"
     ];
     return exclude.some(term => rowName.includes(term));
 };
@@ -286,15 +296,9 @@ export const filterTaphonomyDropdownTags = (tags: string[]): string[] => {
 export const doesNotRequireBoneSideDropdown = (row: PostcranialRow) => { 
   let rowName = row.parentInfo? row.parentInfo + " " + row.boneName : row.boneName;
   let exclude = [
+    "Vertebrae",
     "Sacrum",
     "Coccyx",
-    "Humerus",
-    "Radius",
-    "Ulna",
-    "Femur",
-    "Patella",
-    "Tibia",
-    "Fibula",
     "Sternum Manubrium",
     "Sternum Body",
     "Sternum Xiphoid"

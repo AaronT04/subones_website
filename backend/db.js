@@ -14,12 +14,11 @@ connection.connect(err => {
   else console.log('Connected to MySQL');
 });
 
-connection.on('error', err => {
+const db = connection;
+
+db.on('error', err => {
   console.error('MySQL error', err);
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') process.exit(1);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') process.exit(1);
 });
 
-const db = connection;
-const pdb = connection.promise();
-
-module.exports = { db, pdb };
+module.exports = { db};

@@ -10,7 +10,7 @@ import { useState } from "react";
 import type { PostcranialCategory, PostcranialRow } from "./postcranial-inventory-list";
 import { postcranial_inventory_list, BoxTypeEnum, doesNotRequireBoneSideDropdown, excludeCategoriesFromTaphonomy } from "./postcranial-inventory-list";
 import "./InventoryStyles.css";
-import Taphonomy from "./Taphonomy";
+import Taphonomy from "./SmallTaphonomy";
 import { Button } from "@/components/ui/button"
 import { filterTaphonomyDropdownTags } from "./postcranial-inventory-list";
 import {
@@ -22,6 +22,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
+import TaphonomyDropdown from '@/components/editor/TaphonomyDropdown'
+import InventorySelect from "@/components/InventorySelect";
 
 import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
 
@@ -58,39 +60,7 @@ export default function PostcranialInventory() {
       // --- CHECKBOX ---
       case BoxTypeEnum.CHECKBOX:
         return (
-          <Checkbox.Root
-            className="w-6 h-6 mx-2 border border-gray-400 rounded flex items-start justify-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-            checked={
-              api.postcranial_inventory.find(i => i.inv_entry_name === entryName)?.isChecked || false
-            }
-            onCheckedChange={() =>
-              updateField(
-                "postcranial_inventory",
-                {
-                  inv_entry_name: entryName,
-                  isChecked: !(
-                    api.postcranial_inventory.find(i => i.inv_entry_name === entryName)?.isChecked
-                  ),
-                },
-                "inv_entry_name"
-              )
-            }
-          >
-            <Checkbox.Indicator>
-              <svg
-                className="w-4 h-4 text-blue-600"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </Checkbox.Indicator>
-          </Checkbox.Root>
+          <InventorySelect apiPath={["postcranial_inventory", `${entryName}`]}/>
         );
 
       // --- SELECT DROPDOWN ---
@@ -141,7 +111,7 @@ export default function PostcranialInventory() {
                 "postcranial_inventory",
                 {
                   inv_entry_name: entryName,
-                  value: Number(e.target.value),
+                  value: String(e.target.value),
                   isChecked: true,
                 },
                 "inv_entry_name"
@@ -214,7 +184,7 @@ export default function PostcranialInventory() {
                       Inventory Options
                     </Table.ColumnHeaderCell>
                     <Table.ColumnHeaderCell className="table-header-cell edit">
-                      Edit Information
+                      Taphonomy
                     </Table.ColumnHeaderCell>
                   </Table.Header>
                   <Table.Body>
@@ -245,43 +215,12 @@ export default function PostcranialInventory() {
                           {/* Edit button */}
                           <Table.Cell className="table-cell edit flex justify-center items-center">
                             {hoveredRowIndex === j && !excludeCategoriesFromTaphonomy(row) && (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Taphonomy</DropdownMenuLabel>
-                                    {doesNotRequireBoneSideDropdown(row) ?
-                                    <DropdownMenuItem onClick={() => {
-                                      setSelectedBone(buildEntryName(row));
-                                      setSelectedRow(row)}}>
-                                      Edit
-                                    </DropdownMenuItem>
-                                    :
-                                    filterTaphonomyDropdownTags(row.rowType.columnText).map((label, i) =>
-                                    <>
-                                    <DropdownMenuItem
-                                      key={i}
-                                      onClick={() => setSelectedBone(buildEntryName(row, label))}
-                                    >
-                                      {label}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    </>
-                                    )}
-                                  </DropdownMenuContent>
-                                  {/*
-                              <button
-                                className="w-10"
-                                onClick={() => setSelectedRow(row)}
-                              >
-                                Edit
-                              </button>
-                              */}
-                              </DropdownMenu>
+                              <TaphonomyDropdown 
+                                doesNotRequireBoneSide={doesNotRequireBoneSideDropdown(row)} 
+                                filteredDropdownTags={filterTaphonomyDropdownTags(row.rowType.columnText)}
+                                onEditClick={() => {setSelectedBone(buildEntryName(row)); setSelectedRow(row);}}
+                                onSideClick={(label) => {setSelectedBone(buildEntryName(row, label)); setSelectedRow(row);}}
+                                />
                             )}
                           </Table.Cell>
                         </Table.Row>
