@@ -8,3 +8,4 @@
 Dashboard Code
 .DS_Store
 __OLD__*.*
+.env.development.DS_Store

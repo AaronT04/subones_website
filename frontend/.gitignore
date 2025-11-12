@@ -1,0 +1,4 @@
+*/node_modules
+*/.next
+.env.development.DS_Store
+.DS_Store
