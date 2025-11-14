@@ -5,16 +5,19 @@ import Skull from "./skull"
 import React, { useState, useEffect } from 'react';
 import { useBoneData } from "./context/BoneDataContext"
 import { EditSkeletonAPIProvider } from "@/app/skeleton-editor/EditSkeletonAPIContext"
+import { useRouter, useSearchParams } from 'next/navigation';
 
 function Measurements() {
     const { selectedBone, measurements, setMeasurements } = useBoneData();
     const [boneID, setBoneID] = useState("fallback");
+    const router = useRouter();
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         const normalized = normalizeBone(selectedBone);
         if (postcranialmetrics_list.hasOwnProperty(normalized)) {
             setBoneID(normalized);
-        } else if (selectedBone === "Add Skull") {
+        } else if (selectedBone === "Skull") {
             setBoneID("skull");
         } else {
             console.warn(`Unknown bone type: ${selectedBone}`);

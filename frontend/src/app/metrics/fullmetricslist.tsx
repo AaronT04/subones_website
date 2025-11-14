@@ -18,7 +18,7 @@ export const metrics_list = {
     ],
 
     cranial_metrics: [
-        "Add Skull",
+        "Skull",
         "Cranium",
         "Mandible"
     ]

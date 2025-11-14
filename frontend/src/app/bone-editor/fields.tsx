@@ -11,7 +11,7 @@ import {
 import { useBoneData } from "./context/BoneDataContext"
 
 function Field() {
-    const { formData, setFormData } = useBoneData();
+    const { formData, setFormData, isUserLocked } = useBoneData();
     
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({
@@ -70,10 +70,11 @@ function Field() {
             <div className="flex items-center justify-between space-x-2">
                 <p>User: </p>
                 <Input 
-                    className="h-[40px] w-2/3 max-w-sm bg-white"
+                    className="h-[40px] w-2/3 max-w-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                     value={formData.user}
                     onChange={(e) => handleChange('user', e.target.value)}
                     placeholder="Enter user"
+                    disabled={isUserLocked}
                 />
             </div>
         </div>
