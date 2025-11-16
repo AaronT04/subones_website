@@ -36,14 +36,31 @@ interface BoneDataContextType {
     boneType: string | null;
     isSaving: boolean;
     handleSave: () => Promise<void>;
+    isUserLocked: boolean; // New: to track if user field should be disabled
 }
 
 const BoneDataContext = createContext<BoneDataContextType | undefined>(undefined);
+
+// Helper function to decode JWT token
+function decodeToken(token: string) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+    }
+}
 
 export function BoneDataProvider({ children }: { children: ReactNode }) {
     const searchParams = useSearchParams();
     const selectedBone = searchParams.get('boneName');
     const boneType = selectedBone?.toLowerCase().replace(/\s+/g, '_') || null;
+    const [isUserLocked, setIsUserLocked] = useState(false);
 
     const [formData, setFormData] = useState<FormData>({
         specimenNumber: '',
@@ -61,6 +78,24 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
     
     const [measurements, setMeasurements] = useState<Record<string, any>>({});
     const [isSaving, setIsSaving] = useState(false);
+
+    // Load user from token on mount
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decoded = decodeToken(token);
+            if (decoded && decoded.email) {
+                // You can use email or any other field from the token
+                // Adjust based on what your token contains
+                const userName = decoded.name || decoded.email || decoded.username;
+                setFormData(prev => ({
+                    ...prev,
+                    user: userName
+                }));
+                setIsUserLocked(true);
+            }
+        }
+    }, []);
 
     // Auto-fill locality based on museum selection
     useEffect(() => {
@@ -108,10 +143,14 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
             // Extract taphonomy data from measurements
             const { taphonomy, ...otherMeasurements } = measurements;
             
+            // Get token for authorization
+            const token = localStorage.getItem('token');
+            
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bones/complete`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Include token in request
                 },
                 body: JSON.stringify({
                     specimenNumber: formData.specimenNumber,
@@ -122,7 +161,7 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                     user: formData.user,
                     localityData: localityData,
                     measurements: otherMeasurements,
-                    taphonomy: taphonomy // Send taphonomy separately
+                    taphonomy: taphonomy
                 })
             });
 
@@ -157,7 +196,8 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 selectedBone,
                 boneType,
                 isSaving,
-                handleSave
+                handleSave,
+                isUserLocked
             }}
         >
             {children}

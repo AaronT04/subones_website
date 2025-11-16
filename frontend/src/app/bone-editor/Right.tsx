@@ -22,25 +22,33 @@ function InnerRight() {
             <div className="w-full flex h-[10%] px-20"><h1>{selectedBone}</h1></div>
 
             <div className="flex justify-center px-4">
-                 <Tabs 
-                    defaultValue="measurements" 
-                    className={selectedBone === "Add Skull" ? "relative w-full" : "relative w-[800px]"}
-                >
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="measurements">Measurements</TabsTrigger>
-                        <TabsTrigger value="taphonomy">Taphonomy</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="measurements">
-                        <div className="bone-container">
-                            <Measurements />
-                        </div>
-                    </TabsContent>
-                    <TabsContent value="taphonomy">
-                        <div className="bone-container">
-                            <Taphonomy />
-                        </div>
-                    </TabsContent>
-                </Tabs>
+                {selectedBone === "Skull" ? (
+                    // Skull case: just render Measurements without tabs
+                    <div className="bone-container w-full">
+                        <Measurements />
+                    </div>
+                ) : (
+                    // Other bones: render with tabs structure
+                    <Tabs 
+                        defaultValue="measurements" 
+                        className="relative w-[800px]"
+                    >
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="measurements">Measurements</TabsTrigger>
+                            <TabsTrigger value="taphonomy">Taphonomy</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="measurements">
+                            <div className="bone-container">
+                                <Measurements />
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="taphonomy">
+                            <div className="bone-container">
+                                <Taphonomy />
+                            </div>
+                        </TabsContent>
+                    </Tabs>
+                )}
             </div>
         </div>   
     );
