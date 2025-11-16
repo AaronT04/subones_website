@@ -1,4 +1,3 @@
 export default function DeciduousInventory() {
-    return(<div className="bone-container">
-    </div>)
+    return (<div className="bone-container"></div>)
 }

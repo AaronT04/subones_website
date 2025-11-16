@@ -56,6 +56,21 @@ export type CranialNonmetric = {
     value_str: string
 }
 
+export type Tooth = {
+    tooth_name: string
+    tooth_inv_code: number
+    tooth_width: number
+    tooth_height: number
+    tooth_wear_code: number
+    tooth_dev_code: number
+}
+
+export type Morphology = {
+    tooth_name: string
+    morph_name: string
+    morph_value: number
+}
+
 export type EditSkeletonAPI = {
     skeleton_id: number
     user: User
@@ -69,6 +84,8 @@ export type EditSkeletonAPI = {
     cranial_inventory: Inventory[]
     postcranial_inventory: Inventory[]
     cranial_nonmetrics: CranialNonmetric[]
+    dental_inventory: Tooth[]
+    morphology: Morphology[]
 }
 
 export const DEFAULT_EDIT_SKELETON_API: EditSkeletonAPI = {
@@ -104,4 +121,6 @@ export const DEFAULT_EDIT_SKELETON_API: EditSkeletonAPI = {
   cranial_inventory: [],
   postcranial_inventory: [],
   cranial_nonmetrics: [],
+  dental_inventory: [],
+  morphology: []
 };

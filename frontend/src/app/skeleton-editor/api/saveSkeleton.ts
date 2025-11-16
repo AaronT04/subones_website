@@ -5,6 +5,9 @@ import { saveCraniometrics } from "./saveCraniometrics";
 import { saveInventory } from "./inventoryUtils";
 import {saveNonmetrics} from "./saveNonmetrics";
 import { savePostcranialMetrics } from "./metricsAPI";
+import { saveAllTaphonomy } from "./saveTaphonomy";
+import { saveAllDentalInventory } from "./saveAllDentalInventory";
+import { saveAllMorphology } from "./saveAllMorphology";
 
 /**
  * Saves the skeleton and its related data (specimen, taxonomy, etc.)
@@ -139,6 +142,9 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
     await saveInventory("postcranial", api.specimen.specimen_id, api.postcranial_inventory);
     await savePostcranialMetrics(api.skeleton_id, api.postcranial_metrics);
     await saveNonmetrics(api);
+    await saveAllTaphonomy(api);
+    await saveAllDentalInventory(api); 
+    await saveAllMorphology(api);
     console.log(api);
 
     

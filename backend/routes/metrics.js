@@ -11,7 +11,6 @@ router.get('/api/postcranial_metrics/:skeleton_id', (req, res) => {
     [skeleton_id],
     (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
-      console.log(rows);
       if (!rows.length) return res.json([]);
 
       const row = rows[0];

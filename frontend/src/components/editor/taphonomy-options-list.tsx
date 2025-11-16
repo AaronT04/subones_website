@@ -30,7 +30,7 @@ export const taphonomy_options = {
                             "Warping due to ground pressure",
                             "Contact erosion (eg. coffin wear)",
                             "Burning",
-                            "Other"
+                            "Other Damage"
 
     ]
     ,
@@ -55,7 +55,7 @@ export const taphonomy_options = {
                             "Preservatives/Glue applied",
                             "Plaster/Reconstr. Materials",
                             "Samples removed",
-                            "Other"
+                            "Other Modifications"
     ]
     ,
     cultural_modifications: [

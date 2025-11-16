@@ -5,6 +5,9 @@ import { loadCraniometrics } from "./loadCraniometrics";
 import { loadInventory } from "./inventoryUtils";
 import { loadPostcranialMetrics } from "./metricsAPI";
 import { loadNonmetrics } from "./loadNonmetrics";
+import { loadTaphonomy } from "./loadTaphonomy";
+import { loadDentalInventory } from "./loadDentalInventory";
+import { loadMorphology } from "./loadMorphology";
 
 
 type DecodedToken = {
@@ -89,6 +92,9 @@ export async function loadSkeletonData(API_URL_ROOT: string, setAPI: any) {
     await loadInventory("postcranial", specimenData.specimen_id, setAPI);
     await loadPostcranialMetrics(skeletonData.skeleton_id, setAPI);
     await loadNonmetrics(API_URL_ROOT, specimenData.specimen_id, setAPI);
+    await loadTaphonomy(API_URL_ROOT, specimenData.specimen_id, setAPI);
+    await loadDentalInventory(API_URL_ROOT, specimenData.specimen_id, setAPI);
+    await loadMorphology(API_URL_ROOT, specimenData.specimen_id, setAPI);
     
 
     console.log("✅ Skeleton data loaded successfully");

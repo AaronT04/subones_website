@@ -62,7 +62,9 @@ function Taphonomy(props) {
         if(activeSubmenu == "surface damage") {
             return <div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
-                {taphonomy_options.surface_damage.map((name, i) => <TCheckbox name={name} key={i} onChange={() => updateField("taphonomy", {
+                {taphonomy_options.surface_damage.map((name, i) => <TCheckbox name={name} key={i}
+                checked={getAPIInstance()?.surface_damage.includes(name)}
+                 onChange={() => updateField("taphonomy", {
                     bone_name: props.boneName,
                     surface_damage: name
                 }, "bone_name")}/>)}
@@ -72,7 +74,9 @@ function Taphonomy(props) {
         if(activeSubmenu == "adherent materials") {
             return (<div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
-                {taphonomy_options.adherent_materials.map((name, i) => <TCheckbox name={name} key={i} onChange={() => updateField("taphonomy", {
+                {taphonomy_options.adherent_materials.map((name, i) => <TCheckbox name={name} key={i} 
+                checked={getAPIInstance()?.adherent_materials.includes(name)}
+                onChange={() => updateField("taphonomy", {
                     bone_name: props.boneName,
                     adherent_materials: name
                 }, "bone_name")}/>)}
@@ -84,7 +88,9 @@ function Taphonomy(props) {
                 <div className="flex flex-col justify-center gap-10">
                     <div className="p-2.5 flex flex-col justify-start items-start">
                         <h3 className="break-words leading-normal">Curation Modifications</h3>
-                        {taphonomy_options.curation_modifications.map((name, i) => <TCheckbox name={name} key={i} onChange={() => updateField("taphonomy", {
+                        {taphonomy_options.curation_modifications.map((name, i) => <TCheckbox name={name} key={i} 
+                        checked={getAPIInstance()?.modifications.includes(name)}
+                        onChange={() => updateField("taphonomy", {
                     bone_name: props.boneName,
                     modifications: name
                 }, "bone_name")}/>)}
@@ -92,7 +98,9 @@ function Taphonomy(props) {
                     
                     <div className="p-2.5 flex flex-col justify-start items-start">
                         <h3 className="break-words leading-normal" >Cultural Modifications</h3>
-                        {taphonomy_options.cultural_modifications.map((name, i) => <TCheckbox name={name} key={i} onChange={() => updateField("taphonomy", {
+                        {taphonomy_options.cultural_modifications.map((name, i) => <TCheckbox name={name} key={i}
+                        checked={getAPIInstance()?.modifications.includes(name)}
+                         onChange={() => updateField("taphonomy", {
                     bone_name: props.boneName,
                     modifications: name
                 }, "bone_name")}/>)}
