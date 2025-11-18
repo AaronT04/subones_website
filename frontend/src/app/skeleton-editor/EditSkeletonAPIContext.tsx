@@ -164,7 +164,7 @@ export const EditSkeletonAPIProvider = ({ children }: { children: React.ReactNod
         (target as any)[field] = value;
       })
     );
-    console.log(api);
+    //console.log(api);
   }
 
   return (

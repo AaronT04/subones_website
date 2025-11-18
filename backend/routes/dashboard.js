@@ -28,7 +28,7 @@ router.get('/api/list/bones', (req, res) => {
 
   const sql = `
     SELECT
-      b.bone_id AS id,
+      s.specimen_number AS id,
       CONCAT('B-', b.bone_id) AS menuID,
       COALESCE(b.bone_name, b.bone_type, 'Bone') AS name,
       COALESCE(m.museum_name, '') AS museum,
@@ -38,7 +38,8 @@ router.get('/api/list/bones', (req, res) => {
     LEFT JOIN museum   m ON s.museum_id   = m.museum_id
     LEFT JOIN user     u ON s.user_id     = u.user_id
     ${where}
-    ORDER BY b.bone_id DESC
+    ${where ? "AND" : "WHERE"} s.specimen_number IS NOT NULL
+    ORDER BY s.specimen_number DESC
     LIMIT ? OFFSET ?
   `;
 
@@ -99,20 +100,22 @@ router.get('/api/list/dental', (req, res) => {
   const { where, params } = buildSearchWhere({ q, field, mapAll, mapByField });
 
   const sql = `
-    SELECT
-      d.tooth_id AS id,
-      CONCAT('D-', d.tooth_id) AS menuID,
-      COALESCE(d.tooth_type, d.position, 'Tooth') AS name,
+    SELECT DISTINCT
+      s.specimen_number AS id,
+      CONCAT('D-', s.specimen_id) AS menuID,
+      COALESCE(s.specimen_name, s.specimen_number) AS name,
       COALESCE(m.museum_name, '') AS museum,
       COALESCE(u.name, '') AS user
-    FROM dental_inventory d
-    LEFT JOIN specimen s ON d.specimen_id = s.specimen_id
+    FROM specimen s
+    RIGHT JOIN tooth_inventory t on s.specimen_id = t.specimen_id
     LEFT JOIN museum   m ON s.museum_id   = m.museum_id
     LEFT JOIN user     u ON s.user_id     = u.user_id
     ${where}
-    ORDER BY d.tooth_id DESC
+    ORDER BY s.specimen_id DESC
     LIMIT ? OFFSET ?
   `;
+
+  console.log(where);
 
   db.query(sql, [...params, limit, offset], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });

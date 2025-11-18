@@ -10,11 +10,11 @@ import {
   SelectItem
 } from "@/components/ui/select"
 import { loadMuseums } from "@/app/skeleton-editor/api/loadMuseums";
-import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
+import { useDentalAPI } from "./EditDentalAPIContext";
 
 
 function Field() {
-    const { api, updateField } = useEditSkeletonAPI();
+    const { api, updateField } = useDentalAPI();
     const [museums, setMuseums] = useState<{ museum_id: number; museum_name: string }[]>([]);
 
     useEffect(() => {
@@ -31,15 +31,6 @@ function Field() {
 
     return (
         <div className="flex flex-col ml-5 space-y-5 m-auto">
-
-            <div className="flex items-center justify-between space-x-2">
-                <p>Individual: </p>
-                <Input
-                    className="h-[40px] w-2/3 max-w-sm bg-white"
-                    value={api.specimen.skeleton_name}
-                    onChange={(e) => updateField("specimen", "skeleton_name", e.target.value)}
-                />
-            </div>
 
             <div className="flex items-center justify-between space-x-2">
                 <p>Specimen Number: </p>

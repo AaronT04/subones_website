@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { morphology_list } from "./morphology_list";
-import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
+import { useDentalAPI } from "./EditDentalAPIContext";
 import { morph_help } from "./morph_help_data";
 
 export type SidedToothBox = {
@@ -119,7 +119,7 @@ const toothName = (tooth_box: SidedToothBox) => {
 };
 
 export default function ToothDisplay(props) {
-  const { api, updateField } = useEditSkeletonAPI();
+  const { api, updateField } = useDentalAPI();
   const [selectedToothIndex, setSelectedToothIndex] = useState<number>(0);
 
   // NEW: Track invalid values so we can red-highlight them

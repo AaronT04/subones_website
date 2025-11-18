@@ -160,7 +160,7 @@ export default function Main(){
                 columns={dentalColumns}
                 data={dentalData}
                 type="Dental"
-                onAddClick={() => router.push("/add-bone")}
+                onAddClick={() => router.push("/dental-editor")}
                 onRowClick={goDent}            // NEW
               />
             </div>

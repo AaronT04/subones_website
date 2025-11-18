@@ -1,0 +1,17 @@
+import type { DentalAPI, Tooth } from "../dental-types";
+
+const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL!;
+
+export async function saveAllMorphology(api: DentalAPI, specimenId: number) {
+  const token = localStorage.getItem("token");
+  const specimen_id = api.specimen.specimen_id;
+
+  await fetch(`${API_URL_ROOT}/api/morphology/${specimenId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(api.morphology)
+  });
+}

@@ -4,9 +4,9 @@ import {useState} from 'react'
 
 import { Button } from "@/components/ui/button"
 import "@/app/globals.css"
-import Specimen from "../../components/editor/skeleton-editor/Specimen"
-import Locality from "../../components/editor/skeleton-editor/Locality"
-import Taxonomy from "../../components/editor/skeleton-editor/Taxonomy"
+import Specimen from "./Specimen"
+import Locality from "./Locality"
+import Taxonomy from "./Taxonomy"
 
 import {
     Dialog,
@@ -17,12 +17,12 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
-import { useEditSkeletonAPI } from './EditSkeletonAPIContext'
+import { useDentalAPI } from './EditDentalAPIContext'
 
 function Left() {
 
     const [loading, setLoading] = useState(false);
-    const {api, handleSave} = useEditSkeletonAPI();
+    const {api, handleSave} = useDentalAPI();
     const router = useRouter();
     if (loading) {
         return <div className="p-4">Loading...</div>;
