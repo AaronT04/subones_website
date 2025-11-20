@@ -34,6 +34,16 @@ async function getDentalData(): Promise<Dental[]> {
   }
 }
 
+async function getSkullData(): Promise<Skull[]> {
+  try {
+    const result = api.get<Skull[]>("/api/list/skull");
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
+}
+
 import { useRouter } from 'next/navigation';
 import {
   Tabs,
@@ -47,6 +57,7 @@ import { DataTable } from "./data-table"
 import { Individual, indColumns } from "./columns/ind-columns"
 import { Dental, dentalColumns } from "./columns/dental-columns"
 import { Bone, boneColumns } from "./columns/bone-columns"
+import { Skull, skullColumns} from "./columns/skull-columns"
 import { useEffect, useState } from 'react';
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
 
@@ -56,6 +67,7 @@ export default function Main(){
   const [indData, setIndData] = useState<Individual[]>([]);
   const [boneData, setBoneData] = useState<Bone[]>([]);
   const [dentalData, setDentalData] = useState<Dental[]>([]);
+  const [skullData, setSkullData] = useState<Skull[]>([]);
   const [loading, setLoading] = useState(true);
 
   const confirm = useConfirmDialog();
@@ -65,10 +77,11 @@ export default function Main(){
 
   async function fetchData() {
     try {
-      const [ind, bone, dental] = await Promise.allSettled([
+      const [ind, bone, dental, skull] = await Promise.allSettled([
         getIndData(),
         getBoneData(),
         getDentalData(),
+        getSkullData()
       ]);
 
       if (cancelled) return;
@@ -76,6 +89,7 @@ export default function Main(){
       setIndData(ind.status === "fulfilled" ? ind.value : []);
       setBoneData(bone.status === "fulfilled" ? bone.value : []);
       setDentalData(dental.status === "fulfilled" ? dental.value : []);
+      setSkullData(skull.status === "fulfilled" ? skull.value : []);
     } catch (err) {
       console.error("Unexpected error fetching data:", err);
     } finally {
@@ -119,14 +133,16 @@ export default function Main(){
   const goBone = (b: Bone) => router.push(`/bones/${b.id}`)
   const goInd  = (i: Individual) => router.push(`/individuals/${i.id}`)
   const goDent = (d: Dental) => router.push(`/dental/${d.id}`)
+  const goSkull = () => {}
 
   return (
     <div>
       <div className="rounded-md">
         <Tabs defaultValue="bone" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="bone">Bone</TabsTrigger>
             <TabsTrigger value="individual">Individuals</TabsTrigger>
+            <TabsTrigger value="skull">Skull</TabsTrigger>
             <TabsTrigger value="dental">Dental</TabsTrigger>
           </TabsList>
 
@@ -151,6 +167,17 @@ export default function Main(){
                 onAddClick={confirmAddIndividual}
                 onRowClick={goInd}             // NEW
               />
+            </div>
+          </TabsContent>
+          <TabsContent value="skull">
+            <div>
+              <DataTable
+                columns={skullColumns}
+                data={skullData}
+                type="Skull"
+                onAddClick={() => router.push(`/bone-editor?boneName=Skull`)}
+                onRowClick={goSkull}
+                />
             </div>
           </TabsContent>
 

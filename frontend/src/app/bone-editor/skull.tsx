@@ -11,7 +11,7 @@ import Craniometrics from "@/components/editor/skeleton-editor/Craniometrics"
 import CranialNonmetrics from "@/components/editor/skeleton-editor/CranialNonmetrics"
 import CranialInventory from '@/components/editor/skeleton-editor/CranialInventory';
 
-function Skull() {
+function Skull(props) {
     return(
 
             <div>
@@ -23,13 +23,13 @@ function Skull() {
                         <TabsTrigger value="Cranial Inventory">Inventory</TabsTrigger>
                     </TabsList>
                     <TabsContent value="Craniometrics">
-                        <Craniometrics/>
+                        <Craniometrics skullProps={props}/>
                     </TabsContent>
                     <TabsContent value="Cranial Nonmetrics">
-                        <CranialNonmetrics/>
+                        <CranialNonmetrics skullProps={props}/>
                     </TabsContent>
                     <TabsContent value="Cranial Inventory">
-                        <CranialInventory/>
+                        <CranialInventory skullProps={props}/>
                     </TabsContent>
                 </Tabs>
 

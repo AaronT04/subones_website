@@ -5,9 +5,9 @@ const router = express.Router();
 // Save bone measurements (complex insert)
 router.post('/api/bones/complete', async (req, res) => {
   try {
-    const { specimenNumber, museumId, boneName, boneType, sex, user, localityData, measurements } = req.body;
+    const { specimenNumber, museumId, boneName, boneType, sex, userID, localityData, measurements } = req.body;
     
-    console.log('Received data:', { specimenNumber, museumId, boneName, boneType, sex, user, localityData, measurements });
+    console.log('Received data:', { specimenNumber, museumId, boneName, boneType, sex, userID, localityData, measurements });
     
     // Determine which table to use based on bone type
     const axialBones = ['sacrum', 'cervical_vertebrae', 'thoracic_vertebrae', 'lumbar_vertebrae'];
@@ -64,13 +64,14 @@ router.post('/api/bones/complete', async (req, res) => {
       // Create new specimen with taxonomy data
       const specimenQuery = `
         INSERT INTO specimen (specimen_name, specimen_number, museum_id, sex, user_id, broad_region, country, locality, region) 
-        VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const [specimenResult] = await db.promise().query(specimenQuery, [
         specimenName,
         parseInt(specimenNumber),
         parseInt(museumId),
         sex,
+        userID,
         localityData?.broadRegion || null,
         localityData?.country || null,
         localityData?.locality || null,

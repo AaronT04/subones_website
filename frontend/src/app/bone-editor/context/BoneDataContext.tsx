@@ -8,6 +8,7 @@ interface FormData {
     museumId: string;
     sex: string;
     user: string;
+    userID: number;
 }
 
 interface LocalityData {
@@ -66,7 +67,8 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
         specimenNumber: '',
         museumId: '',
         sex: 'unknown',
-        user: ''
+        user: '',
+        userID: -1
     });
 
     const [localityData, setLocalityData] = useState<LocalityData>({
@@ -88,9 +90,11 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 // You can use email or any other field from the token
                 // Adjust based on what your token contains
                 const userName = decoded.name || decoded.email || decoded.username;
+                const userID = decoded.id;
                 setFormData(prev => ({
                     ...prev,
-                    user: userName
+                    user: userName,
+                    userID: userID
                 }));
                 setIsUserLocked(true);
             }
@@ -158,7 +162,7 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                     boneName: selectedBone,
                     boneType: boneType,
                     sex: formData.sex,
-                    user: formData.user,
+                    userID: formData.userID,
                     localityData: localityData,
                     measurements: otherMeasurements,
                     taphonomy: taphonomy

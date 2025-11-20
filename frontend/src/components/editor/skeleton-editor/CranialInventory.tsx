@@ -8,7 +8,7 @@ import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "
 import InventorySelect from "@/components/InventorySelect";
 import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
 
-export default function CranialInventory() {
+export default function CranialInventory(props) {
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
   const [selectedBone, setSelectedBone] = useState("")
 

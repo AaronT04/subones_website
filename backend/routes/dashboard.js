@@ -38,7 +38,7 @@ router.get('/api/list/bones', (req, res) => {
     LEFT JOIN museum   m ON s.museum_id   = m.museum_id
     LEFT JOIN user     u ON s.user_id     = u.user_id
     ${where}
-    ${where ? "AND" : "WHERE"} s.specimen_number IS NOT NULL
+    ${where ? "AND" : "WHERE"} s.specimen_number IS NOT NULL AND b.bone_name <> "Skull"
     ORDER BY s.specimen_number DESC
     LIMIT ? OFFSET ?
   `;
@@ -84,6 +84,43 @@ router.get('/api/list/individuals', (req, res) => {
     res.json(toNumberId(rows));
   });
 });
+
+//Skull list
+router.get('/api/list/skull', (req, res) => {
+  const { limit, offset, q, field } = pagedParams(req);
+
+  const mapByField = {
+    id: ['s.specimen_id'],
+    name: ['s.specimen_name'],
+    user: ['u.name']
+  }
+
+  const mapAll = [];
+  const { where, params } = buildSearchWhere({ q, field, mapAll, mapByField });
+
+
+  const sql = `
+  SELECT
+    s.specimen_number AS id,
+    CONCAT('SK-', s.specimen_id) AS menuID,
+    COALESCE(s.specimen_name, s.specimen_number) AS name,
+    COALESCE(m.museum_name, '') AS museum,
+    COALESCE(u.name, '') AS user
+    FROM specimen s
+    RIGHT JOIN bone b on s.specimen_id = b.specimen_id
+    LEFT JOIN museum   m ON s.museum_id   = m.museum_id
+    LEFT JOIN user     u ON s.user_id     = u.user_id
+    ${where}
+    ${where ? "AND" : "WHERE"} b.bone_name = "Skull"
+    ORDER BY s.specimen_id DESC
+    LIMIT ? OFFSET ?
+    `
+
+    db.query(sql, [...params, limit, offset], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(toNumberId(rows));
+  });
+})
 
 
 // ------------------ DENTAL LIST ------------------
