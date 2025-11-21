@@ -1,4 +1,3 @@
-import { useRouter } from 'next/navigation';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 let router;
 export type EditorPageAccess = {
@@ -12,11 +11,12 @@ export function connectRouter(r : AppRouterInstance) {
 }
 
 export function handleEditBone (id : number, boneName : string) {
-    localStorage.setItem("bone-editor", JSON.stringify({db_id: id, mode: "Edit", boneName}));
+    localStorage.setItem("bone-editor", JSON.stringify({db_id: id, mode: "Edit", boneName: boneName}));
     router.push(`/bone-editor?boneName=${encodeURIComponent(boneName)}`);
 }
 export function handleCreateBone (boneName : string) {
-    localStorage.setItem("bone-editor", JSON.stringify({db_id: -1, mode: "Create", boneName}));
+    //console.log("handleCreateBone called");
+    localStorage.setItem("bone-editor", JSON.stringify({db_id: -1, mode: "Create", boneName: boneName}));
     router.push(`/bone-editor?boneName=${encodeURIComponent(boneName)}`);
 }
 export function handleEditSkeleton (id : number) {

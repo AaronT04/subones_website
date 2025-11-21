@@ -2,7 +2,8 @@
 
 import { metrics_list } from "../metrics/fullmetricslist"
 import React, {useState, useContext} from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
+import * as PageManager from "@/lib/pageManager";
 
 import {
   Tabs,
@@ -21,8 +22,8 @@ import {
    
   export function BoneMenu() {
 
-    let [boneName, setBoneName] = useState("bone name");
     const router = useRouter();
+    PageManager.connectRouter(router);
 
     return (
       <>
@@ -31,10 +32,7 @@ import {
         <div className="flex flex-wrap justify-evenly max-h-150 gap-2 w-full">
                 {metrics_list.postcranial_metrics.map((name, i) => 
                 <Button2 className="text-left text-white bg-maroon hover:bg-maroon2" variant="default" name={name} key={i} 
-                onClick={() => {
-                  setBoneName(name);
-                  router.push(`/bone-editor?boneName=${encodeURIComponent(name)}`);
-                  }}
+                onClick={() => PageManager.handleCreateBone(name)}
                 > 
                 {name} </Button2>)}
               </div>
