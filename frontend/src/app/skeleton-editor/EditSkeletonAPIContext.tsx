@@ -6,6 +6,8 @@ import { loadSkeletonData } from "./api/loadSkeleton";
 import { saveSkeletonData } from "./api/saveSkeleton";
 import { linkSpecimenToSkeleton } from "./api/linkSpecimenToSkeleton";
 import { saveCraniometrics } from "./api/saveCraniometrics";
+import * as PageManager from "@/lib/pageManager";
+import {loadUser} from "@/lib/loadUser";
 
 const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL;
 const EditSkeletonAPIContext = createContext<any>(null);
@@ -14,7 +16,14 @@ export const EditSkeletonAPIProvider = ({ children }: { children: React.ReactNod
   const [api, setAPI] = useState<EditSkeletonAPI>(DEFAULT_EDIT_SKELETON_API);
 
   useEffect(() => {
-    loadSkeletonData(API_URL_ROOT!, setAPI);
+    if(PageManager.getPageMode("skeleton-editor") === "Edit") {
+      let id = PageManager.getDatabaseID("skeleton-editor");
+      loadSkeletonData(API_URL_ROOT!, setAPI, id);
+    }
+    else {
+      loadUser(setAPI);
+    }
+    
   }, []);
 
   async function handleSave() {

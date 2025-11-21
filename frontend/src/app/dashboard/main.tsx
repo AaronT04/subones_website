@@ -1,7 +1,8 @@
 // main.tsx
 "use client"
 
-import { api } from "./api"
+import { api } from "./api";
+import * as PageManager from "@/lib/pageManager";
 
 async function getIndData(): Promise<Individual[]> {
   try {
@@ -63,6 +64,7 @@ import { useConfirmDialog } from '@/components/confirm-dialog-context';
 
 export default function Main(){
   const router = useRouter();
+  PageManager.connectRouter(router);
 
   const [indData, setIndData] = useState<Individual[]>([]);
   const [boneData, setBoneData] = useState<Bone[]>([]);
@@ -126,14 +128,14 @@ export default function Main(){
     })
     if (!confirmed) return;
     setLoading(true);
-    router.push('/skeleton-editor');
+    PageManager.handleCreateSkeleton();
   }
 
   // NEW: row click handlers to push to detail pages
-  const goBone = (b: Bone) => router.push(`/bones/${b.id}`)
-  const goInd  = (i: Individual) => router.push(`/individuals/${i.id}`)
-  const goDent = (d: Dental) => router.push(`/dental/${d.id}`)
-  const goSkull = () => {}
+  const goBone = (b: Bone) => PageManager.handleEditBone(b.id, b.name);
+  const goInd  = (i: Individual) => PageManager.handleEditSkeleton(i.id);
+  const goDent = (d: Dental) => PageManager.handleEditDental(d.id);
+  const goSkull = (s: Skull) => {PageManager.handleEditBone(s.id, "Skull")}
 
   return (
     <div>
@@ -175,7 +177,7 @@ export default function Main(){
                 columns={skullColumns}
                 data={skullData}
                 type="Skull"
-                onAddClick={() => router.push(`/bone-editor?boneName=Skull`)}
+                onAddClick={() => PageManager.handleCreateBone("Skull")}
                 onRowClick={goSkull}
                 />
             </div>
@@ -187,7 +189,7 @@ export default function Main(){
                 columns={dentalColumns}
                 data={dentalData}
                 type="Dental"
-                onAddClick={() => router.push("/dental-editor")}
+                onAddClick={() => PageManager.handleCreateDental()}
                 onRowClick={goDent}            // NEW
               />
             </div>

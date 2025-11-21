@@ -4,7 +4,7 @@ import { loadCraniometrics } from "./loadCraniometrics";
 import { saveCraniometrics } from "./saveCraniometrics";
 import { saveInventory } from "./inventoryUtils";
 import {saveNonmetrics} from "./saveNonmetrics";
-import { savePostcranialMetrics } from "./metricsAPI";
+import { savePostcranialMetrics } from "./postcranialMetricsAPI";
 import { saveAllTaphonomy } from "./saveTaphonomy";
 import { saveAllDentalInventory } from "./saveAllDentalInventory";
 import { saveAllMorphology } from "./saveAllMorphology";
@@ -58,7 +58,7 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
     const specimenResult = await specimenRes.json();
 
     // If new, update the ID
-    if (!specimenId || specimenId < 0) specimenId = specimenResult.id;
+    if (!specimenId || specimenId < 0) specimenId = specimenResult.specimen_id;
 
         // --- 2️⃣ Save or update taxonomy ---
     const taxonomyBody = {
@@ -137,14 +137,14 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
       throw new Error(`Skeleton save failed (${skeletonRes.status})`);
 
     const skeletonResult = await skeletonRes.json();
-    await saveCraniometrics(API_URL_ROOT, api);
-    await saveInventory("cranial", api.specimen.specimen_id, api.cranial_inventory);
-    await saveInventory("postcranial", api.specimen.specimen_id, api.postcranial_inventory);
+    await saveCraniometrics(API_URL_ROOT, api, specimenId);
+    await saveInventory("cranial", specimenId, api.cranial_inventory);
+    await saveInventory("postcranial", specimenId, api.postcranial_inventory);
     await savePostcranialMetrics(api.skeleton_id, api.postcranial_metrics);
-    await saveNonmetrics(api);
-    await saveAllTaphonomy(api);
-    await saveAllDentalInventory(api); 
-    await saveAllMorphology(api);
+    await saveNonmetrics(api, specimenId);
+    await saveAllTaphonomy(api, specimenId);
+    await saveAllDentalInventory(api, specimenId); 
+    await saveAllMorphology(api, specimenId);
     console.log(api);
 
     

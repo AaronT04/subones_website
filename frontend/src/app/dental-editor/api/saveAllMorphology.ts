@@ -4,7 +4,9 @@ const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL!;
 
 export async function saveAllMorphology(api: DentalAPI, specimenId: number) {
   const token = localStorage.getItem("token");
-  const specimen_id = api.specimen.specimen_id;
+  if(!api.morphology.length) {
+    return;
+  }
 
   await fetch(`${API_URL_ROOT}/api/morphology/${specimenId}`, {
     method: "POST",

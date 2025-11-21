@@ -138,7 +138,7 @@ router.get('/api/list/dental', (req, res) => {
 
   const sql = `
     SELECT DISTINCT
-      s.specimen_number AS id,
+      s.specimen_id AS id,
       CONCAT('D-', s.specimen_id) AS menuID,
       COALESCE(s.specimen_name, s.specimen_number) AS name,
       COALESCE(m.museum_name, '') AS museum,
@@ -284,6 +284,7 @@ router.get('/api/get/individual/:id', (req, res) => {
 
 // ------------------ GET DENTAL RECORD ------------------
 router.get('/api/get/dental/:id', (req, res) => {
+  console.log("iiiiiiii");
   const toothId = req.params.id;
 
   db.query(`

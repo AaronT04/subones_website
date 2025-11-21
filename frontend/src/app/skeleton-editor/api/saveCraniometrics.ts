@@ -1,10 +1,9 @@
 import { EditSkeletonAPI } from "../skeleton-editor-types";
 
-export async function saveCraniometrics(API_URL_ROOT: string, api: EditSkeletonAPI) {
+export async function saveCraniometrics(API_URL_ROOT: string, api: EditSkeletonAPI, specimenId : number) {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated. Please log in first.");
 
-  const specimenId = api.specimen.specimen_id;
   if (!specimenId || specimenId < 1) throw new Error("Invalid specimen ID");
 
   // Helper function to upsert data

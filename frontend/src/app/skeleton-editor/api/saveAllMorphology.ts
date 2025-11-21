@@ -2,9 +2,11 @@ import type { EditSkeletonAPI, Tooth } from "../skeleton-editor-types";
 
 const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL!;
 
-export async function saveAllMorphology(api: EditSkeletonAPI) {
+export async function saveAllMorphology(api: EditSkeletonAPI, specimen_id: number) {
   const token = localStorage.getItem("token");
-  const specimen_id = api.specimen.specimen_id;
+  if(!api.morphology.length) {
+    return;
+  }
 
   await fetch(`${API_URL_ROOT}/api/morphology/${specimen_id}`, {
     method: "POST",

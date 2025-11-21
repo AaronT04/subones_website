@@ -6,7 +6,9 @@ export async function saveAllDentalInventory(api: DentalAPI, specimenId: number)
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated");
 
-  const specimen_id = api.specimen.specimen_id;
+  if(!api.dental_inventory.length) {
+    return;
+  }
 
   const res = await fetch(`${API_URL_ROOT}/api/dental/${specimenId}`, {
     method: "POST",

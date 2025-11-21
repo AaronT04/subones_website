@@ -5,6 +5,7 @@ import { DentalAPI, DEFAULT_DENTAL_API } from "./dental-types";
 import {saveDentalData} from "./api/saveDental"
 import {loadDentalData} from "./api/loadDental"
 import {loadUser} from "@/lib/loadUser"
+import * as PageManager from "@/lib/pageManager"
 
 
 const EditDentalAPIContext = createContext<any>(null);
@@ -15,7 +16,11 @@ export const EditDentalAPIProvider = ({children} : {children: React.ReactNode}) 
     
     useEffect(() => {
         loadUser(setAPI);
-        //loadDentalData(API_URL_ROOT!, setAPI); //test with specimen_id = 7
+        if(PageManager.getPageMode("dental-editor") === "Edit") {
+          let id = PageManager.getDatabaseID("dental-editor");
+          loadDentalData(API_URL_ROOT!, setAPI, id);
+        }
+        // //test with specimen_id = 7
     }, [])
     
     

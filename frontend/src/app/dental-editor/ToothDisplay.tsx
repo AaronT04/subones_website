@@ -167,6 +167,11 @@ export default function ToothDisplay(props) {
     props.dentition === "perm" ? "/permdent.bmp" : "/decdent.bmp";
   return (
     <>
+    <div className="flex justify-center my-[30px]">
+      <label>Autofill:</label>
+      <select className="w-[50px] mx-[20px]">
+      </select>
+    </div>
       <div
         className={`relative w-[275px] h-[475px] mx-auto mt-[15px] bg-contain bg-center bg-no-repeat ${
           props.dentition === "perm"

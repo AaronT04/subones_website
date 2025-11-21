@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import * as PageManager from "@/lib/pageManager"
 
 interface FormData {
     specimenNumber: string;
@@ -98,6 +99,12 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 }));
                 setIsUserLocked(true);
             }
+        }
+        if (PageManager.getPageMode("bone-editor") === "Edit") {
+            alert("Code for loading a bone doesn't exist yet!");
+        }
+        else {
+            alert("Mode = Create");
         }
     }, []);
 

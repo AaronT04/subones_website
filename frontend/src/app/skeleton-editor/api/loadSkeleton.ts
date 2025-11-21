@@ -3,7 +3,7 @@ import { DEFAULT_EDIT_SKELETON_API } from "../skeleton-editor-types";
 import {jwtDecode} from "jwt-decode"
 import { loadCraniometrics } from "./loadCraniometrics";
 import { loadInventory } from "./inventoryUtils";
-import { loadPostcranialMetrics } from "./metricsAPI";
+import { loadPostcranialMetrics } from "./postcranialMetricsAPI";
 import { loadNonmetrics } from "./loadNonmetrics";
 import { loadTaphonomy } from "./loadTaphonomy";
 import { loadDentalInventory } from "./loadDentalInventory";
@@ -19,7 +19,7 @@ type DecodedToken = {
   iat: number;
 };
 
-export async function loadSkeletonData(API_URL_ROOT: string, setAPI: any) {
+export async function loadSkeletonData(API_URL_ROOT: string, setAPI: any, id: number) {
   try {
     const token = localStorage.getItem("token");
 
@@ -41,7 +41,7 @@ export async function loadSkeletonData(API_URL_ROOT: string, setAPI: any) {
         }
     }
 
-    const response = await fetch(`${API_URL_ROOT}/api/skeletal_inventory/1`);
+    const response = await fetch(`${API_URL_ROOT}/api/skeletal_inventory/${id}`);
     if (!response.ok) throw new Error(`Failed to fetch skeleton: ${response.status}`);
     const skeletonData = await response.json();
 

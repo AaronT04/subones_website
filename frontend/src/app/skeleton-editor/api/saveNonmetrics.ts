@@ -2,12 +2,10 @@ import {EditSkeletonAPI} from "../skeleton-editor-types";
 import type {CranialNonmetric} from "../skeleton-editor-types"
 const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL;
 
-export async function saveNonmetrics(api : EditSkeletonAPI) {
+export async function saveNonmetrics(api : EditSkeletonAPI, specimenId : number) {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Not authenticated. Please log in first.");
-
-    const specimenId = api.specimen.specimen_id;
-    console.log(api.specimen.specimen_id);
+    
     if (!specimenId || specimenId < 1) throw new Error("Invalid specimen ID");
 
     async function saveCategory (

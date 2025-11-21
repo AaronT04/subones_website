@@ -45,13 +45,6 @@ export async function saveDentalData(API_URL_ROOT : string, api: DentalAPI, setA
     console.log(specimenResult);
     // If new, update the ID
     specimenId = specimenResult.specimen_id;
-    setAPI(prev => ({
-            ...prev,
-            specimen: {
-                specimen_id: 23,
-                ...prev.specimen,
-            },
-    }));
 
         // --- 2️⃣ Save or update taxonomy ---
     const taxonomyBody = {

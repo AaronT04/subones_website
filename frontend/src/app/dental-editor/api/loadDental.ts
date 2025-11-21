@@ -12,11 +12,10 @@ type DecodedToken = {
   iat: number;
 };
 
-export async function loadDentalData(API_URL_ROOT: string, setAPI: any) {
+export async function loadDentalData(API_URL_ROOT: string, setAPI: any, id: number) {
   try {
     
-
-    const specimenId = 7; //!!!!!!!!!!!!!!!!!
+    const specimenId = id;
     const specimenResponse = await fetch(`${API_URL_ROOT}/api/specimen/${specimenId}`);
     const specimenData = await specimenResponse.json();
 
