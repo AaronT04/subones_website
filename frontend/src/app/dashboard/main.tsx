@@ -1,7 +1,7 @@
 // main.tsx
 "use client"
 
-import { api } from "./api"
+import { api } from "@/lib/api"
 
 async function getIndData(): Promise<Individual[]> {
   try {
