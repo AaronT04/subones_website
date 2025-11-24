@@ -58,7 +58,7 @@ export const dentalColumns: ColumnDef<Dental>[] = [
         </Button>
       </div>
     ),
-    cell: ({ row }) => <div className="text-right font-medium">{row.getValue("id")}</div>,
+    cell: ({ row }) => <div className="text-right font-medium">{row.original.menuID}</div>,
     filterFn: (row, _id, value) => {
       const v = String(value ?? "").trim()
       if (v === "") return true

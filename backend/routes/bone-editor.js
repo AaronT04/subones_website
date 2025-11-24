@@ -2,6 +2,17 @@ const express = require('express');
 const { db } = require('../db');
 const router = express.Router();
 
+const {COLUMN_TO_FRONTEND, FRONTEND_TO_COLUMN} = require("../utils/pcmetrics-map");
+
+const axialBones = ['sacrum', 'cervical_vertebrae', 'thoracic_vertebrae', 'lumbar_vertebrae'];
+const cranialBones = ['cranium'];
+const mandibleBones = ['mandible'];
+    
+const isAxialBone = (boneType) => axialBones.includes(boneType);
+const isCranialBone = (boneType) => cranialBones.includes(boneType);
+const isMandibleBone = (boneType) => mandibleBones.includes(boneType);
+
+
 // Save bone measurements (complex insert)
 router.post('/api/bones/complete', async (req, res) => {
   try {
@@ -10,23 +21,17 @@ router.post('/api/bones/complete', async (req, res) => {
     console.log('Received data:', { specimenNumber, museumId, boneName, boneType, sex, userID, localityData, measurements });
     
     // Determine which table to use based on bone type
-    const axialBones = ['sacrum', 'cervical_vertebrae', 'thoracic_vertebrae', 'lumbar_vertebrae'];
-    const cranialBones = ['cranium'];
-    const mandibleBones = ['mandible'];
     
-    const isAxialBone = axialBones.includes(boneType);
-    const isCranialBone = cranialBones.includes(boneType);
-    const isMandibleBone = mandibleBones.includes(boneType);
     
     let measurementsTable;
     let useSpecimenId = false; // Flag to determine if we use specimen_id or bone_id
     
-    if (isAxialBone) {
+    if (isAxialBone(boneType)) {
       measurementsTable = 'axial_measurements';
-    } else if (isCranialBone) {
+    } else if (isCranialBone(boneType)) {
       measurementsTable = 'cranium_measurements';
       useSpecimenId = true;
-    } else if (isMandibleBone) {
+    } else if (isMandibleBone(boneType)) {
       measurementsTable = 'mandible_measurements';
       useSpecimenId = true;
     } else {
@@ -35,6 +40,10 @@ router.post('/api/bones/complete', async (req, res) => {
     
     console.log('Using table:', measurementsTable);
     console.log('Using specimen_id:', useSpecimenId);
+    
+   if (boneName === "Skull") { //need to use a different route for saving the skull
+    return;
+   }
     
     // Step 1: Get museum abbreviation for specimen_name
     const [museumResult] = await db.promise().query(
@@ -221,6 +230,165 @@ router.post('/api/bones/complete', async (req, res) => {
       error: error.message 
     });
   }
+});
+
+router.post("/api/bone_metrics/save", async (req, res) => {
+  try {
+    const { bone_id, measurements } = req.body;
+
+    if (!bone_id || typeof measurements !== "object") {
+      return res.status(400).json({ error: "Missing bone_id or measurements" });
+    }
+
+    const values = [];
+
+    for (const [metric_name, metric_value] of Object.entries(measurements)) {
+      if (metric_value === null || metric_value === "" || metric_value === undefined)
+        continue;
+
+      values.push([bone_id, metric_name, Number(metric_value)]);
+    }
+
+    if (values.length === 0) {
+      return res.json({ success: true, message: "No metrics to save" });
+    }
+
+    await db.promise().query(
+      `
+      INSERT INTO bone_metrics (bone_id, metric_name, metric_value)
+      VALUES ?
+      ON DUPLICATE KEY UPDATE metric_value = VALUES(metric_value)
+      `,
+      [values]
+    );
+
+    res.json({
+      success: true,
+      rows_saved: values.length,
+    });
+  } catch (err) {
+    console.error("Error saving bone metrics:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/api/bone_metrics/:bone_id", async (req, res) => {
+  try {
+    const bone_id = req.params.bone_id;
+
+    const [rows] = await db.promise().query(
+      `SELECT metric_name, metric_value FROM bone_metrics WHERE bone_id = ?`,
+      [bone_id]
+    );
+
+    const result = {};
+
+    for (const row of rows) {
+      result[row.metric_name] = row.metric_value;
+    }
+
+    res.json(result);
+  } catch (err) {
+    console.error("Error loading bone metrics:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+router.post('/api/measurements/byBone', async (req, res) => {
+  try {
+    const bone = req.body;
+
+    if (!bone || typeof bone !== "object") {
+      return res.status(400).json({ error: "Expected a bone object" });
+    }
+
+    const { bone_id, bone_type, specimen_id } = bone;
+    const bt = bone_type?.toLowerCase();
+
+    let table = null;
+    let key = null;
+
+    // Determine which table to query
+    if (bt === "cranium") {
+      table = "cranium_measurements";
+      key = "specimen_id";
+    } else if (bt === "mandible") {
+      table = "mandible_measurements";
+      key = "specimen_id";
+    } else if (["sacrum", "cervical_vertebrae", "thoracic_vertebrae", "lumbar_vertebrae"].includes(bt)) {
+      table = "axial_measurements";
+      key = "bone_id";
+    } else if (["calcaneus", "talus"].includes(bt)) {
+      table = "feet_measurements";
+      key = "bone_id";
+    } else {
+      table = "appendicular_measurements";
+      key = "bone_id";
+    }
+
+    const lookupValue = key === "bone_id" ? bone_id : specimen_id;
+
+    const [rows] = await db.promise().query(
+      `SELECT * FROM ${table} WHERE ${key} = ?`,
+      [lookupValue]
+    );
+
+    // No measurements exist yet
+    if (!rows.length) {
+      console.log("no measurements exist yet");
+      return res.json({
+        bone_id,
+        bone_type,
+        measurements: {}
+      });
+    }
+
+    const row = rows[0];
+
+    const measurements = {};
+
+    for (const [col, val] of Object.entries(row)) {
+      if (col === key || col === "bone_name") continue;
+
+      const display = COLUMN_TO_FRONTEND[col];
+
+      if (display) {
+        measurements[display] = val;
+      } else {
+        // fallback if missing from map
+        measurements[col] = val;
+      }
+    }
+
+    res.json({
+      bone_id,
+      bone_type,
+      measurements
+    });
+
+  } catch (err) {
+    console.error("Error loading measurements:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+router.get('/api/bone/bySpecimen/:specimen_id', (req, res) => {
+  //console.log(req.params.specimen_id);
+  try {
+    db.query(`SELECT * FROM bone WHERE specimen_id = ?`, [req.params.specimen_id], (err, rows) => {
+        if (err) {return res.status(500).json({ error: err.message });}
+        res.json(rows[0]);
+      })
+  }
+  catch(error) {
+    console.log(error);
+  }
+  
 });
 
 module.exports = router;

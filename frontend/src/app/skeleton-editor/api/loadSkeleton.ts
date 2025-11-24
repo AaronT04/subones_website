@@ -21,26 +21,6 @@ type DecodedToken = {
 
 export async function loadSkeletonData(API_URL_ROOT: string, setAPI: any, id: number) {
   try {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-        try {
-        const decoded = jwtDecode<DecodedToken>(token);
-        //console.log(decoded);
-
-        setAPI(prev => ({
-            ...prev,
-            user: {
-            ...prev.user,
-            user_id: decoded.id,
-            user_name: decoded.name,
-            },
-        }));
-        } catch (error) {
-        console.error("Invalid token:", error);
-        }
-    }
-
     const response = await fetch(`${API_URL_ROOT}/api/skeletal_inventory/${id}`);
     if (!response.ok) throw new Error(`Failed to fetch skeleton: ${response.status}`);
     const skeletonData = await response.json();

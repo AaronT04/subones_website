@@ -81,9 +81,6 @@ function useCrudRoutes(app) {
         if (!Object.keys(body).length)
             return res.status(400).json({ error: "No valid fields" });
 
-        // Ensure the PK is in the body so MySQL accepts the insert
-        //body[pk] = id;
-
         // Upsert logic
         const sql = `
             INSERT INTO ${table} (${[pk, ...Object.keys(body)].map(c => `\`${c}\``).join(", ")})

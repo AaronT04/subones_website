@@ -18,7 +18,8 @@ router.get('/api/list/bones', (req, res) => {
   const { limit, offset, q, field } = pagedParams(req);
 
   const mapByField = {
-    id: ['b.bone_id'],
+    id: ['s.specimen_id'],
+    menuID: ['s.specimen_number'],
     name: ['b.bone_name', 'b.bone_type'],
     user: ['u.name'],
   };
@@ -28,8 +29,8 @@ router.get('/api/list/bones', (req, res) => {
 
   const sql = `
     SELECT
-      s.specimen_number AS id,
-      CONCAT('B-', b.bone_id) AS menuID,
+      s.specimen_id AS id,
+      CONCAT('B-', s.specimen_number) AS menuID,
       COALESCE(b.bone_name, b.bone_type, 'Bone') AS name,
       COALESCE(m.museum_name, '') AS museum,
       COALESCE(u.name, '') AS user
@@ -101,8 +102,8 @@ router.get('/api/list/skull', (req, res) => {
 
   const sql = `
   SELECT
-    s.specimen_number AS id,
-    CONCAT('SK-', s.specimen_id) AS menuID,
+    s.specimen_id AS id,
+    CONCAT('SK-', s.specimen_number) AS menuID,
     COALESCE(s.specimen_name, s.specimen_number) AS name,
     COALESCE(m.museum_name, '') AS museum,
     COALESCE(u.name, '') AS user
@@ -139,7 +140,7 @@ router.get('/api/list/dental', (req, res) => {
   const sql = `
     SELECT DISTINCT
       s.specimen_id AS id,
-      CONCAT('D-', s.specimen_id) AS menuID,
+      CONCAT('D-', s.specimen_number) AS menuID,
       COALESCE(s.specimen_name, s.specimen_number) AS name,
       COALESCE(m.museum_name, '') AS museum,
       COALESCE(u.name, '') AS user

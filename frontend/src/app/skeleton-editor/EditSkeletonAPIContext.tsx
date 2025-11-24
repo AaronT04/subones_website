@@ -16,18 +16,16 @@ export const EditSkeletonAPIProvider = ({ children }: { children: React.ReactNod
   const [api, setAPI] = useState<EditSkeletonAPI>(DEFAULT_EDIT_SKELETON_API);
 
   useEffect(() => {
+    loadUser(setAPI);
     if(PageManager.getPageMode("skeleton-editor") === "Edit") {
       let id = PageManager.getDatabaseID("skeleton-editor");
       loadSkeletonData(API_URL_ROOT!, setAPI, id);
-    }
-    else {
-      loadUser(setAPI);
     }
     
   }, []);
 
   async function handleSave() {
-    const result = await saveSkeletonData(API_URL_ROOT!, api);
+    const result = await saveSkeletonData(API_URL_ROOT!, api, setAPI);
     alert(result.message);
   }
 
@@ -163,7 +161,7 @@ export const EditSkeletonAPIProvider = ({ children }: { children: React.ReactNod
         const current = (target as any)[field];
 
         if (Array.isArray(current)) {
-          // toggle logic for fields like specimen.interments[] if needed
+          // toggle logic for fields like specimen.interments[] if needed <--- AI Slop comment
           const idx = current.indexOf(value);
           if (idx === -1) current.push(value);
           else current.splice(idx, 1);

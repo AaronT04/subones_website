@@ -33,7 +33,7 @@ function Measurements() {
     const handleMeasurementChange = (name: string, value: string) => {
         setMeasurements(prev => ({
             ...prev,
-            [name]: value
+            [name]: Number(value)
         }));
     };
 

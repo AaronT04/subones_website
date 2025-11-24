@@ -109,6 +109,11 @@ router.post("/api/taphonomy/:specimen_id/:bone_name", async (req, res) => {
       placeholders.push("?");
     }
 
+    columns.push("bone_color");
+    values.push(t.bone_color || null);
+    placeholders.push("?");
+
+
     // Build UPSERT clause (updates the row if it already exists)
     const updateClause = columns
       .filter(c => !["specimen_id", "bone_name"].includes(c))
@@ -116,7 +121,7 @@ router.post("/api/taphonomy/:specimen_id/:bone_name", async (req, res) => {
       .join(", ");
 
     const sql = `
-      INSERT INTO taphonomy_enhanced_edition (${columns.join(", ")})
+      INSERT INTO taphonomy (${columns.join(", ")})
       VALUES (${placeholders.join(", ")})
       ON DUPLICATE KEY UPDATE ${updateClause};
     `;
@@ -140,7 +145,7 @@ router.get("/api/taphonomy/all/:specimen_id", (req, res) => {
 
   const sql = `
     SELECT *
-    FROM taphonomy_enhanced_edition
+    FROM taphonomy
     WHERE specimen_id = ?
   `;
 
@@ -163,7 +168,7 @@ router.get("/api/taphonomy/:specimen_id/:bone_name", (req, res) => {
 
   const sql = `
     SELECT *
-    FROM taphonomy_enhanced_edition
+    FROM taphonomy
     WHERE specimen_id = ? AND bone_name = ?
     LIMIT 1
   `;

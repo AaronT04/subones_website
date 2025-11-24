@@ -17,33 +17,10 @@ import { useConfirmDialog } from '@/components/confirm-dialog-context';
 function Taphonomy(props) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
     let [boneCond, setBoneCond] = useState("");
-    const { measurements, setMeasurements } = useBoneData();
+    const { taphonomy, setTaphonomy } = useBoneData();
+    let [surfChecked, setSurfChecked] = useState(taphonomy?.surface_exposure ?? false);
+    const [comment, setComment] = useState(taphonomy?.comments ?? "");
     const confirm = useConfirmDialog();
-
-    // Initialize taphonomy structure in measurements if it doesn't exist
-    useEffect(() => {
-        if (!measurements.taphonomy) {
-            setMeasurements({
-                ...measurements,
-                taphonomy: {
-                    staining: [],
-                    surface_damage: [],
-                    adherent_materials: [],
-                    curation_modifications: [],
-                    cultural_modifications: []
-                }
-            });
-        }
-    }, []);
-
-    // Get current taphonomy data, with fallback to empty structure
-    const taphonomy = measurements.taphonomy || {
-        staining: [],
-        surface_damage: [],
-        adherent_materials: [],
-        curation_modifications: [],
-        cultural_modifications: []
-    };
 
     const showBoneConditionInfo = async() => {
         const confirmed = await confirm({
@@ -65,23 +42,23 @@ function Taphonomy(props) {
         
         console.log('New array for', category, ':', newArray);
         
-        const newMeasurements = {
-            ...measurements,
-            taphonomy: {
+        const newTaphonomy = {
                 ...taphonomy,
                 [category]: newArray
-            }
         };
         
-        console.log('Setting new measurements:', newMeasurements);
-        setMeasurements(newMeasurements);
+        console.log('Setting new measurements:', newTaphonomy);
+        setTaphonomy(newTaphonomy);
     };
 
     const getContents = () => {
         if(activeSubmenu == "bone color") {
             return <div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
-                {taphonomy_options.bone_color.map((name, i) => <HorizontalRadioButton name={name} key={i}/>)}
+                {taphonomy_options.bone_color.map((name, i) => <HorizontalRadioButton name={name} key={i}
+                onChange={() => {
+                    setTaphonomy({...taphonomy, bone_color: name})
+                }}/>)}
                 </div>
             </div>
         }
@@ -136,8 +113,8 @@ function Taphonomy(props) {
                             <TCheckbox 
                                 key={`curation-mods-${i}`}
                                 name={name} 
-                                checked={taphonomy.curation_modifications?.includes(name) || false}
-                                onChange={(checked) => handleCheckboxChange('curation_modifications', name, checked)}
+                                checked={taphonomy.modifications?.includes(name) || false}
+                                onChange={(checked) => handleCheckboxChange('modifications', name, checked)}
                             />
                         ))}
                     </div>
@@ -148,8 +125,8 @@ function Taphonomy(props) {
                             <TCheckbox 
                                 key={`cultural-mods-${i}`}
                                 name={name} 
-                                checked={taphonomy.cultural_modifications?.includes(name) || false}
-                                onChange={(checked) => handleCheckboxChange('cultural_modifications', name, checked)}
+                                checked={taphonomy.modifications?.includes(name) || false}
+                                onChange={(checked) => handleCheckboxChange('modifications', name, checked)}
                             />
                         ))}
                     </div>
@@ -160,8 +137,11 @@ function Taphonomy(props) {
             return (<div>
                 <div className="flex flex-col">
                     <h3>Comments:</h3>
-                    <textarea className="p-1 h-40 border-1 border-gray-200 rounded-lg"/>
-                    <Button className="w-34 ml-auto mt-4 bg-maroon hover:bg-maroon/90">Save Comments</Button>
+                    <textarea placeholder={taphonomy?.comments ?? ""} 
+                    onChange={(e) => setComment(e.target.value)}
+                    className="p-1 h-40 border-1 border-gray-200 rounded-lg"/>
+                    <Button className="w-34 ml-auto mt-4 bg-maroon hover:bg-maroon/90"
+                    onClick={() => setTaphonomy({...taphonomy, comments: comment})}>Save Comments</Button>
                 </div>
             </div>)
         }
@@ -172,7 +152,10 @@ function Taphonomy(props) {
         <div className = "[padding-inline:10px]">
             <div className="flex items-center">
                 <label htmlFor="bone-cond">Bone Condition: </label>
-                <Select value={boneCond} onValueChange={(value) => setBoneCond(value)}>
+                <Select value={boneCond} onValueChange={(value) => {
+                    setBoneCond(value);
+                    setTaphonomy({...taphonomy, bone_condition: Number(value)})
+                }}>
                         <SelectTrigger className="h-[40px] w-[100px] max-w-sm bg-white ml-[20]">
                             <SelectValue placeholder="Select condition" />
                         </SelectTrigger>
@@ -194,7 +177,9 @@ function Taphonomy(props) {
                 <Button className="bg-maroon hover:bg-maroon/90">?</Button>
             </div>*/}
             <div className="flex mt-4 gap-2">
-                <input type="checkbox"/>
+                <input type="checkbox"checked={surfChecked} onChange={ () => {
+                            setSurfChecked(!surfChecked);
+                            setTaphonomy({...taphonomy, surface_exposure: !surfChecked})}}/>
                 <p className = "" >Surface Exposure </p>
             </div>
         </div>

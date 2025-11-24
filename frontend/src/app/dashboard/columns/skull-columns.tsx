@@ -59,7 +59,7 @@ export const skullColumns: ColumnDef<Skull>[] = [
         </Button>
       </div>
     ),
-    cell: ({ row }) => <div className="text-right font-medium">{row.getValue("id")}</div>,
+    cell: ({ row }) => <div className="text-right font-medium">{row.original.menuID}</div>,
     // Numeric-aware filter: full digits → exact; otherwise → prefix match
     filterFn: (row, _id, value) => {
       const v = String(value ?? "").trim()
