@@ -1,8 +1,8 @@
 // main.tsx
 "use client"
 
-import { api } from "./api";
 import * as PageManager from "@/lib/pageManager";
+import { api } from "@/lib/api"
 
 async function getIndData(): Promise<Individual[]> {
   try {
