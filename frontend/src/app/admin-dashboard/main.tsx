@@ -99,33 +99,35 @@ export default function Main() {
   // ────────────────────────────────
   // Delete handler - FIXED: using singular endpoint names
   // ────────────────────────────────
-  async function handleDelete(
-    type: "bone" | "individual" | "dental",
-    id: number
-  ) {
-    try {
-            // Debug: Check token
-            const token = localStorage.getItem('authToken');
-            console.log('Auth token exists:', !!token);
-            console.log('Token value:', token);
-      const confirmed = await confirm({
-        title: "Delete Entry?",
-        description: `This will permanently remove this ${type} entry.`,
-        confirmText: "Delete",
-        cancelText: "Cancel",
-      });
-      if (!confirmed) return;
+async function handleDelete(
+  type: "bone" | "individual" | "dental",
+  id: number
+) {
+  try {
+    // Debug: Check token
+    const token = localStorage.getItem('authToken');
+    console.log('Auth token exists:', !!token);
+    console.log('Token value:', token);
 
-      // FIXED: Changed from /api/${type}s/${id} to /api/${type}/${id}
-      await api.del(`/api/${type}/${id}`);
+    const confirmed = await confirm({
+      title: "Delete Entry?",
+      description: `This will permanently remove this ${type} entry.`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+    });
 
-      if (type === "bone") setBoneData(prev => prev.filter(b => b.id !== id));
-      if (type === "individual") setIndData(prev => prev.filter(i => i.id !== id));
-      if (type === "dental") setDentalData(prev => prev.filter(d => d.id !== id));
-    } catch (err) {
-      console.error(`Failed to delete ${type}:`, err);
-    }
+    if (!confirmed) return;
+
+    await api.del(`/api/${type}/${id}`);
+
+    // Convert id to string for comparison, or use Number() on b.id
+    if (type === "bone") setBoneData(prev => prev.filter(b => String(b.id) !== String(id)));
+    if (type === "individual") setIndData(prev => prev.filter(i => String(i.id) !== String(id)));
+    if (type === "dental") setDentalData(prev => prev.filter(d => String(d.id) !== String(id)));
+  } catch (err) {
+    console.error(`Failed to delete ${type}:`, err);
   }
+}
 
   // ────────────────────────────────
   // Column configs
