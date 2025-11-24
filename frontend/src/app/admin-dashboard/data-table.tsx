@@ -51,6 +51,7 @@ interface DataTableProps<TData, TValue> {
   type: string
   onAddClick: () => void
   onBulkDelete?: (ids: string[]) => void
+  onRowClick?: (row: TData) => void  // Added this
 }
 
 export function DataTable<TData, TValue>({
@@ -58,7 +59,8 @@ export function DataTable<TData, TValue>({
   data,
   type,
   onAddClick,
-  onBulkDelete
+  onBulkDelete,
+  onRowClick  // Added this
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -165,6 +167,8 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => onRowClick?.(row.original)}  // Added this
+                  className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}  // Added this
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

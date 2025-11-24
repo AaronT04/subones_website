@@ -18,6 +18,7 @@ import { DataTable } from "./data-table";
 import { Individual, createIndColumns } from "./columns/ind-columns";
 import { Bone, createBoneColumns } from "./columns/bone-columns";
 import { Dental, createDentalColumns } from "./columns/dental-columns";
+import { Skull, createSkullColumns } from "./columns/skull-columns";
 
 // ────────────────────────────────
 // Fetch helpers
@@ -52,6 +53,16 @@ async function getDentalData(): Promise<Dental[]> {
   }
 }
 
+async function getSkullData(): Promise<Skull[]> {
+  try {
+    const result = await api.get<Skull[]>("/api/list/skull");
+    return result;
+  } catch (err) {
+    console.error("Failed to fetch skull:", err);
+    return [];
+  }
+}
+
 // ────────────────────────────────
 // Component
 // ────────────────────────────────
@@ -62,6 +73,7 @@ export default function Main() {
   const [indData, setIndData] = useState<Individual[]>([]);
   const [boneData, setBoneData] = useState<Bone[]>([]);
   const [dentalData, setDentalData] = useState<Dental[]>([]);
+  const [skullData, setSkullData] = useState<Skull[]>([]);
   const [loading, setLoading] = useState(true);
 
   // ────────────────────────────────
@@ -72,16 +84,18 @@ export default function Main() {
 
     async function fetchData() {
       try {
-        const [ind, bone, dental] = await Promise.allSettled([
+        const [ind, bone, dental, skull] = await Promise.allSettled([
           getIndData(),
           getBoneData(),
           getDentalData(),
+          getSkullData(),
         ]);
         if (cancelled) return;
 
         setIndData(ind.status === "fulfilled" ? ind.value : []);
         setBoneData(bone.status === "fulfilled" ? bone.value : []);
         setDentalData(dental.status === "fulfilled" ? dental.value : []);
+        setSkullData(skull.status === "fulfilled" ? skull.value : []);
       } catch (err) {
         console.error("Unexpected error:", err);
       } finally {
@@ -99,35 +113,35 @@ export default function Main() {
   // ────────────────────────────────
   // Delete handler - FIXED: using singular endpoint names
   // ────────────────────────────────
-async function handleDelete(
-  type: "bone" | "individual" | "dental",
-  id: number
-) {
-  try {
-    // Debug: Check token
-    const token = localStorage.getItem('authToken');
-    console.log('Auth token exists:', !!token);
-    console.log('Token value:', token);
+  async function handleDelete(
+    type: "bone" | "individual" | "dental" | "skull",
+    id: string | number
+  ) {
+    try {
+      const token = localStorage.getItem('authToken');
+      console.log('Auth token exists:', !!token);
+      console.log('Token value:', token);
 
-    const confirmed = await confirm({
-      title: "Delete Entry?",
-      description: `This will permanently remove this ${type} entry.`,
-      confirmText: "Delete",
-      cancelText: "Cancel",
-    });
+      const confirmed = await confirm({
+        title: "Delete Entry?",
+        description: `This will permanently remove this ${type} entry.`,
+        confirmText: "Delete",
+        cancelText: "Cancel",
+      });
 
-    if (!confirmed) return;
+      if (!confirmed) return;
 
-    await api.del(`/api/${type}/${id}`);
+      await api.del(`/api/${type}/${id}`);
 
-    // Convert id to string for comparison, or use Number() on b.id
-    if (type === "bone") setBoneData(prev => prev.filter(b => String(b.id) !== String(id)));
-    if (type === "individual") setIndData(prev => prev.filter(i => String(i.id) !== String(id)));
-    if (type === "dental") setDentalData(prev => prev.filter(d => String(d.id) !== String(id)));
-  } catch (err) {
-    console.error(`Failed to delete ${type}:`, err);
+      // Now compare with consistent types
+      if (type === "bone") setBoneData(prev => prev.filter(b => String(b.id) !== String(id)));
+      if (type === "individual") setIndData(prev => prev.filter(i => String(i.id) !== String(id)));
+      if (type === "dental") setDentalData(prev => prev.filter(d => String(d.id) !== String(id)));
+      if (type === "skull") setSkullData(prev => prev.filter(s => String(s.id) !== String(id)));
+    } catch (err) {
+      console.error(`Failed to delete ${type}:`, err);
+    }
   }
-}
 
   // ────────────────────────────────
   // Column configs
@@ -144,6 +158,10 @@ async function handleDelete(
     () => createDentalColumns((id) => handleDelete("dental", id)),
     []
   );
+  const skullColumns = React.useMemo(
+    () => createSkullColumns((id) => handleDelete("skull", id)),
+    []
+  );
 
   // ────────────────────────────────
   // Navigation
@@ -151,48 +169,72 @@ async function handleDelete(
   const goBone = (b: Bone) => router.push(`/bones/${b.id}`);
   const goInd = (i: Individual) => router.push(`/individuals/${i.id}`);
   const goDent = (d: Dental) => router.push(`/dental/${d.id}`);
+  const goSkull = (s: Skull) => router.push(`/bones/${s.id}`);
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading) {
+    return <div className="p-4">Loading...</div>;
+  }
 
   return (
     <div>
-      <Tabs defaultValue="bone" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="bone">Bone</TabsTrigger>
-          <TabsTrigger value="individual">Individuals</TabsTrigger>
-          <TabsTrigger value="dental">Dental</TabsTrigger>
-        </TabsList>
+      <div className="rounded-md">
+        <Tabs defaultValue="bone" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="bone">Bone</TabsTrigger>
+            <TabsTrigger value="individual">Individuals</TabsTrigger>
+            <TabsTrigger value="skull">Skull</TabsTrigger>
+            <TabsTrigger value="dental">Dental</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="bone">
-          <DataTable
-            columns={boneColumns}
-            data={boneData}
-            type="Bone"
-            onAddClick={() => router.push("/add-bone")}
-            onRowClick={goBone}
-          />
-        </TabsContent>
+          <TabsContent value="bone">
+            <div>
+              <DataTable
+                columns={boneColumns}
+                data={boneData}
+                type="Bone"
+                onAddClick={() => router.push('/add-bone')}
+                onRowClick={goBone}
+              />
+            </div>
+          </TabsContent>
 
-        <TabsContent value="individual">
-          <DataTable
-            columns={indColumns}
-            data={indData}
-            type="Individual"
-            onAddClick={() => router.push("/skeleton-editor")}
-            onRowClick={goInd}
-          />
-        </TabsContent>
+          <TabsContent value="individual">
+            <div>
+              <DataTable
+                columns={indColumns}
+                data={indData}
+                type="Individual"
+                onAddClick={() => router.push('/add-individual')}
+                onRowClick={goInd}
+              />
+            </div>
+          </TabsContent>
 
-        <TabsContent value="dental">
-          <DataTable
-            columns={dentalColumns}
-            data={dentalData}
-            type="Dental"
-            onAddClick={() => router.push("/add-bone")}
-            onRowClick={goDent}
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="skull">
+            <div>
+              <DataTable
+                columns={skullColumns}
+                data={skullData}
+                type="Skull"
+                onAddClick={() => router.push(`/bone-editor?boneName=Skull`)}
+                onRowClick={goSkull}
+              />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="dental">
+            <div>
+              <DataTable
+                columns={dentalColumns}
+                data={dentalData}
+                type="Dental"
+                onAddClick={() => router.push("/dental-editor")}
+                onRowClick={goDent}
+              />
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
