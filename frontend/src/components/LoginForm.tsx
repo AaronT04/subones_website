@@ -140,7 +140,7 @@ export default function LoginForm(props : FormProps){
                         setPassword(testPassword);
                         handleSignIn(testEmail, testPassword);
                         }}>
-                        I don't care, just take me to the site
+                        I don't care just take me to the site
                     </button>
                     {/* Admin button added below */}
                     <button
