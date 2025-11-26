@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   output: 'export',
-  basePath: process.env.ASSET_BASEPATH,
+  basePath: process.env.ASSET_BASEPATH
 };
 
 export default nextConfig;

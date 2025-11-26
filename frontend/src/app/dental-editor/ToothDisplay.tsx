@@ -5,6 +5,7 @@ import { useState } from "react";
 import { morphology_list } from "./morphology_list";
 import { useDentalAPI } from "./EditDentalAPIContext";
 import { morph_help } from "./morph_help_data";
+import {basePath} from "@/lib/basePath"
 
 export type SidedToothBox = {
   unsidedBox: UnsidedToothBox;
@@ -163,8 +164,6 @@ export default function ToothDisplay(props) {
     }
   };
 
-  const imageURL =
-    props.dentition === "perm" ? "/permdent.bmp" : "/decdent.bmp";
   return (
     <>
     <div className="flex justify-center my-[30px]">
@@ -173,11 +172,11 @@ export default function ToothDisplay(props) {
       </select>
     </div>
       <div
-        className={`relative w-[275px] h-[475px] mx-auto mt-[15px] bg-contain bg-center bg-no-repeat ${
+        className={`relative w-[275px] h-[475px] mx-auto mt-[15px] bg-contain bg-center bg-no-repeat`}
+        style={{backgroundImage: 
           props.dentition === "perm"
-            ? "bg-[url('/permdent.bmp')]"
-            : "bg-[url('/decdent.bmp')]"
-        }`}
+            ? `url(${basePath("/permdent.bmp")})`
+            : `url(${basePath("/decdent.bmp")})`}}
       >
         {/* Center panel logic stays the same */}
         {props.displayMode === "Metrics" ? (
