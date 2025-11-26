@@ -40,6 +40,7 @@ export const EditSkeletonAPIProvider = ({ children }: { children: React.ReactNod
         ? arr.filter(item => item !== val)
         : [...arr, val];
     };
+    //console.log(api);
     setAPI(prev =>
       produce(prev, draft => {
         const target = draft[section];

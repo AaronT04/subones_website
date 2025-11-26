@@ -38,7 +38,7 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
       sex: api.specimen.sex || "unknown",
       user_id: api.user.user_id || null,
     };
-    let resultID = saveSpecimen(specimenBody, specimenId, token);
+    let resultID = await saveSpecimen(specimenBody, specimenId, token);
     setAPI(prev => ({
                 ...prev,
                 specimen: {
