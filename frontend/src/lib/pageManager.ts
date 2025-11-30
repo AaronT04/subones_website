@@ -37,6 +37,10 @@ export function handleCreateDental() {
     router.push('/dental-editor');
 }
 
+export function switchToEditModeAfterSave(pageName : string, id : number) {
+    localStorage.setItem(pageName, JSON.stringify({db_id: id, mode: "Edit"}));
+}
+
 export function getPageMode (pageName : string) {
     let p = localStorage.getItem(pageName);
     if (p) return JSON.parse(p).mode;

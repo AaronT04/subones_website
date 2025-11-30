@@ -27,6 +27,9 @@ export const EditSkeletonAPIProvider = ({ children }: { children: React.ReactNod
   async function handleSave() {
     const result = await saveSkeletonData(API_URL_ROOT!, api, setAPI);
     alert(result.message);
+    if(result.id) {
+      PageManager.switchToEditModeAfterSave("skeleton-editor", result.id);
+    }
   }
 
   function updateField<T extends keyof EditSkeletonAPI>(

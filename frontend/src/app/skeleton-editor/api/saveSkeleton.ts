@@ -38,12 +38,12 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
       sex: api.specimen.sex || "unknown",
       user_id: api.user.user_id || null,
     };
-    let resultID = await saveSpecimen(specimenBody, specimenId, token);
+    let resultId = await saveSpecimen(specimenBody, specimenId, token);
     setAPI(prev => ({
                 ...prev,
                 specimen: {
                     ...prev.specimen,
-                    specimen_id: resultID
+                    specimen_id: resultId
                 }
             }));
     // --- 2️⃣ Save or update taxonomy ---
@@ -59,22 +59,22 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
     saveTaxonomy(taxonomyBody, specimenId, token);
     // --- 3️⃣ Save skeleton record itself ---
     const skeletonBody = {
-      specimen_id: specimenId,
+      specimen_id: resultId,
       skeleton_type: "full",
       skeleton_name: api.specimen.skeleton_name,
     };
-    saveSkeleton(skeletonBody, api.skeleton_id, token);
-    await saveCraniometrics(API_URL_ROOT, api, specimenId);
-    await saveInventory("cranial", specimenId, api.cranial_inventory);
-    await saveInventory("postcranial", specimenId, api.postcranial_inventory);
+    let resultSkeletonId = await saveSkeleton(skeletonBody, api.skeleton_id, token);
+    await saveCraniometrics(API_URL_ROOT, api, resultId);
+    await saveInventory("cranial", resultId, api.cranial_inventory);
+    await saveInventory("postcranial", resultId, api.postcranial_inventory);
     await savePostcranialMetrics(api.skeleton_id, api.postcranial_metrics);
-    await saveNonmetrics(api, specimenId);
-    await saveAllTaphonomy(api, specimenId);
-    await saveAllDentalInventory(api, specimenId); 
-    await saveAllMorphology(api, specimenId);
+    await saveNonmetrics(api, resultId);
+    await saveAllTaphonomy(api, resultId);
+    await saveAllDentalInventory(api, resultId); 
+    await saveAllMorphology(api, resultId);
     console.log(api);
 
-    return { success: true, message: "Skeleton saved successfully." };
+    return { success: true, message: "Skeleton saved successfully.", id: resultSkeletonId };
 
 
   } catch (error: any) {
@@ -142,7 +142,11 @@ const saveSkeleton = async (skeletonBody, skeletonId, token) => {
       },
     body: JSON.stringify(skeletonBody),
   });
-
-  if (!skeletonRes.ok)
+    if (!skeletonRes.ok)
     throw new Error(`Skeleton save failed (${skeletonRes.status})`);
+  const skeletonResult = await skeletonRes.json();
+  return Number(skeletonResult.skeleton_id);
+
+
+
 }

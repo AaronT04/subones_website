@@ -172,7 +172,8 @@ export default function Main(){
                 columns={indColumns}
                 data={indData}
                 type="Individual"
-                onAddClick={confirmAddIndividual}
+                //onAddClick={confirmAddIndividual}
+                onAddClick={() => PageManager.handleCreateSkeleton()}
                 onRowClick={goInd}             // NEW
               />
             </div>
