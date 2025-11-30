@@ -3,48 +3,8 @@
 
 import * as PageManager from "@/lib/pageManager";
 import { api } from "@/lib/api"
-
-async function getIndData(): Promise<Individual[]> {
-  try {
-    const result = api.get<Individual[]>("/api/list/individuals");
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-  
-}
-
-async function getBoneData(): Promise<Bone[]> {
-  try {
-    const result = api.get<Bone[]>("/api/list/bones");
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-}
-
-async function getDentalData(): Promise<Dental[]> {
-  try {
-    const result = api.get<Dental[]>("/api/list/dental");
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-}
-
-async function getSkullData(): Promise<Skull[]> {
-  try {
-    const result = api.get<Skull[]>("/api/list/skull");
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-}
-
+import type {DecodedToken} from "@/lib/api/types"
+import {loadUser} from "@/lib/loadUser";
 import { useRouter } from 'next/navigation';
 import {
   Tabs,
@@ -62,10 +22,53 @@ import { Skull, skullColumns} from "./columns/skull-columns"
 import { useEffect, useState } from 'react';
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
 
+async function getIndData(user? : DecodedToken): Promise<Individual[]> {
+  try {
+    console.log(user);
+    const result = api.get<Individual[]>(`/api/list/individuals?id=${user?.id}`);
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
+  
+}
+
+async function getBoneData(user? : DecodedToken): Promise<Bone[]> {
+  try {
+    const result = api.get<Bone[]>(`/api/list/bones?id=${user?.id}`);
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
+}
+
+async function getDentalData(user? : DecodedToken): Promise<Dental[]> {
+  try {
+    const result = api.get<Dental[]>(`/api/list/dental?id=${user?.id}`);
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
+}
+
+async function getSkullData(user? : DecodedToken): Promise<Skull[]> {
+  try {
+    const result = api.get<Skull[]>(`/api/list/skull?id=${user?.id}`);
+    return result;
+  }
+  catch(err) {
+    return [];
+  }
+}
+
+
+
 export default function Main(){
   const router = useRouter();
   PageManager.connectRouter(router);
-
   const [indData, setIndData] = useState<Individual[]>([]);
   const [boneData, setBoneData] = useState<Bone[]>([]);
   const [dentalData, setDentalData] = useState<Dental[]>([]);
@@ -79,11 +82,12 @@ export default function Main(){
 
   async function fetchData() {
     try {
+      const user = loadUser();
       const [ind, bone, dental, skull] = await Promise.allSettled([
-        getIndData(),
-        getBoneData(),
-        getDentalData(),
-        getSkullData()
+        getIndData(user),
+        getBoneData(user),
+        getDentalData(user),
+        getSkullData(user)
       ]);
 
       if (cancelled) return;
@@ -108,6 +112,8 @@ export default function Main(){
   }, 6000); // 6 seconds fallback
 
   fetchData();
+  
+  
 
   return () => {
     cancelled = true;

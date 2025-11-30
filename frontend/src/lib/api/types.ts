@@ -9,3 +9,12 @@ export type SpecimenBody = {
     sex: string
     user_id: number | null
 }
+
+export type DecodedToken = {
+  id: number;
+  name: string;
+  email: string;
+  roles: string[];
+  exp: number;
+  iat: number;
+};
