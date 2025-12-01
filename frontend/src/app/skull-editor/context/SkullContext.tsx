@@ -44,9 +44,9 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
     const [mandibleMetrics, setMandibleMetrics] = useState<Measurement[]>([]);
     const craniometricsContext : ICraniometrics = {craniumMetrics, updateCranium : setCraniumMetrics,
          mandibleMetrics, updateMandible: setMandibleMetrics};
-    const [allTaphonomy, setAllTaphonomy] = useState<TaphonomyData[]>([]);
+    const [allTaphonomy, setAllTaphonomy] = useState<Record<string, TaphonomyData>>({});
     const taphonomyContext : IAllTaphonomy = {allTaphonomy, update: setAllTaphonomy}
-    const [inventory, setInventory] = useState<Inventory[]>([]);
+    const [inventory, setInventory] = useState<Record<string, Inventory>>({});
     const cranialInventoryContext : IInventory = {inventory, update: setInventory};
     const [allNonmetrics, setAllNonmetrics] = useState<Record<string, CranialNonmetric>>({})
     const cranialNonmetricsContext : ICranialNonmetrics = {allNonmetrics, update: setAllNonmetrics}

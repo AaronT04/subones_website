@@ -19,13 +19,13 @@ export interface ISkull extends SkullData {
 }
 
 export interface IAllTaphonomy {
-    allTaphonomy : TaphonomyData[]
-    update : React.Dispatch<React.SetStateAction<TaphonomyData[]>>
+    allTaphonomy : Record<string, TaphonomyData>
+    update : React.Dispatch<React.SetStateAction<Record<string, TaphonomyData>>>
 }
 
 export interface IInventory {
-    inventory: Inventory[]
-    update : React.Dispatch<React.SetStateAction<Inventory[]>>
+    inventory: Record<string, Inventory>
+    update : React.Dispatch<React.SetStateAction<Record<string, Inventory>>>
 }
 
 export interface ICranialNonmetrics {
