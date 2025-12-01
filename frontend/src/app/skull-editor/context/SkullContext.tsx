@@ -1,8 +1,8 @@
 "use client"
 
 import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react'
-import type {LocalityData, Measurement, TaphonomyData, Inventory, FormData, SkullData, CranialNonmetric} from "@/lib/api/types"
-import type {IForm, ILocality, ICraniometrics, IAllTaphonomy, IInventory, ISkull, ICranialNonmetrics} from "@/lib/api/componentTypes"
+import type {LocalityData, Measurement, TaphonomyData, Inventory, FormData, DentalInventory, Morphology, SkullData, CranialNonmetric} from "@/lib/api/types"
+import type {IForm, ILocality, ICraniometrics, IAllTaphonomy, IInventory, ISkull, IDental, ICranialNonmetrics} from "@/lib/api/componentTypes"
 
 
 
@@ -14,6 +14,7 @@ interface SkullContextType {
     taphonomyContext : IAllTaphonomy
     cranialInventoryContext : IInventory
     cranialNonmetricsContext : ICranialNonmetrics
+    dentalContext : IDental
     handleSave: () => Promise<void>;
 
 }
@@ -50,6 +51,9 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
     const cranialInventoryContext : IInventory = {inventory, update: setInventory};
     const [allNonmetrics, setAllNonmetrics] = useState<Record<string, CranialNonmetric>>({})
     const cranialNonmetricsContext : ICranialNonmetrics = {allNonmetrics, update: setAllNonmetrics}
+    const [dentInv, setDentInv] = useState<Record<string, DentalInventory>>({});
+    const [morphology, setMorphology] = useState<Record<string, Morphology>>({});
+    const dentalContext : IDental = {inventory: dentInv, updateInventory: setDentInv, morphology, updateMorphology: setMorphology}
     async function handleSave() {
         console.log(formContext, localityContext, craniometricsContext, taphonomyContext, cranialInventoryContext, cranialNonmetricsContext);
     };
@@ -57,7 +61,7 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
 
     return (<SkullContext.Provider value={
         {skullContext, formContext, localityContext, craniometricsContext, 
-        taphonomyContext, cranialInventoryContext, cranialNonmetricsContext, handleSave}
+        taphonomyContext, cranialInventoryContext, cranialNonmetricsContext, dentalContext, handleSave}
 
     }>
         {children}

@@ -1,4 +1,4 @@
-import type {FormData, LocalityData, Craniometrics, Measurement, TaphonomyData, Inventory, SkullData, CranialNonmetric} from "@/lib/api/types"
+import type {FormData, LocalityData, Craniometrics, Measurement, TaphonomyData, Inventory, DentalInventory, SkullData, Morphology, CranialNonmetric} from "@/lib/api/types"
 import React from 'react'
 
 export interface IForm extends FormData {
@@ -31,4 +31,11 @@ export interface IInventory {
 export interface ICranialNonmetrics {
     allNonmetrics : Record<string, CranialNonmetric>
     update : React.Dispatch<React.SetStateAction<Record<string, CranialNonmetric>>>
+}
+
+export interface IDental {
+    inventory : Record<string, DentalInventory>
+    updateInventory: React.Dispatch<React.SetStateAction<Record<string, DentalInventory>>>
+    morphology : Record<string, Morphology>
+    updateMorphology: React.Dispatch<React.SetStateAction<Record<string, Morphology>>>
 }

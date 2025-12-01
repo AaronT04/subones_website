@@ -21,7 +21,7 @@ export default function InventorySelect(props : InventorySelectProps) {
 
     return (
     <Select
-    value={inventory[entryName].value}
+    value={inventory[entryName]?.value}
     onValueChange={(v) => update(prev =>
         produce(prev, draft => {
             draft[entryName] =

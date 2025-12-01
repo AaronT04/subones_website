@@ -5,7 +5,7 @@ const router = express.Router();
 // Load all postcranial metrics for a skeleton
 router.get('/api/postcranial_metrics/:skeleton_id', (req, res) => {
   const { skeleton_id } = req.params;
-  console.log(skeleton_id);
+  //console.log(skeleton_id);
   db.query(
     'SELECT * FROM postcranial_metrics WHERE skeleton_id = ?',
     [skeleton_id],

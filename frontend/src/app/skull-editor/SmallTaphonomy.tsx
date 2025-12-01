@@ -5,6 +5,8 @@ import HorizontalRadioButton from "@/components/ui/HorizontalRadioButton";
 import { Button } from "@/components/ui/button"
 import {produce} from "immer"
 import type { IAllTaphonomy } from "@/lib/api/componentTypes";
+import {defaultTaphonomy} from "@/lib/api/types"
+import {useEffect} from 'react'
 import {
     Select,
     SelectContent,
@@ -22,9 +24,10 @@ interface SmallTaphonomyProps {
 function SmallTaphonomy(props : SmallTaphonomyProps) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
     let [boneCond, setBoneCond] = useState("");
-    const taphonomy = props.taphonomyContext.allTaphonomy[props.boneName];
+    const taphonomy = props.taphonomyContext.allTaphonomy[props.boneName] || defaultTaphonomy;
     const boneName = props.boneName;
     const update = props.taphonomyContext.update;
+
     const handleCheckboxChange = (category: string, value: string, checked: boolean) => {
         console.log('handleCheckboxChange called:', { category, value, checked });
         console.log('Current taphonomy state:', taphonomy);
@@ -76,7 +79,7 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
             return <div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.staining.map((name, i) => <TCheckbox name={name} key={i} 
-                    checked={taphonomy?.staining.includes(name)}
+                    checked={taphonomy?.staining.includes(name) ?? false}
                     onChange={(checked) => handleCheckboxChange('staining', name, checked)}/>)}
                 </div>
             </div>

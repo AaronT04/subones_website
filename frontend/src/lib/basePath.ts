@@ -1,4 +1,6 @@
+const base_path = process.env.ASSET_BASEPATH;
+
 export function basePath(url : string) {
-    return(`${process.env.ASSET_BASEPATH === undefined ? url 
-            : process.env.ASSET_BASEPATH + `/${url}`}`);
+    return(`${base_path === undefined ? url 
+            : base_path + `/${url}`}`);
 }

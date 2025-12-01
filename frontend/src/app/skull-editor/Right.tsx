@@ -15,7 +15,8 @@ import Dental from '@/components/editor/skeleton-editor/Dental'
 import { useSkullContext } from "./context/SkullContext"
 
 function Right(props) {
-    const { skullContext,  craniometricsContext, cranialNonmetricsContext, cranialInventoryContext, taphonomyContext} = useSkullContext();
+    const { skullContext,  craniometricsContext, cranialNonmetricsContext,
+         cranialInventoryContext, taphonomyContext, dentalContext} = useSkullContext();
     return(
             <div>
                 <Tabs defaultValue="Craniometrics" className="relative w-full">
@@ -35,7 +36,7 @@ function Right(props) {
                         <CranialInventory skullContext={skullContext} cranialInventoryContext={cranialInventoryContext} taphonomyContext={taphonomyContext}/>
                     </TabsContent>
                     <TabsContent value="Dental">
-                        <Dental skullProps={props}/>
+                        <Dental skullContext={skullContext} dentalContext={dentalContext}/>
                     </TabsContent>
                 </Tabs>
 

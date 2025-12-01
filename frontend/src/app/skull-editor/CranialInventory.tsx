@@ -4,7 +4,7 @@ import { Table, TextField } from "@radix-ui/themes";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { cranial_inventory_list, CranialInventoryList, CranialInventoryRow } from "@/components/editor/skeleton-editor/cranial-inventory-list";
 import SmallTaphonomy from "./SmallTaphonomy"
-import "./InventoryStyles.css"
+import "@/components/editor/skeleton-editor/InventoryStyles.css"
 import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "@/components/editor/skeleton-editor/cranial-inventory-list";
 import InventorySelect from "./InventorySelect";
 import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
@@ -41,14 +41,16 @@ export default function CranialInventory(props: CranialInventoryProps) {
     }
 
     function enableRowCondition(bone : CranialInventoryRow) {
-        return (hasCranium && bone.boneName != "Mandible") || (hasMandible && bone.boneName === "Mandible")
+        
+        let result = (hasCranium && bone.boneName !== "Mandible") || (hasMandible && bone.boneName === "Mandible");
+        console.log(result);
+        return result;
     }
 
     function createCheckboxes(bone : CranialInventoryRow) {
         const numBoxes : number = bone.numBoxes;
         const labels = getCheckboxLabels(bone.numBoxes);
         const entryName = (idx) => labels[idx] ? bone.boneName + " " + labels[idx] : bone.boneName;
-        //const apiInstance = (idx) => api.cranial_inventory.find((inv) => inv.inv_entry_name === entryName(idx))
         return Array.from({ length: numBoxes }).map((_, idx) => (
             <InventorySelect entryName={entryName(idx)} inventoryContext={cranialInventoryContext} />
         ));

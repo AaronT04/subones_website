@@ -54,6 +54,42 @@ export interface TaphonomyData {
     comments: string
 }
 
+export type DentalInventory = {
+    tooth_name: string
+    tooth_inv_code: number | null
+    tooth_width: number | null
+    tooth_height: number | null
+    tooth_wear_code: number | null
+    tooth_dev_code: number | null
+}
+
+export type Morphology = {
+    tooth_name: string
+    morph_name: string
+    morph_value: number
+}
+
+export const defaultTaphonomy : TaphonomyData = {
+    bone_name: "",
+    bone_condition: -1,
+    surface_exposure: false,
+    bone_color: "",
+    staining: [],
+    surface_damage: [],
+    adherent_materials: [],
+    modifications: [],
+    comments: ""
+}
+
+export const defaultTooth : DentalInventory = {
+    tooth_name: "",
+    tooth_inv_code: null,
+    tooth_width: null,
+    tooth_height: null,
+    tooth_wear_code: null,
+    tooth_dev_code: null,
+}
+
 export type Measurement = {
     metric_name: string,
     metric_value: number
