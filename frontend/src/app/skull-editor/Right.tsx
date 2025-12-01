@@ -10,12 +10,12 @@ import {Table, TextField} from '@radix-ui/themes'
 import {craniometrics_list} from "@/components/editor/skeleton-editor/craniometrics-list"
 import Craniometrics from "./Craniometrics"
 import CranialNonmetrics from "./CranialNonmetrics"
-import CranialInventory from '@/components/editor/skeleton-editor/CranialInventory';
+import CranialInventory from './CranialInventory';
 import Dental from '@/components/editor/skeleton-editor/Dental'
 import { useSkullContext } from "./context/SkullContext"
 
 function Right(props) {
-    const { skullContext,  craniometricsContext, cranialNonmetricsContext} = useSkullContext();
+    const { skullContext,  craniometricsContext, cranialNonmetricsContext, cranialInventoryContext, taphonomyContext} = useSkullContext();
     return(
             <div>
                 <Tabs defaultValue="Craniometrics" className="relative w-full">
@@ -32,7 +32,7 @@ function Right(props) {
                         <CranialNonmetrics skullContext={skullContext} cranialNonmetricsContext={cranialNonmetricsContext}/>
                     </TabsContent>
                     <TabsContent value="Cranial Inventory">
-                        <CranialInventory skullProps={props}/>
+                        <CranialInventory skullContext={skullContext} cranialInventoryContext={cranialInventoryContext} taphonomyContext={taphonomyContext}/>
                     </TabsContent>
                     <TabsContent value="Dental">
                         <Dental skullProps={props}/>
