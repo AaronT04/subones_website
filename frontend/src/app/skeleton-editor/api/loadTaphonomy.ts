@@ -1,4 +1,4 @@
-import type { Taphonomy } from "../skeleton-editor-types";
+import type { TaphonomyData } from "@/lib/api/types";
 
 export async function loadTaphonomy(
   API_URL_ROOT: string,
@@ -21,7 +21,7 @@ export async function loadTaphonomy(
     return;
   }
 
-  const taphRows: Taphonomy[] = await res.json();
+  const taphRows: TaphonomyData[] = await res.json();
 
   // Integrate into EditSkeletonAPI
   setAPI((prev: any) => ({

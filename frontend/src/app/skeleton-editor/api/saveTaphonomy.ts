@@ -1,4 +1,5 @@
-import type { EditSkeletonAPI, Taphonomy } from "../skeleton-editor-types";
+import type { EditSkeletonAPI} from "../skeleton-editor-types";
+import type { TaphonomyData } from "@/lib/api/types";
 
 const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -21,7 +22,7 @@ export async function saveAllTaphonomy(api: EditSkeletonAPI, specimen_id : numbe
 // Save a single bone's taphonomy entry
 async function saveSingleTaphonomy(
   specimen_id: number,
-  t: Taphonomy,
+  t: TaphonomyData,
   token: string
 ) {
 
