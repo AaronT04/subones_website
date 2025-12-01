@@ -77,11 +77,7 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.staining.map((name, i) => <TCheckbox name={name} key={i} 
                     checked={taphonomy?.staining.includes(name)}
-                    onChange={() => update(prev =>
-                    produce(prev, draft =>{
-                        draft[boneName] =
-                    {...taphonomy, staining:
-                         {...taphonomy.staining, name}}}))}/>)}
+                    onChange={(checked) => handleCheckboxChange('staining', name, checked)}/>)}
                 </div>
             </div>
         }
@@ -90,10 +86,7 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.surface_damage.map((name, i) => <TCheckbox name={name} key={i}
                 checked={taphonomy?.surface_damage.includes(name)}
-                 onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    surface_damage: name
-                }, "bone_name")}/>)}
+                 onChange={(checked) => handleCheckboxChange('surface_damage', name, checked)}/>)}
                 </div>
             </div>
         }
@@ -102,10 +95,7 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.adherent_materials.map((name, i) => <TCheckbox name={name} key={i} 
                 checked={taphonomy?.adherent_materials.includes(name)}
-                onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    adherent_materials: name
-                }, "bone_name")}/>)}
+                onChange={(checked) => handleCheckboxChange('adherent_materials', name, checked)}/>)}
                 </div>
             </div>)
         }
@@ -116,20 +106,14 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                         <h3 className="break-words leading-normal">Curation Modifications</h3>
                         {taphonomy_options.curation_modifications.map((name, i) => <TCheckbox name={name} key={i} 
                         checked={taphonomy?.modifications.includes(name)}
-                        onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    modifications: name
-                }, "bone_name")}/>)}
+                        onChange={(checked) => handleCheckboxChange('modifications', name, checked)}/>)}
                     </div>
                     
                     <div className="p-2.5 flex flex-col justify-start items-start">
                         <h3 className="break-words leading-normal" >Cultural Modifications</h3>
                         {taphonomy_options.cultural_modifications.map((name, i) => <TCheckbox name={name} key={i}
                         checked={taphonomy?.modifications.includes(name)}
-                         onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    modifications: name
-                }, "bone_name")}/>)}
+                         onChange={(checked) => handleCheckboxChange('modifications', name, checked)}/>)}
                     </div>
                 </div>
             </div>)
@@ -141,11 +125,12 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                     <textarea placeholder={taphonomy?.comments ?? ""}className="p-1 h-40 border-1 border-gray-200 rounded-lg resize-none"
                     onChange={(e) => setComment(e.target.value)}/>
                     <Button className="w-34 ml-auto mt-4 bg-maroon hover:bg-maroon/90" onClick={() => {
-                    updateField("taphonomy", {
-                        bone_name: props.boneName,
-                        comments: comment
-                    }, "bone_name")
-                    }}>
+                    update(prev =>
+                        produce(prev, draft => {
+                            draft[boneName] = {
+                                ...taphonomy,
+                                comments: comment
+                    }}))}}>
                     Save Comments</Button>
                 </div>
             </div>)
@@ -159,11 +144,13 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                 <div className = "w-1/2 justify-left">
                     <div className="flex items-center">
                 <label htmlFor="bone-cond">Bone Condition: </label>
-                <Select value={taphonomy?.bone_condition ?? ""} onValueChange={(value) => {setBoneCond(value); 
-                updateField("taphonomy", {
-                        bone_name: props.boneName,
-                        bone_condition: value
-                    }, "bone_name");
+                <Select value={String(taphonomy?.bone_condition ?? "")} onValueChange={(value) => {setBoneCond(value); 
+                update(prev =>
+                        produce(prev, draft => {
+                            draft[boneName] = {
+                                ...taphonomy,
+                                bone_condition: Number(value)
+                    }}));
 
                 }}>
                         <SelectTrigger className="h-[40px] w-[100px] max-w-sm bg-white ml-[20]">
@@ -183,10 +170,13 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                     <div className="flex mt-4 gap-2">
                         <input type="checkbox" checked={surfChecked} onChange={ () => {
                             setSurfChecked(!surfChecked);
-                            updateField("taphonomy", {
-                                bone_name: props.boneName,
-                                surface_exposure: !surfChecked
-                            }, "bone_name")}}/>
+                            update(prev =>
+                                produce(prev, draft => {
+                                    draft[boneName] = {
+                                        ...taphonomy,
+                                        surface_exposure: !surfChecked
+                                    }
+                                }))}}/>
                         <p className = "" >Surface Exposure </p>
                     </div>
                 </div>
