@@ -5,32 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import * as PageManager from "@/lib/pageManager"
 import {saveSpecimen} from "@/lib/api/save/saveSpecimen"
 import {saveBone} from "@/lib/api/save/saveBone"
+import type {FormData, LocalityData, TaphonomyData} from '@/lib/api/types'
 
-interface FormData {
-    specimenNumber: string;
-    museumId: string;
-    sex: string;
-    user: string;
-    userID: number;
-}
-
-interface LocalityData {
-    broadRegion: string;
-    country: string;
-    locality: string;
-    region: string;
-}
-
-interface TaphonomyData {
-    bone_condition: number,
-    surface_exposure: boolean,
-    bone_color: string,
-    staining: string[],
-    surface_damage: string[],
-    adherent_materials: string[],
-    modifications: string[],
-    comments: string
-}
 
 interface BoneDataContextType {
     formData: FormData;
@@ -41,8 +17,6 @@ interface BoneDataContextType {
     setMeasurements: React.Dispatch<React.SetStateAction<Record<string, number | null>>>;
     taphonomy: TaphonomyData,
     setTaphonomy: React.Dispatch<React.SetStateAction<TaphonomyData>>;
-    museumName : string,
-    setMuseumName : React.Dispatch<React.SetStateAction<string>>;
     selectedBone: string | null;
     boneType: string | null;
     isSaving: boolean;
@@ -90,6 +64,7 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
     });
 
     const [taphonomy, setTaphonomy] = useState<TaphonomyData>({
+        bone_name: "n/a",
         bone_condition: -1,
         surface_exposure: false,
         bone_color: "",
@@ -99,7 +74,6 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
         modifications: [],
         comments: ""
     });
-    const [museumName, setMuseumName] = useState("SUB");
     
     const [measurements, setMeasurements] = useState<Record<string, number | null>>({});
     const [isSaving, setIsSaving] = useState(false);
@@ -297,8 +271,6 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 setMeasurements,
                 taphonomy,
                 setTaphonomy,
-                museumName,
-                setMuseumName,
                 selectedBone,
                 boneType,
                 isSaving,

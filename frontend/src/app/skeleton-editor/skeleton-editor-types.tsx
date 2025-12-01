@@ -1,3 +1,8 @@
+import type {Measurement} from "@/lib/api/types"
+import type {TaphonomyData} from "@/lib/api/types"
+import type {Inventory} from "@/lib/api/types"
+import type { CranialNonmetric } from "@/lib/api/types"
+
 export type User = {
     user_id:  number
     user_name: string
@@ -26,36 +31,6 @@ export type Locality = {
     region: string
 }
 
-export type Measurement = {
-    metric_name: string,
-    metric_value: number
-}
-
-export type Inventory = {
-    inv_entry_name: string
-    value?: string
-    taphonomy_id?: number
-    isChecked: boolean
-}
-
-export type Taphonomy = {
-    bone_name: string,
-    bone_condition: number,
-    surface_exposure: boolean,
-    bone_color: string,
-    staining: string[],
-    surface_damage: string[],
-    adherent_materials: string[],
-    modifications: string[],
-    comments: string
-}
-
-export type CranialNonmetric = {
-    category: string
-    nonmetric_name: string
-    value_str: string
-}
-
 export type Tooth = {
     tooth_name: string
     tooth_inv_code: number
@@ -77,7 +52,7 @@ export type EditSkeletonAPI = {
     specimen: Specimen
     locality: Locality
     taxonomy: Taxonomy
-    taphonomy: Taphonomy[]
+    taphonomy: TaphonomyData[]
     metrics_cranium: Measurement[]
     metrics_mandible: Measurement[]
     postcranial_metrics: Measurement[]

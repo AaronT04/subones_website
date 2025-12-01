@@ -141,7 +141,7 @@ export default function Main(){
   const goBone = (b: Bone) => PageManager.handleEditBone(b.id, b.name);
   const goInd  = (i: Individual) => PageManager.handleEditSkeleton(i.id);
   const goDent = (d: Dental) => PageManager.handleEditDental(d.id);
-  const goSkull = (s: Skull) => {PageManager.handleEditBone(s.id, "Skull")}
+  const goSkull = (s: Skull) => {PageManager.handleEditSkull(s.id)}
 
   return (
     <div>
@@ -184,7 +184,7 @@ export default function Main(){
                 columns={skullColumns}
                 data={skullData}
                 type="Skull"
-                onAddClick={() => PageManager.handleCreateBone("Skull")}
+                onAddClick={() => PageManager.handleCreateSkull()}
                 onRowClick={goSkull}
                 />
             </div>

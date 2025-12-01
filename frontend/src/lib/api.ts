@@ -1,5 +1,5 @@
 // src/lib/api.ts
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:7286/api";
+const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:7286/";
 
 type Json = Record<string, unknown> | unknown[];
 

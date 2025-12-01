@@ -31,10 +31,17 @@ export function handleEditDental (id : number) {
     localStorage.setItem("dental-editor", JSON.stringify({db_id: id, mode: "Edit"}));
     router.push('/dental-editor');
 }
-
 export function handleCreateDental() {
     localStorage.setItem("dental-editor", JSON.stringify({db_id: -1, mode: "Create"}));
     router.push('/dental-editor');
+}
+export function handleEditSkull(id: number) {
+    localStorage.setItem("skull-editor", JSON.stringify({db_id: id, mode: "Edit"}));
+    router.push('skull-editor');
+}
+export function handleCreateSkull() {
+    localStorage.setItem("skull-editor", JSON.stringify({db_id: -1, mode: "Create"}));
+    router.push('skull-editor');
 }
 
 export function switchToEditModeAfterSave(pageName : string, id : number) {

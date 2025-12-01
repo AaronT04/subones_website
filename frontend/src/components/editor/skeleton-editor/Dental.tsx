@@ -1,3 +1,4 @@
+"use client"
 import {
     Select,
     SelectContent,
@@ -14,7 +15,7 @@ const enum DentalWindow {
     PERMANENT = 0,
     DECIDUOUS = 1
 }
-export default function Dental() {
+export default function Dental(props) {
     const [activeSubmenu, setActiveSubmenu] = useState("");
     const getWindow = () => {
         switch(activeSubmenu) {
