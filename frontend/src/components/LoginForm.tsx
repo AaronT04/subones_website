@@ -59,7 +59,7 @@ export default function LoginForm(props : FormProps){
             return;
         }
         try {
-            const response = await fetch(`${API_URL_ROOT}/api/login`, {
+            const response = await fetch(`/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
