@@ -3,9 +3,10 @@
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { morphology_list } from "@/components/editor/skeleton-editor/morphology_list";
-import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
 import { morph_help } from "@/components/editor/skeleton-editor/morph_help_data";
 import {basePath} from "@/lib/basePath"
+import {ISkull, IDental} from "@/lib/api/componentTypes"
+import {produce} from 'immer'
 
 export type SidedToothBox = {
   unsidedBox: UnsidedToothBox;
@@ -119,8 +120,26 @@ const toothName = (tooth_box: SidedToothBox) => {
   return tooth_box.sideLR + tooth_box.unsidedBox.unsidedName;
 };
 
-export default function ToothDisplay(props) {
-  const { api, updateField } = useEditSkeletonAPI();
+interface ToothDisplayProps {
+    dentition: "perm" | "dec"
+    skullContext? : ISkull
+    dentalContext : IDental
+    displayMode : string
+    trait : string
+}
+
+
+
+export default function ToothDisplay(props : ToothDisplayProps) {
+    const inventory = props.dentalContext.inventory;
+    const morphology = props.dentalContext.morphology;
+    const updateInventory = props.dentalContext.updateInventory;
+    const updateMorphology = props.dentalContext.updateMorphology;
+        // Helper to read a tooth record
+    const getToothRecord = (tooth_name: string) => {
+        return inventory[tooth_name] || {};
+    };
+
   const [selectedToothIndex, setSelectedToothIndex] = useState<number>(0);
 
   // NEW: Track invalid values so we can red-highlight them
@@ -129,11 +148,8 @@ export default function ToothDisplay(props) {
   const tooth_boxes = props.dentition === "perm" ? perm_boxes : dec_boxes;
 
   const selectedToothName = toothName(tooth_boxes[selectedToothIndex]);
-  const selectedRecord =
-    api?.dental_inventory?.find((t) => t.tooth_name === selectedToothName) ||
-    null;
+  const selectedRecord = getToothRecord(selectedToothName);
 
-  // Updated handleChange with invalid highlighting
   const handleChange = (tooth_name, field, rawValue) => {
     const validated = validateToothValue(props.displayMode, rawValue, props.trait);
 
@@ -148,19 +164,21 @@ export default function ToothDisplay(props) {
 
     const value = validated === "" ? null : validated;
     if(props.displayMode != "Morphology") {
-      updateField(
-        "dental_inventory",
-        { tooth_name, [field]: value },
-        "tooth_name"
+      updateInventory(prev => 
+        produce(prev, draft => {
+            draft[tooth_name] = {
+                ...getToothRecord(tooth_name),
+                [field]: value
+            }
+        })
       );
     }
     else {
-      updateField(
-        "morphology",
-        {tooth_name, morph_name: props.trait, morph_value: value
-        },
-        ["tooth_name", "morph_name"]
-      );
+      updateMorphology(prev =>
+        produce(prev, draft => {
+            draft[tooth_name[props.trait]] = {
+                morph_value: value
+            }}));
     }
   };
 
@@ -247,8 +265,7 @@ export default function ToothDisplay(props) {
         {/* ---- TOOTH GRID ---- */}
         {tooth_boxes.map((box, i) => {
           const name = toothName(box);
-          const record =
-            api?.dental_inventory?.find((t) => t.tooth_name === name) || null;
+          const record = getToothRecord(name);
 
           const xSigned = signedX(box);
           const { xPct, yPct } = normalizedToPaddedPercent(
@@ -329,11 +346,7 @@ export default function ToothDisplay(props) {
                         }
                       `}
                       value={
-                        api.morphology?.find(
-                          (m) =>
-                            m.tooth_name === name &&
-                            m.morph_name === props.trait
-                        )?.morph_value ?? ""
+                        morphology[toothName[props.trait]]?.morph_value ?? ""
                       }
                       onChange={(e) =>
                         handleChange(name, "morph_name", e.target.value)

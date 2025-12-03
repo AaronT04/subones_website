@@ -57,7 +57,8 @@ export default function DeciduousInventory(props : DeciduousInventoryProps) {
                         {displayModeNames.map((mode, i) => <TabsTrigger value={mode}>{mode}</TabsTrigger>)}
                     </TabsList>
                 </Tabs>
-                <ToothDisplay key={trait} dentition="dec" displayMode={displayMode} trait={trait}/>
+                <ToothDisplay dentition="dec" displayMode={displayMode} trait={trait}
+                skullContext={props.skullContext} dentalContext={props.dentalContext} />
             </div>
             <div className="w-[350px] h-full min-h-0 overflow-y-auto">
                 <div className="h-full overflow-y-auto">

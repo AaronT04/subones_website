@@ -52,7 +52,7 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
     const [allNonmetrics, setAllNonmetrics] = useState<Record<string, CranialNonmetric>>({})
     const cranialNonmetricsContext : ICranialNonmetrics = {allNonmetrics, update: setAllNonmetrics}
     const [dentInv, setDentInv] = useState<Record<string, DentalInventory>>({});
-    const [morphology, setMorphology] = useState<Record<string, Morphology>>({});
+    const [morphology, setMorphology] = useState<Record<string, Record<string, number | null>>>({});
     const dentalContext : IDental = {inventory: dentInv, updateInventory: setDentInv, morphology, updateMorphology: setMorphology}
     async function handleSave() {
         console.log(formContext, localityContext, craniometricsContext, taphonomyContext, cranialInventoryContext, cranialNonmetricsContext);

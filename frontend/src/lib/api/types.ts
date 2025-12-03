@@ -56,17 +56,17 @@ export interface TaphonomyData {
 
 export type DentalInventory = {
     tooth_name: string
-    tooth_inv_code: number | null
-    tooth_width: number | null
-    tooth_height: number | null
-    tooth_wear_code: number | null
-    tooth_dev_code: number | null
+    tooth_inv_code: number
+    tooth_width: number
+    tooth_height: number
+    tooth_wear_code: number
+    tooth_dev_code: number
 }
 
 export type Morphology = {
     tooth_name: string
     morph_name: string
-    morph_value: number
+    morph_value: number | null
 }
 
 export const defaultTaphonomy : TaphonomyData = {
@@ -79,15 +79,6 @@ export const defaultTaphonomy : TaphonomyData = {
     adherent_materials: [],
     modifications: [],
     comments: ""
-}
-
-export const defaultTooth : DentalInventory = {
-    tooth_name: "",
-    tooth_inv_code: null,
-    tooth_width: null,
-    tooth_height: null,
-    tooth_wear_code: null,
-    tooth_dev_code: null,
 }
 
 export type Measurement = {

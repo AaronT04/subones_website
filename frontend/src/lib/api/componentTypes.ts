@@ -36,6 +36,6 @@ export interface ICranialNonmetrics {
 export interface IDental {
     inventory : Record<string, DentalInventory>
     updateInventory: React.Dispatch<React.SetStateAction<Record<string, DentalInventory>>>
-    morphology : Record<string, Morphology>
-    updateMorphology: React.Dispatch<React.SetStateAction<Record<string, Morphology>>>
+    morphology : Record<string, Record<string, number | null>>
+    updateMorphology: React.Dispatch<React.SetStateAction<Record<string, Record<string, number | null>>>>
 }

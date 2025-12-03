@@ -4,7 +4,6 @@ import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from "@
 import { tooth_layout } from "@/components/editor/skeleton-editor/tooth_layout";
 import React from "react";
 import type {ISkull, IDental} from "@/lib/api/componentTypes"
-import {defaultTooth} from "@/lib/api/types"
 import {produce} from "immer"
 
 const border = "border border-gray-400 rounded px-1";
@@ -29,7 +28,7 @@ export default function DentalTable(props : DentalTableProps) {
 
     // Helper to read a tooth record
     const getToothRecord = (tooth_name: string) => {
-        return inventory[tooth_name] || defaultTooth;
+        return inventory[tooth_name] || {};
     };
 
     // Generic per-field update handler

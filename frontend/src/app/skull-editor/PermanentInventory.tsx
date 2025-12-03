@@ -79,7 +79,8 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
                         {displayModeNames.map((mode, i) => <TabsTrigger value={mode}>{mode}</TabsTrigger>)}
                     </TabsList>
                 </Tabs>
-                <ToothDisplay key={trait} dentition="perm" displayMode={displayMode} trait={trait}/>
+                <ToothDisplay dentition="perm" dentalContext={props.dentalContext}
+                skullContext={props.skullContext} displayMode={displayMode} trait={trait}/>
             </div>
             <div className="w-[350px] h-full min-h-0 overflow-y-auto">
                 <div className="h-full overflow-y-auto">
@@ -115,7 +116,8 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
 
             <div>
                 
-            <ToothDisplay key={"morph - " + trait} dentition="perm" displayMode={"Morphology"} trait={trait}/>
+            <ToothDisplay dentition="perm" displayMode={"Morphology"} trait={trait} 
+            dentalContext={props.dentalContext} skullContext={props.skullContext}/>
 
             </div>
             <div className="w-[350px] h-full min-h-0 overflow-y-auto">
