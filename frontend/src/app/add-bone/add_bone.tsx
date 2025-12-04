@@ -23,6 +23,7 @@ import {
    
   export function BoneMenu() {
 
+    let [boneName, setBoneName] = useState("bone name");
     const router = useRouter();
     PageManager.connectRouter(router);
 
