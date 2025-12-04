@@ -9,7 +9,7 @@ import {Table, TextField} from '@radix-ui/themes'
 import {craniometrics_list} from "@/components/editor/skeleton-editor/craniometrics-list"
 import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext"
 
-export default function Craniometrics() {
+export default function Craniometrics(props) {
     const {api, updateField} = useEditSkeletonAPI();
     const displayName = (info) => info.split("\t")[0].trim(' ');
     function storageName(info: string): string {

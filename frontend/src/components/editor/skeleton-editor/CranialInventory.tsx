@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react";
 import { Table, TextField } from "@radix-ui/themes";
 import * as Checkbox from "@radix-ui/react-checkbox";
@@ -8,7 +9,7 @@ import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "
 import InventorySelect from "@/components/InventorySelect";
 import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
 
-export default function CranialInventory() {
+export default function CranialInventory(props) {
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
   const [selectedBone, setSelectedBone] = useState("")
 

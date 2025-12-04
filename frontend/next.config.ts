@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+import "dotenv/config";
+
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -6,7 +8,8 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  output: 'export'
+  output: 'export',
+  basePath: process.env.ASSET_BASEPATH
 };
 
 export default nextConfig;

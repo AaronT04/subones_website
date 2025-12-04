@@ -1,3 +1,7 @@
+import type {Measurement} from "@/lib/api/dataTypes"
+import type {TaphonomyData} from "@/lib/api/dataTypes"
+
+
 export type User = {
     user_id:  number
     user_name: string
@@ -9,6 +13,19 @@ export type Specimen = {
     specimen_number: number,
     museum_id: number,
     sex: string
+}
+
+export type CranialNonmetric = {
+    category: string
+    nonmetric_name: string
+    value_str: string
+}
+
+export type Inventory = {
+    inv_entry_name: string
+    value?: string
+    taphonomy_id?: number
+    isChecked: boolean
 }
 
 export type Taxonomy = {
@@ -26,34 +43,19 @@ export type Locality = {
     region: string
 }
 
-export type Measurement = {
-    metric_name: string,
-    metric_value: number
+export type Tooth = {
+    tooth_name: string
+    tooth_inv_code: number
+    tooth_width: number
+    tooth_height: number
+    tooth_wear_code: number
+    tooth_dev_code: number
 }
 
-export type Inventory = {
-    inv_entry_name: string
-    value?: string
-    taphonomy_id?: number
-    isChecked: boolean
-}
-
-export type Taphonomy = {
-    bone_name: string,
-    bone_condition: number,
-    surface_exposure: boolean,
-    bone_color: string,
-    staining: string[],
-    surface_damage: string[],
-    adherent_materials: string[],
-    modifications: string[],
-    comments: string
-}
-
-export type CranialNonmetric = {
-    category: string
-    nonmetric_name: string
-    value_str: string
+export type Morphology = {
+    tooth_name: string
+    morph_name: string
+    morph_value: number
 }
 
 export type EditSkeletonAPI = {
@@ -62,13 +64,15 @@ export type EditSkeletonAPI = {
     specimen: Specimen
     locality: Locality
     taxonomy: Taxonomy
-    taphonomy: Taphonomy[]
+    taphonomy: TaphonomyData[]
     metrics_cranium: Measurement[]
     metrics_mandible: Measurement[]
     postcranial_metrics: Measurement[]
     cranial_inventory: Inventory[]
     postcranial_inventory: Inventory[]
     cranial_nonmetrics: CranialNonmetric[]
+    dental_inventory: Tooth[]
+    morphology: Morphology[]
 }
 
 export const DEFAULT_EDIT_SKELETON_API: EditSkeletonAPI = {
@@ -104,4 +108,6 @@ export const DEFAULT_EDIT_SKELETON_API: EditSkeletonAPI = {
   cranial_inventory: [],
   postcranial_inventory: [],
   cranial_nonmetrics: [],
+  dental_inventory: [],
+  morphology: []
 };

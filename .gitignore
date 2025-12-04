@@ -1,7 +1,6 @@
 **/node_modules
 node_modules
 */out
-.env.*
 .env.production
 .env.development
 */.next
@@ -12,3 +11,7 @@ Dashboard Code
 .DS_Store
 __OLD__*.*
 .env.development.DS_Store
+*.zip
+bone-viewer
+boneViewer.js
+/.idea

@@ -4,7 +4,12 @@ import { loadCraniometrics } from "./loadCraniometrics";
 import { saveCraniometrics } from "./saveCraniometrics";
 import { saveInventory } from "./inventoryUtils";
 import {saveNonmetrics} from "./saveNonmetrics";
-import { savePostcranialMetrics } from "./metricsAPI";
+import { savePostcranialMetrics } from "./postcranialMetricsAPI";
+import { saveAllTaphonomy } from "./saveTaphonomy";
+import { saveAllDentalInventory } from "./saveAllDentalInventory";
+import { saveAllMorphology } from "./saveAllMorphology";
+
+import { saveSpecimen } from '@/lib/api/save/saveSpecimen'
 
 /**
  * Saves the skeleton and its related data (specimen, taxonomy, etc.)
@@ -14,14 +19,14 @@ import { savePostcranialMetrics } from "./metricsAPI";
  * @param api - The full EditSkeletonAPI object from context
  * @returns A success/failure message or thrown error
  */
-export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAPI) {
+export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAPI, setAPI: any) {
   try {
     console.log("💾 Saving skeleton data...");
 
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Not authenticated. Please log in first.");
-
-    // --- 1️⃣ Save or update specimen ---
+    let specimenId = api.specimen.specimen_id;
+    
     const specimenBody = {
       museum_id: api.specimen.museum_id,
       specimen_name: "",
@@ -33,31 +38,15 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
       sex: api.specimen.sex || "unknown",
       user_id: api.user.user_id || null,
     };
-
-    let specimenId = api.specimen.specimen_id;
-
-    // Check if specimen already exists (update) or create new
-    const specimenMethod = specimenId && specimenId > 0 ? "PUT" : "POST";
-    const specimenUrl =
-      specimenMethod === "PUT"
-        ? `${API_URL_ROOT}/api/specimen/${specimenId}`
-        : `${API_URL_ROOT}/api/specimen`;
-
-    const specimenRes = await fetch(specimenUrl, {
-      method: specimenMethod,
-      headers: { "Content-Type": "application/json",
-        "authorization": `Bearer ${token}`
-       },
-      body: JSON.stringify(specimenBody),
-    });
-
-    if (!specimenRes.ok) throw new Error(`Specimen save failed (${specimenRes.status})`);
-    const specimenResult = await specimenRes.json();
-
-    // If new, update the ID
-    if (!specimenId || specimenId < 0) specimenId = specimenResult.id;
-
-        // --- 2️⃣ Save or update taxonomy ---
+    let resultId = await saveSpecimen(specimenBody, specimenId, token);
+    setAPI(prev => ({
+                ...prev,
+                specimen: {
+                    ...prev.specimen,
+                    specimen_id: resultId
+                }
+            }));
+    // --- 2️⃣ Save or update taxonomy ---
     const taxonomyBody = {
     parvorder: api.taxonomy.parvorder || "",
     superfamily: api.taxonomy.superfamily || "",
@@ -67,10 +56,40 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
     species: "", // optional for now
     specimen_id: specimenId,
     };
+    saveTaxonomy(taxonomyBody, specimenId, token);
+    // --- 3️⃣ Save skeleton record itself ---
+    const skeletonBody = {
+      specimen_id: resultId,
+      skeleton_type: "full",
+      skeleton_name: api.specimen.skeleton_name,
+    };
+    let resultSkeletonId = await saveSkeleton(skeletonBody, api.skeleton_id, token);
+    await saveCraniometrics(API_URL_ROOT, api, resultId);
+    await saveInventory("cranial", resultId, api.cranial_inventory);
+    await saveInventory("postcranial", resultId, api.postcranial_inventory);
+    await savePostcranialMetrics(api.skeleton_id, api.postcranial_metrics);
+    await saveNonmetrics(api, resultId);
+    await saveAllTaphonomy(api, resultId);
+    await saveAllDentalInventory(api, resultId); 
+    await saveAllMorphology(api, resultId);
+    console.log(api);
 
-    // ✅ Step 1: Check if taxonomy already exists for this specimen
+    return { success: true, message: "Skeleton saved successfully.", id: resultSkeletonId };
+
+
+  } catch (error: any) {
+    console.error("❌ Error saving skeleton data:", error);
+    return { success: false, message: error.message };
+  }
+
+}
+
+
+
+const saveTaxonomy = async (taxonomyBody, specimenId, token) => {
+      // ✅ Step 1: Check if taxonomy already exists for this specimen
     const existingTaxonomyRes = await fetch(
-    `${API_URL_ROOT}/api/taxonomy/bySpecimen/${specimenId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/taxonomy/bySpecimen/${specimenId}`,
     {
         headers: {
         "Content-Type": "application/json",
@@ -80,17 +99,17 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
     );
 
     let taxonomyMethod = "POST";
-    let taxonomyUrl = `${API_URL_ROOT}/api/taxonomy`;
+    let taxonomyUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/taxonomy`;
 
     if (existingTaxonomyRes.ok) {
-    const taxonomies = await existingTaxonomyRes.json();
+      const taxonomies = await existingTaxonomyRes.json();
 
-    // if there is already a taxonomy for this specimen
-    if (Array.isArray(taxonomies) && taxonomies.length > 0) {
-        const taxonomyId = taxonomies[0].taxonomy_id;
-        taxonomyMethod = "PUT";
-        taxonomyUrl = `${API_URL_ROOT}/api/taxonomy/${taxonomyId}`;
-    }
+      // if there is already a taxonomy for this specimen
+      if (Array.isArray(taxonomies) && taxonomies.length > 0) {
+          const taxonomyId = taxonomies[0].taxonomy_id;
+          taxonomyMethod = "PUT";
+          taxonomyUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/taxonomy/${taxonomyId}`;
+      }
     }
 
     // ✅ Step 2: Save (create or update)
@@ -108,48 +127,26 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
     } else {
     console.log(`✅ Taxonomy ${taxonomyMethod} successful`);
     }
+}
+const saveSkeleton = async (skeletonBody, skeletonId, token) => {
+  const skeletonMethod = skeletonId && skeletonId > 0 ? "PUT" : "POST";
+  const skeletonUrl =
+    skeletonMethod === "PUT"
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/skeletal_inventory/${skeletonId}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/skeletal_inventory`;
 
-    // --- 3️⃣ Save skeleton record itself ---
-    const skeletonBody = {
-      specimen_id: specimenId,
-      skeleton_type: "full",
-      skeleton_name: api.specimen.skeleton_name,
-    };
-
-    const skeletonMethod = api.skeleton_id && api.skeleton_id > 0 ? "PUT" : "POST";
-    const skeletonUrl =
-      skeletonMethod === "PUT"
-        ? `${API_URL_ROOT}/api/skeletal_inventory/${api.skeleton_id}`
-        : `${API_URL_ROOT}/api/skeletal_inventory`;
-
-    const skeletonRes = await fetch(skeletonUrl, {
-      method: skeletonMethod,
-      headers: { "Content-Type": "application/json",
-        "authorization": `Bearer ${token}`
-       },
-      body: JSON.stringify(skeletonBody),
-    });
-
+  const skeletonRes = await fetch(skeletonUrl, {
+    method: skeletonMethod,
+    headers: { "Content-Type": "application/json",
+      "authorization": `Bearer ${token}`
+      },
+    body: JSON.stringify(skeletonBody),
+  });
     if (!skeletonRes.ok)
-      throw new Error(`Skeleton save failed (${skeletonRes.status})`);
-
-    const skeletonResult = await skeletonRes.json();
-    await saveCraniometrics(API_URL_ROOT, api);
-    await saveInventory("cranial", api.specimen.specimen_id, api.cranial_inventory);
-    await saveInventory("postcranial", api.specimen.specimen_id, api.postcranial_inventory);
-    await savePostcranialMetrics(api.skeleton_id, api.postcranial_metrics);
-    await saveNonmetrics(api);
-    console.log(api);
-
-    
-
-    console.log("✅ Skeleton saved successfully:", skeletonResult);
-    return { success: true, message: "Skeleton saved successfully." };
+    throw new Error(`Skeleton save failed (${skeletonRes.status})`);
+  const skeletonResult = await skeletonRes.json();
+  return Number(skeletonResult.skeleton_id);
 
 
-  } catch (error: any) {
-    console.error("❌ Error saving skeleton data:", error);
-    return { success: false, message: error.message };
-  }
 
 }

@@ -53,6 +53,40 @@ h4 {
   font-family: inherit;
   font-weight: bold;
 }
+
+/* Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+/*
+::-webkit-scrollbar {
+  width: 15px;
+  
+}
+
+
+::-webkit-scrollbar-track {
+  background:hsl(0, 0%, 48%);
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: hsl(0, 0%, 0%);
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(0, 0%, 17%);
+}
+*/
+
 @theme inline {
   --color-maroon: #8a0000;
   --color-maroon2: #A50000;

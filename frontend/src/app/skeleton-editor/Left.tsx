@@ -51,7 +51,7 @@ function Left() {
             <Dialog>
                 <DialogTrigger asChild>
                     <Button
-                        variant="outline" // This is likely a prop for a design system — you might need to adjust how this behaves too
+                        variant="outline"
                         size="lg"
                         className="h-16 w-full text-base sm:text-lg md:text-xl font-medium transition-all duration-200"
                     >

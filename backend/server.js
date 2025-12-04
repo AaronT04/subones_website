@@ -9,6 +9,9 @@ const inventoryRoutes = require('./routes/inventory');
 const metricsRoutes = require('./routes/metrics');
 const miscRoutes = require('./routes/misc');
 const verifyEmailRoutes = require('./routes/verify-email');
+const taphonomyRoutes = require('./routes/taphonomy');
+const dentalRoutes = require("./routes/dental");
+const morphologyRoutes = require("./routes/morphology");
 const { useCrudRoutes } = require('./routes/crud');
 const { applyRateLimit } = require('./middleware/rate-limit');
 
@@ -27,7 +30,10 @@ app.use('/', [
   metricsRoutes,
   dashboardRoutes,
   miscRoutes,
-  verifyEmailRoutes
+  verifyEmailRoutes,
+  taphonomyRoutes,
+  dentalRoutes,
+  morphologyRoutes
 ]);
 
 useCrudRoutes(app); // this one dynamically registers tables

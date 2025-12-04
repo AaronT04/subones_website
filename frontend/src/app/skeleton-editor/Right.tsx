@@ -12,8 +12,7 @@ import {
   import CranialNonmetrics from "@/components/editor/skeleton-editor/CranialNonmetrics"
 import CranialInventory from '@/components/editor/skeleton-editor/CranialInventory';
 import PostcranialInventory from '@/components/editor/skeleton-editor/PostcranialInventory';
-import PermanentInventory from '@/components/editor/skeleton-editor/PermanentInventory';
-import DeciduousInventory from '@/components/editor/skeleton-editor/DeciduousInventory';
+import Dental from '@/components/editor/skeleton-editor/Dental';
  
 function Right() {
     
@@ -61,18 +60,7 @@ function Right() {
                         </Tabs>
                     </TabsContent>
                     <TabsContent value="dental">
-                        <Tabs className="relative w-full">
-                            <TabsList className = "grid w-full grid-cols-2">
-                                <TabsTrigger value="Dental Permanent">Permanent</TabsTrigger>
-                                <TabsTrigger value="Dental Deciduous">Deciduous</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="Dental Permanent">
-                               <PermanentInventory/>
-                            </TabsContent>
-                            <TabsContent value="Dental Deciduous">
-                                <DeciduousInventory/>
-                            </TabsContent>
-                        </Tabs>
+                            <Dental/>
                     </TabsContent>
             </Tabs>
         </div>

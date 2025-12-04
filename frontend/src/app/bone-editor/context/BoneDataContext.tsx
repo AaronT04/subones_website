@@ -2,36 +2,22 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import * as PageManager from "@/lib/pageManager"
+import {saveSpecimen} from "@/lib/api/save/saveSpecimen"
+import {saveBone} from "@/lib/api/save/saveBone"
+import type {FormData, LocalityData, TaphonomyData} from '@/lib/api/dataTypes'
+import { SpecimenBody } from '@/lib/api/apiTypes';
 
-interface FormData {
-    specimenNumber: string;
-    museumId: string;
-    sex: string;
-    user: string;
-}
-
-interface LocalityData {
-    broadRegion: string;
-    country: string;
-    locality: string;
-    region: string;
-}
-
-interface TaphonomyData {
-    staining: string[];
-    surface_damage: string[];
-    adherent_materials: string[];
-    curation_modifications: string[];
-    cultural_modifications: string[];
-}
 
 interface BoneDataContextType {
     formData: FormData;
     setFormData: React.Dispatch<React.SetStateAction<FormData>>;
     localityData: LocalityData;
     setLocalityData: React.Dispatch<React.SetStateAction<LocalityData>>;
-    measurements: Record<string, any>;
-    setMeasurements: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+    measurements: Record<string, number | null>;
+    setMeasurements: React.Dispatch<React.SetStateAction<Record<string, number | null>>>;
+    taphonomy: TaphonomyData,
+    setTaphonomy: React.Dispatch<React.SetStateAction<TaphonomyData>>;
     selectedBone: string | null;
     boneType: string | null;
     isSaving: boolean;
@@ -61,12 +47,14 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
     const selectedBone = searchParams.get('boneName');
     const boneType = selectedBone?.toLowerCase().replace(/\s+/g, '_') || null;
     const [isUserLocked, setIsUserLocked] = useState(false);
+    const [boneId, setBoneId] = useState(-1);
 
     const [formData, setFormData] = useState<FormData>({
         specimenNumber: '',
         museumId: '',
         sex: 'unknown',
-        user: ''
+        user: '',
+        userID: -1
     });
 
     const [localityData, setLocalityData] = useState<LocalityData>({
@@ -75,8 +63,20 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
         locality: '',
         region: ''
     });
+
+    const [taphonomy, setTaphonomy] = useState<TaphonomyData>({
+        bone_name: "n/a",
+        bone_condition: -1,
+        surface_exposure: false,
+        bone_color: "",
+        staining: [],
+        surface_damage: [],
+        adherent_materials: [],
+        modifications: [],
+        comments: ""
+    });
     
-    const [measurements, setMeasurements] = useState<Record<string, any>>({});
+    const [measurements, setMeasurements] = useState<Record<string, number | null>>({});
     const [isSaving, setIsSaving] = useState(false);
 
     // Load user from token on mount
@@ -88,12 +88,21 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 // You can use email or any other field from the token
                 // Adjust based on what your token contains
                 const userName = decoded.name || decoded.email || decoded.username;
+                const userID = decoded.id;
                 setFormData(prev => ({
                     ...prev,
-                    user: userName
+                    user: userName,
+                    userID: userID
                 }));
                 setIsUserLocked(true);
             }
+        }
+        if (PageManager.getPageMode("bone-editor") === "Edit") {
+            //alert("Code for loading a bone doesn't exist yet!");
+            handleLoad(PageManager.getDatabaseID("bone-editor"));
+        }
+        else {
+            //
         }
     }, []);
 
@@ -116,6 +125,51 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
             });
         }
     }, [formData.museumId]);
+
+    const handleLoad = async (specimenId : number) => {
+        const token = localStorage.getItem('token');
+        try {
+            const specimenRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/specimen/${specimenId}`);
+            if (!specimenRes.ok) throw new Error(`Failed to fetch specimen: ${specimenRes.status}`)
+            const specimenData = await specimenRes.json();
+            setFormData({
+                specimenNumber: specimenData.specimen_number,
+                museumId: specimenData.museum_id,
+                sex: specimenData.sex,
+                user: formData.user,
+                userID: formData.userID
+            });
+            setLocalityData({
+                broadRegion: specimenData.broadRegion,
+                country: specimenData.country,
+                region: specimenData.region,
+                locality: specimenData.locality
+            }); 
+            const boneRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bone/bySpecimen/${specimenId}`);
+            if(!boneRes.ok) throw new Error(`Failed to fetch bone: ${boneRes.status}`);
+            const boneData = await boneRes.json();
+            console.log(boneData);
+            setBoneId(boneData.bone_id);
+            const measurementsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bone_metrics/${boneData.bone_id}}`);
+            const measurementsData = await measurementsRes.json();
+            setMeasurements(measurementsData); 
+            console.log(measurementsData);
+            console.log(boneData.bone_id);
+            const boneName = boneData.bone_name;
+            const taphonomyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/taphonomy/${specimenId}/${boneName}`, {
+                method: "GET"
+            });
+            if(!taphonomyRes.ok) throw new Error(`Failed to fetch taphonomy: ${taphonomyRes.status}`);
+            const taphonomyData = await taphonomyRes.json();
+            if(taphonomyData != null) {setTaphonomy(taphonomyData);}
+            console.log(taphonomyData);
+            
+        }
+        catch(error : any) {
+            console.log("Error loading data:", error);
+        }
+
+    }
 
     const handleSave = async () => {
         console.log('handleSave called!');
@@ -141,40 +195,63 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
             console.log('Sending request to backend...');
             
             // Extract taphonomy data from measurements
-            const { taphonomy, ...otherMeasurements } = measurements;
+            //const { taphonomy, ...otherMeasurements } = measurements;
+            let specimenId = PageManager.getDatabaseID("bone-editor");
+            let boneName = selectedBone;
             
             // Get token for authorization
             const token = localStorage.getItem('token');
-            
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bones/complete`, {
-                method: 'POST',
+
+            //save specimen
+            const specimenBody : SpecimenBody = {
+                museum_id: Number(formData.museumId),
+                specimen_name: "SUB-" + formData.specimenNumber, // 
+                specimen_number: Number(formData.specimenNumber),
+                broad_region: localityData.broadRegion,
+                country: localityData.country,
+                locality: localityData.locality,
+                region: localityData.region,
+                sex: formData.sex,
+                user_id: formData.userID || -1
+            }
+            console.log(specimenId);
+            let resultSpecimenID = await saveSpecimen(specimenBody, specimenId, token);
+            console.log(resultSpecimenID);
+            //save taxonomy
+            //save bone
+            const boneBody = {
+                skeleton_id: null,
+                bone_type: boneType,
+                bone_name: selectedBone,
+                condition: "",
+                specimen_id: resultSpecimenID
+            }
+            let resultBoneID = await saveBone(boneBody, boneId, token);
+            setBoneId(resultBoneID);
+            //save measurements
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bone_metrics/save`, {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Include token in request
+                    "Content-Type": "application/json",
+                    authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    specimenNumber: formData.specimenNumber,
-                    museumId: formData.museumId,
-                    boneName: selectedBone,
-                    boneType: boneType,
-                    sex: formData.sex,
-                    user: formData.user,
-                    localityData: localityData,
-                    measurements: otherMeasurements,
-                    taphonomy: taphonomy
+                    bone_id: resultBoneID,       
+                    measurements: measurements
                 })
             });
+            //save taphonomy
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/taphonomy/${resultSpecimenID}/${selectedBone}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(taphonomy)
+            });
 
-            console.log('Response status:', response.status);
-            const data = await response.json();
-            console.log('Response data:', data);
 
-            if (data.success) {
-                alert(`Data saved successfully!\nSpecimen: ${data.specimenName}\nBone ID: ${data.boneId}`);
-                setMeasurements({});
-            } else {
-                alert('Failed to save: ' + data.message);
-            }
+
         } catch (error) {
             console.error('Error saving data:', error);
             alert('Error saving data. Check console for details.');
@@ -193,6 +270,8 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 setLocalityData,
                 measurements, 
                 setMeasurements,
+                taphonomy,
+                setTaphonomy,
                 selectedBone,
                 boneType,
                 isSaving,

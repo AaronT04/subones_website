@@ -15,7 +15,7 @@ import type { CranialNonmetricRow } from "@/components/editor/skeleton-editor/cr
 import Macromorphoscopics from "@/components/editor/skeleton-editor/Macromorphoscopics"
 import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext"
 
-function CranialNonmetrics() {
+function CranialNonmetrics(props) {
 
     const {api, updateField} = useEditSkeletonAPI();
 

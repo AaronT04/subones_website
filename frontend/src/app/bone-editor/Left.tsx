@@ -94,9 +94,6 @@ function Left() {
                     className="bg-maroon hover:bg-maroon/90 text-white hover:text-white 
                     h-16 w-full text-base sm:text-lg md:text-xl font-medium transition-all duration-200"
                     onClick={() => {
-                        alert('Button clicked!'); // Does this show?
-                        console.log('Button clicked!');
-                        console.log('handleSave exists?', typeof handleSave);
                         if (handleSave) {
                             handleSave();
                         } else {

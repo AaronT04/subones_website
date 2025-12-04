@@ -71,6 +71,7 @@ function useCrudRoutes(app) {
     }
     });
 
+    // Upsert logic
     app.post(`/api/${table}/:id`, authenticateToken, async (req, res) => {
         try {
         const id = req.params.id;
@@ -81,10 +82,6 @@ function useCrudRoutes(app) {
         if (!Object.keys(body).length)
             return res.status(400).json({ error: "No valid fields" });
 
-        // Ensure the PK is in the body so MySQL accepts the insert
-        //body[pk] = id;
-
-        // Upsert logic
         const sql = `
             INSERT INTO ${table} (${[pk, ...Object.keys(body)].map(c => `\`${c}\``).join(", ")})
             VALUES (${[pk, ...Object.keys(body)].map(() => "?").join(", ")})
@@ -106,6 +103,7 @@ function useCrudRoutes(app) {
     // Update
     app.put(`/api/${table}/:id`, authenticateToken, (req, res) => {
         const body = {};
+        const id = req.params.id;
         for (const f of allowedFields) {
         if (req.body[f] !== undefined) body[f] = req.body[f];
         }
@@ -117,7 +115,7 @@ function useCrudRoutes(app) {
             console.error("Error in app.put:", err);
             return res.status(500).json({ error: err.message });
         }
-        res.json({ id: req.params.id, ...body });
+        res.json({ [pk]: id, ...body });
         });
     });
 
@@ -138,14 +136,14 @@ function useCrudRoutes(app) {
     makeCrudRoutes('taxonomy', 'taxonomy_id', ['parvorder','superfamily','family','subfamily','genus','species','specimen_id']);
     makeCrudRoutes('taphonomy', 'taphonomy_id', ['specimen_id','bone_id','date_of_record']);
     makeCrudRoutes('bone', 'bone_id', ['skeleton_id','bone_type','bone_name','condition','specimen_id']);
-    makeCrudRoutes('skeletal_inventory', 'skeleton_id', ['specimen_id','condition','skeleton_type','measurements']);
-    makeCrudRoutes('cranium_measurements', 'specimen_id', ['specimen_id', 'maximum_cranial_length', 'maximum_cranial_breadth',
+    makeCrudRoutes('skeletal_inventory', 'skeleton_id', ['skeleton_name', 'specimen_id','condition','skeleton_type','measurements']);
+    makeCrudRoutes('cranium_measurements', 'specimen_id', ['maximum_cranial_length', 'maximum_cranial_breadth',
                 'bizygomatic_diameter', 'basion_bregma_height', 'cranial_base_length', 'basion_prosthion_length',
                 'maxillo_alveolar_breadth', 'maxillo_alveolar_length', 'biauricular_breadth', 'upper_facial_height',
                 'minimum_frontal_breadth', 'upper_facial_breadth', 'nasal_height', 'nasal_breadth', 'orbital_breadth',
                 'orbital_height', 'biorbital_breadth', 'interorbital_breadth', 'frontal_chord', 'parietal_chord',
                 'occipital_chord', 'foramen_magnum_length', 'foramen_magnum_breadth', 'mastoid_height']);
-    makeCrudRoutes('mandible_measurements', 'specimen_id', ['specimen_id', 'chin_height', 'height_of_the_mandibular_body_at_the_mental_foramen',
+    makeCrudRoutes('mandible_measurements', 'specimen_id', ['chin_height', 'height_of_the_mandibular_body_at_the_mental_foramen',
                 'breadth_of_the_mandibular_body_at_the_mental_foramen', 'bigonial_width', 'bicondylar_breadth',
                 'minimum_ramus_breadth', 'maximum_ramus_breadth', 'maximum_ramus_height', 'mandibular_length', 'mandibular_angle']);
     makeCrudRoutes('has_skeleton', 'specimen_id', ['specimen_id', 'skeleton_id']);
@@ -204,5 +202,7 @@ function useCrudRoutes(app) {
     'posterior_zygomatic_tubercule', 'supranasal_suture',
     'zygomaticomaxillary_suture_course', 'transverse_palatine_suture'
     ]);
+
+    makeCrudRoutes('skull', 'specimen_id', ['has_cranium', 'has_mandible']);
 }
 module.exports = {useCrudRoutes}

@@ -1,10 +1,9 @@
 import { EditSkeletonAPI } from "../skeleton-editor-types";
 
-export async function saveCraniometrics(API_URL_ROOT: string, api: EditSkeletonAPI) {
+export async function saveCraniometrics(API_URL_ROOT: string, api: EditSkeletonAPI, specimenId : number) {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Not authenticated. Please log in first.");
 
-  const specimenId = api.specimen.specimen_id;
   if (!specimenId || specimenId < 1) throw new Error("Invalid specimen ID");
 
   // Helper function to upsert data
@@ -13,7 +12,7 @@ export async function saveCraniometrics(API_URL_ROOT: string, api: EditSkeletonA
     measurements: { metric_name: string; metric_value: number }[]
   ) {
     // Convert to body with dynamic columns
-    const body: Record<string, number | string> = { specimen_id: specimenId };
+    const body: Record<string, number | string> = {};
     for (const m of measurements) {
       if (m.metric_value !== undefined && !isNaN(m.metric_value)) {
         // Convert metric name to SQL-friendly column
@@ -24,30 +23,10 @@ export async function saveCraniometrics(API_URL_ROOT: string, api: EditSkeletonA
         body[col] = m.metric_value;
       }
     }
-    //console.log(body);
 
-    // Check if entry already exists
-    const existingRes = await fetch(`${API_URL_ROOT}/api/${endpoint}/${specimenId}`, {
-        method: 'GET',
-        headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-        },
-    });
-
-    const existing = await existingRes.json();
-    const method = existing != undefined ? "PUT" : "POST";
-    //console.log(existing);
-    //console.log("Array.isArray(existing) " + String(Array.isArray(existing)) + "\nexisting.length > 0 " + String(existing.length > 0));
-    
-    const url =
-      method === "PUT"
-        ? `${API_URL_ROOT}/api/${endpoint}/${specimenId}`
-        : `${API_URL_ROOT}/api/${endpoint}`;
-
-    // Save the record
-    const saveRes = await fetch(url, {
-      method,
+    // Upsert
+    const saveRes = await fetch(`${API_URL_ROOT}/api/${endpoint}/${specimenId}`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${token}`,
@@ -60,7 +39,7 @@ export async function saveCraniometrics(API_URL_ROOT: string, api: EditSkeletonA
       throw new Error(err.error || `Failed to save ${endpoint}`);
     }
 
-    console.log(`✅ ${endpoint} ${method} successful`);
+    console.log(`✅ ${endpoint} POST successful`);
   }
 
   // --- Save both sets ---
