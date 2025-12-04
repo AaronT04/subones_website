@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import * as PageManager from "@/lib/pageManager"
 import {saveSpecimen} from "@/lib/api/save/saveSpecimen"
 import {saveBone} from "@/lib/api/save/saveBone"
-import type {FormData, LocalityData, TaphonomyData} from '@/lib/api/types'
+import type {FormData, LocalityData, TaphonomyData} from '@/lib/api/dataTypes'
+import { SpecimenBody } from '@/lib/api/apiTypes';
 
 
 interface BoneDataContextType {
@@ -202,10 +203,10 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
             const token = localStorage.getItem('token');
 
             //save specimen
-            const specimenBody = {
-                museum_id: formData.museumId,
+            const specimenBody : SpecimenBody = {
+                museum_id: Number(formData.museumId),
                 specimen_name: "SUB-" + formData.specimenNumber, // 
-                specimen_number: formData.specimenNumber,
+                specimen_number: Number(formData.specimenNumber),
                 broad_region: localityData.broadRegion,
                 country: localityData.country,
                 locality: localityData.locality,

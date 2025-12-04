@@ -64,13 +64,10 @@ export default function Craniometrics(props : CraniometricsProps) {
                                 <Table.Cell>{row_info.split("\t")[2]}</Table.Cell>
                                 <Table.Cell>
                                     <TextField.Root type="number" 
-                                    value={craniumMetrics.find((m) => storageName(row_info) === m.metric_name)?.metric_value || ''}
+                                    value={craniumMetrics[storageName(row_info)] || ''}
                                     onChange={(e) => updateCranium(prev =>
                                                         produce(prev, draft => {
-                                                            draft[i] = {
-                                                            metric_name: storageName(row_info),
-                                                            metric_value: Number(e.target.value),
-                                                            };
+                                                            draft[storageName(row_info)] = Number(e.target.value);
                                                         }))}/>
                                 </Table.Cell>
                             </Table.Row>)}
@@ -98,13 +95,10 @@ export default function Craniometrics(props : CraniometricsProps) {
                                 <Table.Cell>{row_info.split("\t")[2]}</Table.Cell>
                                 <Table.Cell>
                                     <TextField.Root type="number" 
-                                    value={mandibleMetrics.find((m) => storageName(row_info) === m.metric_name)?.metric_value || ''}
+                                    value={mandibleMetrics[storageName(row_info)] || ''}
                                     onChange={(e) => updateMandible(prev =>
                                                         produce(prev, draft => {
-                                                            draft[i] = {
-                                                            metric_name: storageName(row_info),
-                                                            metric_value: Number(e.target.value),
-                                                            };
+                                                            draft[storageName(row_info)] = Number(e.target.value);
                                                         }))}/>
                                 </Table.Cell>
                             </Table.Row>)}

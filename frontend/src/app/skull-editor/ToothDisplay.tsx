@@ -120,6 +120,7 @@ const toothName = (tooth_box: SidedToothBox) => {
   return tooth_box.sideLR + tooth_box.unsidedBox.unsidedName;
 };
 
+
 interface ToothDisplayProps {
     dentition: "perm" | "dec"
     skullContext? : ISkull
@@ -133,6 +134,8 @@ interface ToothDisplayProps {
 export default function ToothDisplay(props : ToothDisplayProps) {
     const inventory = props.dentalContext.inventory;
     const morphology = props.dentalContext.morphology;
+    const hasCranium = props.skullContext ? props.skullContext.hasCranium : true;
+    const hasMandible = props.skullContext ? props.skullContext.hasMandible : true;
     const updateInventory = props.dentalContext.updateInventory;
     const updateMorphology = props.dentalContext.updateMorphology;
         // Helper to read a tooth record
@@ -149,6 +152,10 @@ export default function ToothDisplay(props : ToothDisplayProps) {
 
   const selectedToothName = toothName(tooth_boxes[selectedToothIndex]);
   const selectedRecord = getToothRecord(selectedToothName);
+
+  const enableBoxCond = (tooth_name : string)  => {
+    return (tooth_name[1] === "L" && hasMandible) || (tooth_name[1] === "U" && hasCranium)
+  }
 
   const handleChange = (tooth_name, field, rawValue) => {
     const validated = validateToothValue(props.displayMode, rawValue, props.trait);
@@ -176,8 +183,9 @@ export default function ToothDisplay(props : ToothDisplayProps) {
     else {
       updateMorphology(prev =>
         produce(prev, draft => {
-            draft[tooth_name[props.trait]] = {
-                morph_value: value
+            draft[props.trait] = {
+                ...(prev[props.trait] || {}),
+                [tooth_name] : value
             }}));
     }
   };
@@ -277,6 +285,7 @@ export default function ToothDisplay(props : ToothDisplayProps) {
           const isMorph = props.displayMode === "Morphology";
 
           return (
+            enableBoxCond(name) &&
             <div
               key={i}
               className="absolute"
@@ -346,7 +355,8 @@ export default function ToothDisplay(props : ToothDisplayProps) {
                         }
                       `}
                       value={
-                        morphology[toothName[props.trait]]?.morph_value ?? ""
+                        morphology[props.trait] ?
+                        ((morphology[props.trait])[name]) || "" : ""
                       }
                       onChange={(e) =>
                         handleChange(name, "morph_name", e.target.value)

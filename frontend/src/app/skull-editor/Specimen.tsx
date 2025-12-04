@@ -10,13 +10,16 @@ import {
 } from "@/components/ui/select"
 
 import type {IForm} from "@/lib/api/componentTypes"
+import type {DecodedToken} from "@/lib/api/dataTypes"
 
 interface SpecimenProps {
     formContext: IForm
+    userData: DecodedToken | undefined
 }
 
 function Specimen(props : SpecimenProps) {
     const formContext = props.formContext;
+    const userData = props.userData;
     
     const handleChange = (field: string, value: string) => {
         formContext.update(prev => ({
@@ -75,7 +78,7 @@ function Specimen(props : SpecimenProps) {
             <div className="flex items-center justify-between space-x-2">
                 <p>User: </p>
                 <p className="h-[40px] w-2/3 max-w-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed">
-                {formContext.user}
+                {userData?.name}
                 </p>
             </div>
         </div>

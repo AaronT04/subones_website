@@ -1,37 +1,17 @@
-export type SpecimenBody = {
-    museum_id: number
-    specimen_name: string
-    specimen_number: number
-    broad_region: string
-    country: string
-    locality: string
-    region: string
-    sex: string
-    user_id: number | null
-}
-
 export type SkullData = {
     hasCranium: boolean;
     hasMandible: boolean;
-}
-
-export type CranialNonmetric = {
-    category: string
-    nonmetric_name: string
-    value_str: string
 }
 
 export type FormData = {
     specimenNumber: string;
     museumId: string;
     sex: string;
-    user: string;
-    userID: number;
 }
 
 export type Craniometrics = {
-  craniumMetrics: Measurement[]
-  mandibleMetrics: Measurement[]
+  craniumMetrics: Record<string, number>
+  mandibleMetrics: Record<string, number>
 }
 
 
@@ -41,6 +21,8 @@ export type LocalityData = {
   locality: string;
   region: string;
 }
+
+export type CranialNonmetric = Record<string, string>
 
 export interface TaphonomyData {
     bone_name : string,
@@ -63,11 +45,7 @@ export type DentalInventory = {
     tooth_dev_code: number
 }
 
-export type Morphology = {
-    tooth_name: string
-    morph_name: string
-    morph_value: number | null
-}
+export type Morphology = Record<string, Record<string, number | null>>
 
 export const defaultTaphonomy : TaphonomyData = {
     bone_name: "",

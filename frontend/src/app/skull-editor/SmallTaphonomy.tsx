@@ -5,7 +5,7 @@ import HorizontalRadioButton from "@/components/ui/HorizontalRadioButton";
 import { Button } from "@/components/ui/button"
 import {produce} from "immer"
 import type { IAllTaphonomy } from "@/lib/api/componentTypes";
-import {defaultTaphonomy} from "@/lib/api/types"
+import {defaultTaphonomy} from "@/lib/api/dataTypes"
 import {useEffect} from 'react'
 import {
     Select,

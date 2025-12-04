@@ -40,17 +40,18 @@ function CranialNonmetrics(props : CranialNonmetricsProps) {
             <Table.Root>
             <Table.Body>
             {info.map((row, i) => (
+                
                 <Table.Row key={i}>
                     <Table.RowHeaderCell>{row[0]}</Table.RowHeaderCell>
                     <Table.Cell className="w-200">
                         <Select.Root
-                        value={allNonmetrics[row[0]]?.value_str}
+                        value={allNonmetrics[tab_str]?
+                            (allNonmetrics[tab_str])[row[0]] || "" : ""}
                         onValueChange={(value) => {update(prev =>
                             produce(prev, draft => {
-                                draft[row[0]] = {
-                                    category: tab_str,
-                                    nonmetric_name: row[0],
-                                    value_str: value
+                                draft[tab_str] = {
+                                    ...prev[tab_str] || {},
+                                    [row[0]]: value
                                 };
                             }))}}>
                             <Select.Trigger/>

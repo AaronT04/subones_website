@@ -19,7 +19,7 @@ import {
 
 function Left() {
     const [loading, setLoading] = useState(false);
-    const { handleSave, localityContext, formContext, skullContext } = useSkullContext();
+    const { handleSave, localityContext, formContext, skullContext, userData} = useSkullContext();
     
     const router = useRouter();
     if (loading) {
@@ -40,7 +40,7 @@ function Left() {
             </div>
 
             <div className="flex flex-col items-center w-[90%] h-[350px]">
-                <Specimen formContext={formContext}/>
+                <Specimen formContext={formContext} userData={userData}/>
                 <div className="flex flex-row w-full justify-center">
                     <label className="mt-[10px] mx-[30px]">Has Cranium:</label>
                     <input checked={skullContext.hasCranium} 

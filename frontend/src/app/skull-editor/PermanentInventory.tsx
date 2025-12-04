@@ -25,6 +25,7 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
   const [trait, selectTrait] = useState("Shoveling");
 
   const getTrait = () => {return trait;}
+  const dentalContext = props.dentalContext;
 
   const getDentalHelpTable = () => {
      switch(displayMode) {
@@ -68,7 +69,7 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
             {/* Scroll only inside this column */}
             <div className="ml-[5%] h-full flex flex-col min-h-0">
                 <div className="flex-1 overflow-y-auto border border-black rounded-md">
-                    <DentalTable dentition="perm" skullContext={props.skullContext} dentalContext={props.dentalContext}/>
+                    <DentalTable dentition="perm" skullContext={props.skullContext} dentalContext={dentalContext}/>
                 </div>
             </div>
 
@@ -79,7 +80,7 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
                         {displayModeNames.map((mode, i) => <TabsTrigger value={mode}>{mode}</TabsTrigger>)}
                     </TabsList>
                 </Tabs>
-                <ToothDisplay dentition="perm" dentalContext={props.dentalContext}
+                <ToothDisplay dentition="perm" dentalContext={dentalContext}
                 skullContext={props.skullContext} displayMode={displayMode} trait={trait}/>
             </div>
             <div className="w-[350px] h-full min-h-0 overflow-y-auto">
@@ -117,7 +118,7 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
             <div>
                 
             <ToothDisplay dentition="perm" displayMode={"Morphology"} trait={trait} 
-            dentalContext={props.dentalContext} skullContext={props.skullContext}/>
+            dentalContext={dentalContext} skullContext={props.skullContext}/>
 
             </div>
             <div className="w-[350px] h-full min-h-0 overflow-y-auto">

@@ -1,6 +1,6 @@
 import {jwtDecode} from "jwt-decode"
 
-import type {DecodedToken} from "@/lib/api/types"
+import type {DecodedToken} from "@/lib/api/dataTypes"
 
 export function loadUser(setAPI? : any) {
     const token = localStorage.getItem("token");

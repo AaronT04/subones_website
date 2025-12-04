@@ -1,5 +1,5 @@
 import {EditSkeletonAPI} from "../skeleton-editor-types";
-import type {CranialNonmetric} from "@/lib/api/types"
+import type {CranialNonmetric} from "../skeleton-editor-types";
 const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL;
 
 export async function saveNonmetrics(api : EditSkeletonAPI, specimenId : number) {

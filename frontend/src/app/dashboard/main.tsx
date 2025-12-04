@@ -3,7 +3,7 @@
 
 import * as PageManager from "@/lib/pageManager";
 import { api } from "@/lib/api"
-import type {DecodedToken} from "@/lib/api/types"
+import type {DecodedToken} from "@/lib/api/dataTypes"
 import {loadUser} from "@/lib/loadUser";
 import { useRouter } from 'next/navigation';
 import {

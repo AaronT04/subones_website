@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { trimTagsFromBoneName } from "./postcranial-inventory-list";
 import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
 import type {EditSkeletonAPI }from "@/app/skeleton-editor/skeleton-editor-types"
-import type {TaphonomyData} from "@/lib/api/types"
+import type {TaphonomyData} from "@/lib/api/dataTypes"
 import {
     Select,
     SelectContent,
