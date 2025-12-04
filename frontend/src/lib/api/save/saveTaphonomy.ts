@@ -1,5 +1,4 @@
 import type { TaphonomyData } from "../dataTypes";
-import { postCrud } from "../post-crud";
 
 export async function saveSingleTaphonomy(data : TaphonomyData, specimenId : number, boneName : string) {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/taphonomy/${specimenId}/${encodeURIComponent(boneName)}`;

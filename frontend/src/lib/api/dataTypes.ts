@@ -7,6 +7,8 @@ export type FormData = {
     specimenNumber: string;
     museumId: string;
     sex: string;
+    user?: string;
+    userID?: number;
 }
 
 export type Craniometrics = {

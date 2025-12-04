@@ -212,7 +212,7 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 locality: localityData.locality,
                 region: localityData.region,
                 sex: formData.sex,
-                user_id: formData.userID
+                user_id: formData.userID || -1
             }
             console.log(specimenId);
             let resultSpecimenID = await saveSpecimen(specimenBody, specimenId, token);

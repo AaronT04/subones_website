@@ -20,6 +20,7 @@ import {loadCraniometrics} from "@/lib/api/load/loadCraniometrics"
 import {loadNonmetrics} from "@/lib/api/load/loadNonmetrics"
 import {loadInventory} from "@/lib/api/load/loadInventory"
 import {loadAllTaphonomy} from "@/lib/api/load/loadTaphonomy"
+import {loadDental} from "@/lib/api/load/loadDental"
 
 interface SkullContextType {
     userData : DecodedToken | undefined
@@ -112,10 +113,7 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
         await loadNonmetrics(specimenId, cranialNonmetricsContext);
         await loadInventory(specimenId, "cranial", cranialInventoryContext);
         await loadAllTaphonomy(specimenId, taphonomyContext);
-        //await loadDentalInventory(specimenId, dentalContext);
-        /*
-        await loadMorpology(specimenId, dentalContext);
-        */
+        await loadDental(specimenId, dentalContext);
     }
         
 

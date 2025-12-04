@@ -29,11 +29,9 @@ function HomeContent() {
 export default function Home() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <EditSkeletonAPIProvider> {/* temporary, so page doesn't break  */}
                 <SkullContextProvider>
                     <HomeContent />
                 </SkullContextProvider>
-            </EditSkeletonAPIProvider>
         </Suspense>
     )
 }

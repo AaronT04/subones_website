@@ -1,5 +1,4 @@
-import type { EditSkeletonAPI} from "../skeleton-editor-types";
-import type {CranialNonmetric} from "@/lib/api/dataTypes";
+import type { EditSkeletonAPI, CranialNonmetric} from "../skeleton-editor-types";
 
 /**
  * Load all cranial nonmetric categories from backend (facial, lateral, basilar, mandibular, macromorphoscopics)
