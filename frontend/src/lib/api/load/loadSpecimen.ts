@@ -1,4 +1,3 @@
-import { Specimen } from "@/app/dental-editor/dental-types";
 import type { IForm, ILocality } from "../componentTypes";
 import type {DecodedToken} from "../dataTypes"
 import type {SpecimenBody} from "@/lib/api/apiTypes"

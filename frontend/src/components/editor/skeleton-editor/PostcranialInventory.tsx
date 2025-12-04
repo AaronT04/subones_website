@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
-import TaphonomyDropdown from '@/components/editor/TaphonomyDropdown'
+import TaphonomyDropdown from '@/components/temp-allcomponents/TaphonomyDropdown'
 import InventorySelect from "@/components/InventorySelect";
 
 import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";

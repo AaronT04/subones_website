@@ -7,7 +7,7 @@ import SmallTaphonomy from "./SmallTaphonomy"
 import "@/components/editor/skeleton-editor/InventoryStyles.css"
 import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "@/components/editor/skeleton-editor/cranial-inventory-list";
 import InventorySelect from "./InventorySelect";
-import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
+import TaphonomyDropdown from "@/components/temp-allcomponents/TaphonomyDropdown"
 import type {IInventory, ISkull, IAllTaphonomy} from "@/lib/api/componentTypes"
 
 interface CranialInventoryProps {

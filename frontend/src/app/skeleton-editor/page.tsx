@@ -4,7 +4,7 @@ import Left from "@/app/skeleton-editor/Left"
 import Right from "./Right"
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import ResponsiveLayout from "@/components/editor/responsiveLayout"
+import ResponsiveLayout from "@/components/temp-allcomponents/responsiveLayout"
 import {EditSkeletonAPI} from "./skeleton-editor-types"
 import { DEFAULT_EDIT_SKELETON_API } from "./skeleton-editor-types"
 import { EditSkeletonAPIProvider } from "./EditSkeletonAPIContext"

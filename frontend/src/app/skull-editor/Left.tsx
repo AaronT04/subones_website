@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import {useRouter} from 'next/navigation'
 import "@/app/globals.css"
-import Specimen from "./Specimen"
-import Taxonomy from "./Taxonomy"
-import Locality from "./Locality"
+import Specimen from "@/components/temp-allcomponents/Specimen"
+import Taxonomy from "../../components/temp-allcomponents/Taxonomy"
+import Locality from "../../components/temp-allcomponents/Locality"
 import { useSkullContext } from "./context/SkullContext"
 import {useState} from 'react'
 
@@ -114,7 +114,7 @@ function Left() {
                             console.error('handleSave is undefined!');
                         }
                     }}
-                >
+                >Save
                 </Button>
             </div>
         </div>

@@ -7,7 +7,7 @@ import Taphonomy from "./SmallTaphonomy"
 import "./InventoryStyles.css"
 import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "./cranial-inventory-list";
 import InventorySelect from "@/components/InventorySelect";
-import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
+import TaphonomyDropdown from "@/components/temp-allcomponents/TaphonomyDropdown"
 
 export default function CranialInventory(props) {
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
