@@ -70,7 +70,7 @@ export function DentalEditorContextProvider({children} : {children : ReactNode})
             alert("Save error - invalid token");
             return;
         }
-        let specimenId = PageManager.getDatabaseID("skull-editor");
+        let specimenId = PageManager.getDatabaseID("dental-editor");
         await loadSpecimen(specimenId, formContext, localityContext);
         await loadDental(specimenId, dentalContext);
     }
