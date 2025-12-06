@@ -1,13 +1,13 @@
 "use client"
-const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL;
-import {useState} from 'react'
-import {useRouter} from 'next/navigation'
+const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7286';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface FormProps {
     goCreateAccount: () => void
 }
 
-export default function LoginForm(props : FormProps){
+export default function LoginForm(props: FormProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -15,7 +15,7 @@ export default function LoginForm(props : FormProps){
     const router = useRouter();
 
     const handleSignIn = async (email: string, password: string) => {
-        if(!email || !password) {
+        if (!email || !password) {
             setMessage("All fields are required.");
             return;
         }
@@ -47,19 +47,19 @@ export default function LoginForm(props : FormProps){
             setMessage("Login successful!");
             router.push("/dashboard")
         }
-        catch(error : any) {
+        catch (error: any) {
             console.error('Create account error:', error);
             setMessage(`Server error: ${error.message || 'Unexpected issue occurred. Please try again later.'}`);
         }
     }
 
     const handleAdminSignIn = async (email: string, password: string) => {
-        if(!email || !password) {
+        if (!email || !password) {
             setMessage("All fields are required.");
             return;
         }
         try {
-            const response = await fetch(`/api/login`, {
+            const response = await fetch(`${API_URL_ROOT}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -79,14 +79,14 @@ export default function LoginForm(props : FormProps){
             setMessage("Login successful!");
             router.push("/admin-dashboard");
 
-        } catch(error: any) {
+        } catch (error: any) {
             console.error('Admin login error:', error);
             setMessage(`Server error: ${error.message || 'Unexpected error occurred.'}`);
         }
     }
 
 
-      if (loading) {
+    if (loading) {
         return <div className="p-4">Loading...</div>;
     }
 
@@ -128,17 +128,17 @@ export default function LoginForm(props : FormProps){
                 <div className='mt-8 flex flex-col gap-y-4'>
                     <button className='active:scale-[.98] active:duration-75 hover:scale-[1.02] ease-in-out transition-all py-3 rounded-3xl
                     bg-maroon hover:bg-maroon text-white text-lg font-medium'
-                    onClick={() => handleSignIn(email, password)}>
+                        onClick={() => handleSignIn(email, password)}>
                         Sign In
                     </button>
                     <button className='active:scale-[.98] active:duration-75 hover:scale-[1.02] ease-in-out transition-all py-3 rounded-3xl
                     bg-maroon hover:bg-maroon text-white text-lg font-medium'
-                    onClick={() => {
-                        const testEmail = "test@test.test";
-                        const testPassword = "test"
-                        setEmail(testEmail);
-                        setPassword(testPassword);
-                        handleSignIn(testEmail, testPassword);
+                        onClick={() => {
+                            const testEmail = "test@test.test";
+                            const testPassword = "test"
+                            setEmail(testEmail);
+                            setPassword(testPassword);
+                            handleSignIn(testEmail, testPassword);
                         }}>
                         I dont care just take me to the site
                     </button>
@@ -146,11 +146,7 @@ export default function LoginForm(props : FormProps){
                     <button
                         className='active:scale-[.98] active:duration-75 hover:scale-[1.02] transition-all py-3 rounded-3xl border-2 border-maroon text-maroon text-lg font-medium'
                         onClick={() => {
-                            const adminEmail = "admin@test.com";
-                            const adminPassword = "admin123";
-                            setEmail(adminEmail);
-                            setPassword(adminPassword);
-                            handleAdminSignIn(adminEmail, adminPassword);
+                            handleAdminSignIn(email, password);
                         }}
                     >
                         Admin Sign-In
@@ -166,7 +162,7 @@ export default function LoginForm(props : FormProps){
                 </div>
             </div>
             {message && (
-            <div className='mt-4 text-sm text-red-500 font-medium'>{message}</div>
+                <div className='mt-4 text-sm text-red-500 font-medium'>{message}</div>
             )}
         </div>
     )
