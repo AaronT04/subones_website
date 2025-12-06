@@ -8,10 +8,10 @@ import {
 
 import {Table, TextField} from '@radix-ui/themes'
 import {craniometrics_list} from "@/components/editor/skeleton-editor/craniometrics-list"
-import Craniometrics from "./Craniometrics"
-import CranialNonmetrics from "./CranialNonmetrics"
-import CranialInventory from './CranialInventory';
-import Dental from '@/components/editor/skeleton-editor/Dental'
+import Craniometrics from "../../components/temp-allcomponents/Craniometrics"
+import CranialNonmetrics from "../../components/temp-allcomponents/CranialNonmetrics"
+import CranialInventory from '../../components/temp-allcomponents/CranialInventory'
+import Dental from '../../components/temp-allcomponents/Dental'
 import { useSkullContext } from "./context/SkullContext"
 
 function Right(props) {

@@ -202,5 +202,7 @@ function useCrudRoutes(app) {
     'posterior_zygomatic_tubercule', 'supranasal_suture',
     'zygomaticomaxillary_suture_course', 'transverse_palatine_suture'
     ]);
+
+    makeCrudRoutes('skull', 'specimen_id', ['has_cranium', 'has_mandible']);
 }
 module.exports = {useCrudRoutes}

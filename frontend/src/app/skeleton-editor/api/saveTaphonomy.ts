@@ -1,5 +1,5 @@
 import type { EditSkeletonAPI} from "../skeleton-editor-types";
-import type { TaphonomyData } from "@/lib/api/types";
+import type { TaphonomyData } from "@/lib/api/dataTypes";
 
 const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL!;
 

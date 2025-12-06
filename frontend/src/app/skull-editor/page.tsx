@@ -1,10 +1,9 @@
 "use client"
 import Left from "./Left"
 import Right from "./Right"
-import ResponsiveLayout from "@/components/editor/responsiveLayout"
+import ResponsiveLayout from "@/components/temp-allcomponents/responsiveLayout"
 import { Suspense } from "react"
 import {SkullContextProvider} from "./context/SkullContext"
-import { EditSkeletonAPIProvider } from "../skeleton-editor/EditSkeletonAPIContext"
 
 function Left2() {
     return (
@@ -29,11 +28,9 @@ function HomeContent() {
 export default function Home() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <EditSkeletonAPIProvider> {/* temporary, so page doesn't break  */}
                 <SkullContextProvider>
                     <HomeContent />
                 </SkullContextProvider>
-            </EditSkeletonAPIProvider>
         </Suspense>
     )
 }

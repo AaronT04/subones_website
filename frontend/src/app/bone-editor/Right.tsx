@@ -12,9 +12,21 @@ import Measurements from "./measurements"
 import { Button } from "@/components/ui/button"
 import Taphonomy from "./Taphonomy"
 import { useBoneData } from "./context/BoneDataContext"
+import { boneCategories } from "../metrics/handsfeet" // Update this import path
  
 function InnerRight() {
     const { selectedBone } = useBoneData();
+
+    // Check if the bone is in hands/feet categories (excluding Talus and Calcaneus)
+    const isHandsAndFeetBone = () => {
+        if (!selectedBone || selectedBone === "Talus" || selectedBone === "Calcaneus") {
+            return false;
+        }
+        
+        return boneCategories.some(category => 
+            category.items.includes(selectedBone)
+        );
+    };
 
     return(
         <div className = "flex flex-col h-screen col-span-2 lg:col-span-4 space-y-4 bg-gray-100/10">
@@ -27,8 +39,13 @@ function InnerRight() {
                     <div className="bone-container w-full">
                         <Measurements />
                     </div>
+                ) : isHandsAndFeetBone() ? (
+                    // Hands and feet bones (except Talus/Calcaneus): only Taphonomy, no tabs
+                    <div className="bone-container w-full">
+                        <Taphonomy />
+                    </div>
                 ) : (
-                    // Other bones: render with tabs structure
+                    // Other bones (including Talus/Calcaneus): render with tabs structure
                     <Tabs 
                         defaultValue="measurements" 
                         className="relative w-[800px]"

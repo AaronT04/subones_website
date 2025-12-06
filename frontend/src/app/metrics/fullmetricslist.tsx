@@ -10,8 +10,6 @@ export const metrics_list = {
         "Femur",
         "Tibia",
         "Fibula",
-        "Calcaneus",
-        "Talus",
         "Cervical Vertebrae",
         "Thoracic Vertebrae",
         "Lumbar Vertebrae",

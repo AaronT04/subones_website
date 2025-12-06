@@ -76,11 +76,12 @@ router.get('/api/list/skull', (req, res) => {
     COALESCE(s.specimen_name, s.specimen_number) AS name,
     COALESCE(m.museum_name, '') AS museum,
     COALESCE(u.name, '') AS user
-    FROM specimen s
-    RIGHT JOIN bone b on s.specimen_id = b.specimen_id
+    FROM skull sk
+
+    LEFT JOIN specimen s on sk.specimen_id = s.specimen_id
     LEFT JOIN museum   m ON s.museum_id   = m.museum_id
     LEFT JOIN user     u ON s.user_id     = u.user_id
-    WHERE b.bone_name = "Skull" AND u.user_id = ?
+    WHERE u.user_id = ?
     ORDER BY s.specimen_id DESC
     `
 

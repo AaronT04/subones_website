@@ -1,4 +1,4 @@
-import type { TaphonomyData } from "@/lib/api/types";
+import type { TaphonomyData } from "@/lib/api/dataTypes";
 
 export async function loadTaphonomy(
   API_URL_ROOT: string,

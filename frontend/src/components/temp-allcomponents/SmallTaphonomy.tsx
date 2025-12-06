@@ -3,11 +3,10 @@ import React, {useState, useContext} from 'react';
 import {taphonomy_options} from "@/components/editor/taphonomy-options-list";
 import HorizontalRadioButton from "@/components/ui/HorizontalRadioButton";
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { trimTagsFromBoneName } from "./postcranial-inventory-list";
-import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
-import type {EditSkeletonAPI }from "@/app/skeleton-editor/skeleton-editor-types"
-import type {TaphonomyData} from "@/lib/api/dataTypes"
+import {produce} from "immer"
+import type { IAllTaphonomy } from "@/lib/api/componentTypes";
+import {defaultTaphonomy} from "@/lib/api/dataTypes"
+import {useEffect} from 'react'
 import {
     Select,
     SelectContent,
@@ -17,17 +16,40 @@ import {
 } from "@/components/ui/select"
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
 
-function Taphonomy(props) {
+interface SmallTaphonomyProps {
+    taphonomyContext: IAllTaphonomy
+    boneName: string
+}
+
+function SmallTaphonomy(props : SmallTaphonomyProps) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
-    
     let [boneCond, setBoneCond] = useState("");
-    //const boneName = trimTagsFromBoneName(props.boneName);
-    const {api, updateField} = useEditSkeletonAPI();
-    const getAPIInstance = () => {return api?.taphonomy.find((taph) => taph.bone_name === props.boneName)}
-    const apiInstance = getAPIInstance();
-    const [comment, setComment] = useState(apiInstance?.comments ?? "");
-    
-    let [surfChecked, setSurfChecked] = useState(apiInstance?.surface_exposure ?? false);
+    const taphonomy = props.taphonomyContext.allTaphonomy[props.boneName] || defaultTaphonomy;
+    const boneName = props.boneName;
+    const update = props.taphonomyContext.update;
+
+    const handleCheckboxChange = (category: string, value: string, checked: boolean) => {
+        console.log('handleCheckboxChange called:', { category, value, checked });
+        console.log('Current taphonomy state:', taphonomy);
+        
+        const currentArray = taphonomy[category] || [];
+        const newArray = checked 
+            ? [...currentArray, value]
+            : currentArray.filter((item: string) => item !== value);
+        
+        console.log('New array for', category, ':', newArray);
+        
+        const newTaphonomy = {
+                ...taphonomy,
+                [category]: newArray
+        };
+        
+        console.log('Setting new measurements:', newTaphonomy);
+        update(prev => produce(prev, draft => {draft[boneName] = newTaphonomy}));
+    };
+
+    const [comment, setComment] = useState(taphonomy?.comments ?? "");
+    let [surfChecked, setSurfChecked] = useState(taphonomy?.surface_exposure ?? false);
     
     const confirm = useConfirmDialog();
     const showBoneConditionInfo = async() => {
@@ -44,10 +66,12 @@ function Taphonomy(props) {
             return <div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.bone_color.map((color, i) => <HorizontalRadioButton name={color} key={i} onChange={() => 
-                updateField("taphonomy", {
-                    bone_name: props.boneName,
+                update(prev =>
+                    produce(prev, draft => {
+                        draft[boneName] = {
+                    ...taphonomy,
                     bone_color: color
-                }, "bone_name")}/>)}
+                        }}))}/>)}
                 </div>
             </div>
         }
@@ -55,8 +79,8 @@ function Taphonomy(props) {
             return <div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.staining.map((name, i) => <TCheckbox name={name} key={i} 
-                    checked={getAPIInstance()?.staining.includes(name)}
-                    onChange={() => updateField("taphonomy", {bone_name: props.boneName, staining: name}, "bone_name")}/>)}
+                    checked={taphonomy?.staining.includes(name) ?? false}
+                    onChange={(checked) => handleCheckboxChange('staining', name, checked)}/>)}
                 </div>
             </div>
         }
@@ -64,11 +88,8 @@ function Taphonomy(props) {
             return <div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.surface_damage.map((name, i) => <TCheckbox name={name} key={i}
-                checked={getAPIInstance()?.surface_damage.includes(name)}
-                 onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    surface_damage: name
-                }, "bone_name")}/>)}
+                checked={taphonomy?.surface_damage.includes(name)}
+                 onChange={(checked) => handleCheckboxChange('surface_damage', name, checked)}/>)}
                 </div>
             </div>
         }
@@ -76,11 +97,8 @@ function Taphonomy(props) {
             return (<div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
                 {taphonomy_options.adherent_materials.map((name, i) => <TCheckbox name={name} key={i} 
-                checked={getAPIInstance()?.adherent_materials.includes(name)}
-                onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    adherent_materials: name
-                }, "bone_name")}/>)}
+                checked={taphonomy?.adherent_materials.includes(name)}
+                onChange={(checked) => handleCheckboxChange('adherent_materials', name, checked)}/>)}
                 </div>
             </div>)
         }
@@ -90,21 +108,15 @@ function Taphonomy(props) {
                     <div className="p-2.5 flex flex-col justify-start items-start">
                         <h3 className="break-words leading-normal">Curation Modifications</h3>
                         {taphonomy_options.curation_modifications.map((name, i) => <TCheckbox name={name} key={i} 
-                        checked={getAPIInstance()?.modifications.includes(name)}
-                        onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    modifications: name
-                }, "bone_name")}/>)}
+                        checked={taphonomy?.modifications.includes(name)}
+                        onChange={(checked) => handleCheckboxChange('modifications', name, checked)}/>)}
                     </div>
                     
                     <div className="p-2.5 flex flex-col justify-start items-start">
                         <h3 className="break-words leading-normal" >Cultural Modifications</h3>
                         {taphonomy_options.cultural_modifications.map((name, i) => <TCheckbox name={name} key={i}
-                        checked={getAPIInstance()?.modifications.includes(name)}
-                         onChange={() => updateField("taphonomy", {
-                    bone_name: props.boneName,
-                    modifications: name
-                }, "bone_name")}/>)}
+                        checked={taphonomy?.modifications.includes(name)}
+                         onChange={(checked) => handleCheckboxChange('modifications', name, checked)}/>)}
                     </div>
                 </div>
             </div>)
@@ -113,14 +125,15 @@ function Taphonomy(props) {
             return (<div>
                 <div className="flex flex-col">
                     <h3>Comments:</h3>
-                    <textarea placeholder={getAPIInstance()?.comments ?? ""}className="p-1 h-40 border-1 border-gray-200 rounded-lg resize-none"
+                    <textarea placeholder={taphonomy?.comments ?? ""}className="p-1 h-40 border-1 border-gray-200 rounded-lg resize-none"
                     onChange={(e) => setComment(e.target.value)}/>
                     <Button className="w-34 ml-auto mt-4 bg-maroon hover:bg-maroon/90" onClick={() => {
-                    updateField("taphonomy", {
-                        bone_name: props.boneName,
-                        comments: comment
-                    }, "bone_name")
-                    }}>
+                    update(prev =>
+                        produce(prev, draft => {
+                            draft[boneName] = {
+                                ...taphonomy,
+                                comments: comment
+                    }}))}}>
                     Save Comments</Button>
                 </div>
             </div>)
@@ -134,11 +147,13 @@ function Taphonomy(props) {
                 <div className = "w-1/2 justify-left">
                     <div className="flex items-center">
                 <label htmlFor="bone-cond">Bone Condition: </label>
-                <Select value={getAPIInstance()?.bone_condition ?? ""} onValueChange={(value) => {setBoneCond(value); 
-                updateField("taphonomy", {
-                        bone_name: props.boneName,
-                        bone_condition: value
-                    }, "bone_name");
+                <Select value={String(taphonomy?.bone_condition ?? "")} onValueChange={(value) => {setBoneCond(value); 
+                update(prev =>
+                        produce(prev, draft => {
+                            draft[boneName] = {
+                                ...taphonomy,
+                                bone_condition: Number(value)
+                    }}));
 
                 }}>
                         <SelectTrigger className="h-[40px] w-[100px] max-w-sm bg-white ml-[20]">
@@ -158,10 +173,13 @@ function Taphonomy(props) {
                     <div className="flex mt-4 gap-2">
                         <input type="checkbox" checked={surfChecked} onChange={ () => {
                             setSurfChecked(!surfChecked);
-                            updateField("taphonomy", {
-                                bone_name: props.boneName,
-                                surface_exposure: !surfChecked
-                            }, "bone_name")}}/>
+                            update(prev =>
+                                produce(prev, draft => {
+                                    draft[boneName] = {
+                                        ...taphonomy,
+                                        surface_exposure: !surfChecked
+                                    }
+                                }))}}/>
                         <p className = "" >Surface Exposure </p>
                     </div>
                 </div>
@@ -181,4 +199,4 @@ function Taphonomy(props) {
         );
     
 }
-export default Taphonomy
+export default SmallTaphonomy

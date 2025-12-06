@@ -1,7 +1,6 @@
-import type {Measurement} from "@/lib/api/types"
-import type {TaphonomyData} from "@/lib/api/types"
-import type {Inventory} from "@/lib/api/types"
-import type { CranialNonmetric } from "@/lib/api/types"
+import type {Measurement} from "@/lib/api/dataTypes"
+import type {TaphonomyData} from "@/lib/api/dataTypes"
+
 
 export type User = {
     user_id:  number
@@ -14,6 +13,19 @@ export type Specimen = {
     specimen_number: number,
     museum_id: number,
     sex: string
+}
+
+export type CranialNonmetric = {
+    category: string
+    nonmetric_name: string
+    value_str: string
+}
+
+export type Inventory = {
+    inv_entry_name: string
+    value?: string
+    taphonomy_id?: number
+    isChecked: boolean
 }
 
 export type Taxonomy = {

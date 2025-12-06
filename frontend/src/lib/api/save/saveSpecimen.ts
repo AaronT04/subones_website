@@ -1,4 +1,6 @@
-export const saveSpecimen = async (specimenBody, specimenId, token) => {
+import type {SpecimenBody} from '@/lib/api/apiTypes'
+
+export const saveSpecimen = async (specimenBody : SpecimenBody, specimenId, token) => {
 // Check if specimen already exists (update) or create new
     const specimenMethod = specimenId && specimenId > 0 ? "PUT" : "POST";
     const specimenUrl =
