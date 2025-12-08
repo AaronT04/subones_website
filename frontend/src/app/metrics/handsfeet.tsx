@@ -38,6 +38,6 @@ export const boneCategories: Category[] = [
     "MT4",
     "MT5"
   ] },
-  { title: "Hand Phalanges", items: [] },
-  { title: "Foot Phalanges", items: [] },
+  { title: "Hand Phalanges", items: ["Proximal", "Middle", "Distal"] },
+  { title: "Foot Phalanges", items: ["Proximal", "Middle", "Distal"] },
 ];

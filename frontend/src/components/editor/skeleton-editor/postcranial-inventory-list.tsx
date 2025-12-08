@@ -92,15 +92,11 @@ const vertebrae_rows: PostcranialRow[] = [
     ["C2", "Single"],
     ["C3-C6", "SingleNum", { min: 0, max: 4 }],
     ["C7", "Single"],
-    ["T1-T9", "SingleNum", { min: 0, max: 4 }],
+    ["T1-T9", "SingleNum", { min: 0, max: 9 }],
     ["T10", "Single"],
     ["T11", "Single"],
     ["T12", "Single"],
-    ["L1", "Single"],
-    ["L2", "Single"],
-    ["L3", "Single"],
-    ["L4", "Single"],
-    ["L5", "Single"]
+    ["L1-L5", "SingleNum", { min: 0, max: 5 }]
   ]),
   /*
   make_header("Unidentifiable Vertebrae"),
@@ -122,11 +118,14 @@ const ribs_rows: PostcranialRow[] = makeRowsWithParentInfo("Ribs", [
 const axgeneral_rows: PostcranialRow[] = [
   make_row("Sacrum", "Single"),
   make_row("Coccyx", "Single"),
-  make_row("Illium", "LR"),
-  make_row("Ischium", "LR"),
-  make_row("Pubis", "LR"),
   //make_row("Acetabulum", "LR"),
   //make_row("Auricular Surf", "LR")
+]
+
+const oscoxa_rows: PostcranialRow[] = [
+  make_row("Illium", "LR"),
+  make_row("Ischium", "LR"),
+  make_row("Pubis", "LR")
 ]
 
 const hyoid_rows: PostcranialRow[] = [make_row("Hyoid", "LBodyR")]
@@ -191,10 +190,10 @@ const sternum_rows: PostcranialRow[] = makeRowsWithParentInfo("Sternum", [
 const carpal_names = [
   "Scaphoid",
   "Lunate",
-  "Triquetral",
+  "Triquetrum",
   "Pisiform",
-  "Greater Multa",
-  "Lesser Multa",
+  "Trapezium",
+  "Trapezoid",
   "Capitate",
   "Hamate"
 ]
@@ -209,7 +208,7 @@ const metacarpal_rows: PostcranialRow[] = makeRowsWithParentInfo(
   metacarpal_names.map((name) => [name, "LRQ"] as const)
 ).concat(make_row("Unidentifiable", "SingleNum", undefined, "Metacarpals"))
 
-const tarsal_names = ["Calcaneus", "Talus", "Cuboid", "1st Cuneiform", "2nd Cuneiform", "3rd Cuneiform", "Navicular"]
+const tarsal_names = ["Calcaneus", "Talus", "Cuboid", "Medial Cuneiform", "Intermediate Cuneiform", "Lateral Cuneiform", "Navicular"]
 const tarsal_rows: PostcranialRow[] = makeRowsWithParentInfo(
   "",
   tarsal_names.map((name) => [name, "LRQ"] as const)
@@ -247,6 +246,7 @@ export const postcranial_inventory_list: Record<string, PostcranialCategory[]> =
   Appendicular: [
     { name: "General", rows: appgeneral_rows },
     { name: "Shoulder", rows: shoulder_rows },
+    { name: "Os Coxa", rows: oscoxa_rows },
     { name: "Sternum", rows: sternum_rows }
   ],
   "Hands and Feet": [
