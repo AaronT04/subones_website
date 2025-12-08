@@ -14,9 +14,9 @@
 }
 .add-bone-container {
   max-width: 800px;
-  margin: 150px auto;
+  margin: 100px auto;
   background: #ffffff;
-  padding: 40px 30px;
+  padding: 30px 30px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
