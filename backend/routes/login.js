@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { db } = require('../db');
 const router = express.Router();
-const {captchaHandler} = require('../middleware/captcha');
+const { captchaHandler } = require('../middleware/captcha');
 
 const SECRET_KEY = process.env.JWT_SECRET || 'SecretKey';
 
@@ -35,6 +35,9 @@ router.post('/api/login', (req, res) => {
     if (!rows.length) return res.status(401).json({ error: 'Invalid email' });
 
     const user = rows[0];
+    console.log('DEBUG: User found:', user);
+    console.log('DEBUG: Input kpassword:', password);
+    console.log('DEBUG: Stored hash:', user.password);
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'Invalid password' });
 
