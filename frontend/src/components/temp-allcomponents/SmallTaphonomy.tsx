@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
+import { showBoneConditionInfo } from "@/components/boneConditionInfo";
 
 interface SmallTaphonomyProps {
     taphonomyContext: IAllTaphonomy
@@ -27,6 +28,7 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
     const taphonomy = props.taphonomyContext.allTaphonomy[props.boneName] || defaultTaphonomy;
     const boneName = props.boneName;
     const update = props.taphonomyContext.update;
+    const confirm = useConfirmDialog();
 
     const handleCheckboxChange = (category: string, value: string, checked: boolean) => {
         console.log('handleCheckboxChange called:', { category, value, checked });
@@ -50,16 +52,6 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
 
     const [comment, setComment] = useState(taphonomy?.comments ?? "");
     let [surfChecked, setSurfChecked] = useState(taphonomy?.surface_exposure ?? false);
-    
-    const confirm = useConfirmDialog();
-    const showBoneConditionInfo = async() => {
-        const confirmed = await confirm({
-        title:"",
-        description:"bone condition info...",
-        confirmText:"OK"
-        })
-        return;
-    }
 
     const getContents = () => {
         if(activeSubmenu == "bone color") {
@@ -168,7 +160,7 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                             <SelectItem value="5">Stage 5</SelectItem>
                         </SelectContent>
                 </Select>
-                <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={showBoneConditionInfo}>?</Button>
+                <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={() => showBoneConditionInfo(confirm)}>?</Button>
             </div>
                     <div className="flex mt-4 gap-2">
                         <input type="checkbox" checked={surfChecked} onChange={ () => {

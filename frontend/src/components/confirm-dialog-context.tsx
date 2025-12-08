@@ -1,16 +1,18 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
-import { ConfirmDialog } from './confirm-dialog';
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { ConfirmDialog, } from './confirm-dialog';
+import type {ConfirmDialogStyle} from './confirm-dialog'
 
-type ConfirmOptions = {
+export type ConfirmOptions = {
   title?: string;
-  description?: string;
+  description?: ReactNode;
   confirmText?: string;
   cancelText?: string;
+  styleOverride?: ConfirmDialogStyle
 };
 
-type ConfirmDialogContextType = {
+export type ConfirmDialogContextType = {
   confirm: (options: ConfirmOptions) => Promise<boolean>;
 };
 

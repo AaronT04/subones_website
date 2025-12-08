@@ -6,6 +6,7 @@ import { morphology_list } from "./morphology_list";
 import { useEditSkeletonAPI } from "@/app/skeleton-editor/EditSkeletonAPIContext";
 import { morph_help } from "./morph_help_data";
 import {basePath} from "@/lib/basePath"
+import { Button } from "@radix-ui/themes";
 
 export type SidedToothBox = {
   unsidedBox: UnsidedToothBox;
@@ -38,6 +39,31 @@ function normalizedToPaddedPercent(xNorm: number, yNorm: number) {
   return { xPct, yPct };
 }
 
+function getValidCodes(displayMode : string, trait? : string) : number[] | undefined {
+  if (displayMode === "Metrics") {
+    return undefined;
+  }
+
+  if (displayMode === "Inventory") {
+    return validInventoryCodes;
+  }
+
+  if (displayMode === "Wear") {
+    return validWearCodes;
+  }
+
+  if (displayMode === "Development") {
+    return validDevelopmentCodes;
+  }
+  if(displayMode === "Morphology") {
+
+    if(!trait) return [];
+    const traitInfo = morph_help.find((m) => m.title === trait);
+    return traitInfo?.valid_codes;
+  }
+  return [];
+}
+
 
 
 function validateToothValue(displayMode: string, rawValue: string, trait? : string | null) {
@@ -49,27 +75,7 @@ function validateToothValue(displayMode: string, rawValue: string, trait? : stri
   if (displayMode === "Metrics") {
     return value > 0 ? value : null;
   }
-
-  if (displayMode === "Inventory") {
-    return validInventoryCodes.includes(value) ? value : null;
-  }
-
-  if (displayMode === "Wear") {
-    return validWearCodes.includes(value) ? value : null;
-  }
-
-  if (displayMode === "Development") {
-    return validDevelopmentCodes.includes(value) ? value : null;
-  }
-  if(displayMode === "Morphology") {
-    console.log(trait);
-    if(!trait) return null;
-      const traitInfo = morph_help.find((m) => m.title === trait);
-      console.log(traitInfo);
-      return traitInfo?.valid_codes.includes(value) ? value : null;
-  }
-
-  return value;
+  return getValidCodes(displayMode, trait ?? undefined)?.includes(value) ? value : null;
 }
 
 /* Tooth box definitions remain unchanged */
@@ -130,7 +136,7 @@ export default function ToothDisplay(props) {
 
   const selectedToothName = toothName(tooth_boxes[selectedToothIndex]);
   const selectedRecord =
-    api?.dental_inventory?.find((t) => t.tooth_name === selectedToothName) ||
+    api?.dental_inventory?.find((t) => t.tooth_name === selectedToothName) ??
     null;
 
   // Updated handleChange with invalid highlighting
@@ -165,7 +171,20 @@ export default function ToothDisplay(props) {
   };
 
   return (
-    <>
+    <div className="flex flex-col items-center">
+      {getValidCodes(props.displayMode) != undefined && 
+      <div className="my-[10px] flex gap-4 items-center">
+        <label>Autofill:
+          
+        </label>
+        <select>
+            {getValidCodes(props.displayMode, props.trait)?.map((code) => (
+              <option value={code}>{code}</option>
+            ))}
+          </select>
+          <Button>Go</Button>
+      </div>
+      }
       <div
               className={`relative w-[275px] h-[475px] mx-auto mt-[15px] bg-contain bg-center bg-no-repeat`}
               style={{backgroundImage: 
@@ -248,7 +267,7 @@ export default function ToothDisplay(props) {
         {tooth_boxes.map((box, i) => {
           const name = toothName(box);
           const record =
-            api?.dental_inventory?.find((t) => t.tooth_name === name) || null;
+            api?.dental_inventory?.find((t) => t.tooth_name === name) ?? null;
 
           const xSigned = signedX(box);
           const { xPct, yPct } = normalizedToPaddedPercent(
@@ -352,6 +371,6 @@ export default function ToothDisplay(props) {
           Trait: {props.trait}
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -42,7 +42,7 @@ export default function PermanentInventory() {
   const mandibularTraits = Object.keys(morphology_list.options).slice(21, 33);
 
   return (
-    <div className="bone-container h-[650px] flex flex-col">
+    <div className="bone-container h-[700px] flex flex-col">
       {/* Tabs should fill the container */}
       <Tabs className="flex-1 flex flex-col overflow-hidden">
         {/* Header row (TabsList) sits on top, takes natural height */}

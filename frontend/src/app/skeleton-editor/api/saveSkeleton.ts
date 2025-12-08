@@ -74,7 +74,7 @@ export async function saveSkeletonData(API_URL_ROOT: string, api: EditSkeletonAP
     await saveAllMorphology(api, resultId);
     console.log(api);
 
-    return { success: true, message: "Skeleton saved successfully.", id: resultSkeletonId };
+    return { success: true, message: "Skeleton save complete - check console for details.", id: resultSkeletonId };
 
 
   } catch (error: any) {
@@ -146,7 +146,4 @@ const saveSkeleton = async (skeletonBody, skeletonId, token) => {
     throw new Error(`Skeleton save failed (${skeletonRes.status})`);
   const skeletonResult = await skeletonRes.json();
   return Number(skeletonResult.skeleton_id);
-
-
-
 }

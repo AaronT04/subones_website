@@ -7,6 +7,7 @@ import { morph_help } from "@/components/editor/skeleton-editor/morph_help_data"
 import {basePath} from "@/lib/basePath"
 import {ISkull, IDental} from "@/lib/api/componentTypes"
 import {produce} from 'immer'
+import { Button } from "@radix-ui/themes";
 
 export type SidedToothBox = {
   unsidedBox: UnsidedToothBox;
@@ -39,7 +40,30 @@ function normalizedToPaddedPercent(xNorm: number, yNorm: number) {
   return { xPct, yPct };
 }
 
+function getValidCodes(displayMode : string, trait? : string) : number[] | undefined {
+  if (displayMode === "Metrics") {
+    return undefined;
+  }
 
+  if (displayMode === "Inventory") {
+    return validInventoryCodes;
+  }
+
+  if (displayMode === "Wear") {
+    return validWearCodes;
+  }
+
+  if (displayMode === "Development") {
+    return validDevelopmentCodes;
+  }
+  if(displayMode === "Morphology") {
+
+    if(!trait) return [];
+    const traitInfo = morph_help.find((m) => m.title === trait);
+    return traitInfo?.valid_codes;
+  }
+  return [];
+}
 
 function validateToothValue(displayMode: string, rawValue: string, trait? : string | null) {
   if (rawValue === "") return ""; // allow clearing
@@ -50,27 +74,7 @@ function validateToothValue(displayMode: string, rawValue: string, trait? : stri
   if (displayMode === "Metrics") {
     return value > 0 ? value : null;
   }
-
-  if (displayMode === "Inventory") {
-    return validInventoryCodes.includes(value) ? value : null;
-  }
-
-  if (displayMode === "Wear") {
-    return validWearCodes.includes(value) ? value : null;
-  }
-
-  if (displayMode === "Development") {
-    return validDevelopmentCodes.includes(value) ? value : null;
-  }
-  if(displayMode === "Morphology") {
-    console.log(trait);
-    if(!trait) return null;
-      const traitInfo = morph_help.find((m) => m.title === trait);
-      console.log(traitInfo);
-      return traitInfo?.valid_codes.includes(value) ? value : null;
-  }
-
-  return value;
+  return getValidCodes(displayMode, trait ?? undefined)?.includes(value) ? value : null;
 }
 
 /* Tooth box definitions remain unchanged */
@@ -140,7 +144,7 @@ export default function ToothDisplay(props : ToothDisplayProps) {
     const updateMorphology = props.dentalContext.updateMorphology;
         // Helper to read a tooth record
     const getToothRecord = (tooth_name: string) => {
-        return inventory[tooth_name] || {};
+        return inventory[tooth_name] ?? {};
     };
 
   const [selectedToothIndex, setSelectedToothIndex] = useState<number>(0);
@@ -184,14 +188,85 @@ export default function ToothDisplay(props : ToothDisplayProps) {
       updateMorphology(prev =>
         produce(prev, draft => {
             draft[props.trait] = {
-                ...(prev[props.trait] || {}),
+                ...(prev[props.trait] ?? {}),
                 [tooth_name] : value
             }}));
     }
   };
 
   return (
-    <>
+    <div className="flex flex-col items-center">
+      {getValidCodes(props.displayMode) != undefined && 
+      <div className="my-[10px] flex gap-4 items-center">
+        <label>Autofill:
+          
+        </label>
+        <select id="autofill-select">
+            {getValidCodes(props.displayMode, props.trait)?.map((code) => (
+              <option value={code}>{code}</option>
+            ))}
+          </select>
+            <Button
+                onClick={() => {
+                  const autofillValue = Number(
+                    (document.querySelector("#autofill-select") as HTMLSelectElement)?.value
+                  );
+
+                  if (isNaN(autofillValue)) return;
+
+                  // ---- (1) SIMPLE CASE: Inventory, Development, Wear ----
+                  if (props.displayMode !== "Morphology") {
+                    const field =
+                      props.displayMode === "Inventory"
+                        ? "tooth_inv_code"
+                        : props.displayMode === "Wear"
+                        ? "tooth_wear_code"
+                        : "tooth_dev_code";
+
+                    updateInventory((prev) =>
+                      produce(prev, (draft) => {
+                        tooth_boxes.forEach((box) => {
+                          const toothNameStr = toothName(box);
+
+                          // only apply if skull doesn’t block this tooth
+                          if (!enableBoxCond(toothNameStr)) return;
+
+                          draft[toothNameStr] = {
+                            ...(prev[toothNameStr] ?? {}),
+                            [field]: autofillValue,
+                          };
+                        });
+                      })
+                    );
+
+                    return;
+                  }
+
+                  // ---- (2) MORPHOLOGY CASE ----
+                  const allowedUnsided =
+                    morphology_list.options[props.trait]?.[1] ?? [];
+
+                  updateMorphology((prev) =>
+                    produce(prev, (draft) => {
+                      if (!draft[props.trait]) draft[props.trait] = {};
+
+                      tooth_boxes.forEach((box) => {
+                        const uname = box.unsidedBox.unsidedName;
+                        const toothNameStr = toothName(box);
+
+                        if (!allowedUnsided.includes(uname)) return;
+                        if (!enableBoxCond(toothNameStr)) return; // same side check as inventory
+
+                        draft[props.trait][toothNameStr] = autofillValue;
+                      });
+                    })
+                  );
+                }}
+              >
+                Go
+      </Button>
+      </div>
+      }
       <div
               className={`relative w-[275px] h-[475px] mx-auto mt-[15px] bg-contain bg-center bg-no-repeat`}
               style={{backgroundImage: 
@@ -356,7 +431,7 @@ export default function ToothDisplay(props : ToothDisplayProps) {
                       `}
                       value={
                         morphology[props.trait] ?
-                        ((morphology[props.trait])[name]) || "" : ""
+                        ((morphology[props.trait])[name]) ?? "" : ""
                       }
                       onChange={(e) =>
                         handleChange(name, "morph_name", e.target.value)
@@ -375,6 +450,6 @@ export default function ToothDisplay(props : ToothDisplayProps) {
           Trait: {props.trait}
         </div>
       )}
-    </>
+    </div>
   );
 }

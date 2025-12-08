@@ -26,7 +26,7 @@ export async function saveNonmetrics(api : EditSkeletonAPI, specimenId : number)
                 body[col] = n.value_str;
             }
         }
-        console.log(body);
+        //console.log(body);
 
         const existingRes = await fetch(`${API_URL_ROOT}/api/${endpoint}/${specimenId}`, {
         method: 'GET',
@@ -36,7 +36,7 @@ export async function saveNonmetrics(api : EditSkeletonAPI, specimenId : number)
         }});
 
         const existing = await existingRes.json();
-        console.log(existing);
+        //console.log(existing);
         //const method = existing != undefined ? "PUT" : "POST";
         const method = existingRes.ok ? "PUT" : "POST";
 

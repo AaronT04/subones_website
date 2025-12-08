@@ -37,7 +37,7 @@ export default function DeciduousInventory() {
   const mandibularTraits = Object.keys(morphology_list.options).slice(21, 33);
 
   return (
-    <div className="bone-container h-[650px] flex flex-col overflow-hidden">
+    <div className="bone-container h-[700px] flex flex-col overflow-hidden">
           <div className="grid w-full grid-cols-[3fr_4fr_3fr] h-full">
             <div className="ml-[5%] h-full flex flex-col min-h-0">
                 <div className="flex-1 overflow-y-auto border border-black rounded-md">

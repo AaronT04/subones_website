@@ -16,6 +16,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
+import { showBoneConditionInfo } from "@/components/boneConditionInfo";
 
 function Taphonomy(props) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
@@ -28,16 +29,8 @@ function Taphonomy(props) {
     const [comment, setComment] = useState(apiInstance?.comments ?? "");
     
     let [surfChecked, setSurfChecked] = useState(apiInstance?.surface_exposure ?? false);
-    
+
     const confirm = useConfirmDialog();
-    const showBoneConditionInfo = async() => {
-        const confirmed = await confirm({
-        title:"",
-        description:"bone condition info...",
-        confirmText:"OK"
-        })
-        return;
-    }
 
     const getContents = () => {
         if(activeSubmenu == "bone color") {
@@ -153,7 +146,7 @@ function Taphonomy(props) {
                             <SelectItem value="5">Stage 5</SelectItem>
                         </SelectContent>
                 </Select>
-                <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={showBoneConditionInfo}>?</Button>
+                <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={() => showBoneConditionInfo(confirm)}>?</Button>
             </div>
                     <div className="flex mt-4 gap-2">
                         <input type="checkbox" checked={surfChecked} onChange={ () => {

@@ -1,5 +1,4 @@
 "use client"
-const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL;
 import {useState} from 'react'
 import {useRouter} from 'next/navigation'
 
@@ -20,7 +19,7 @@ export default function LoginForm(props : FormProps){
             return;
         }
         try {
-            const response = await fetch(`${API_URL_ROOT}/api/login`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

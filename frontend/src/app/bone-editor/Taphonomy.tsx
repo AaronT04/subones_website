@@ -12,7 +12,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useBoneData } from "./context/BoneDataContext";
-import { useConfirmDialog } from '@/components/confirm-dialog-context';
+import { showBoneConditionInfo } from "@/components/boneConditionInfo";
+import { useConfirmDialog } from "@/components/confirm-dialog-context";
 
 function Taphonomy(props) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
@@ -21,15 +22,7 @@ function Taphonomy(props) {
     let [surfChecked, setSurfChecked] = useState(taphonomy?.surface_exposure ?? false);
     const [comment, setComment] = useState(taphonomy?.comments ?? "");
     const confirm = useConfirmDialog();
-
-    const showBoneConditionInfo = async() => {
-        const confirmed = await confirm({
-        title:"",
-        description:"bone condition info...",
-        confirmText:"OK"
-        })
-        return;
-    }
+    
 
     const handleCheckboxChange = (category: string, value: string, checked: boolean) => {
         console.log('handleCheckboxChange called:', { category, value, checked });
@@ -168,7 +161,7 @@ function Taphonomy(props) {
                             <SelectItem value="5">Stage 5</SelectItem>
                         </SelectContent>
                 </Select>
-                <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={showBoneConditionInfo}>?</Button>
+                <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={() => showBoneConditionInfo(confirm)}>?</Button>
             </div>
                 {/*
             <div className="mt-1 flex gap-2 text-left">

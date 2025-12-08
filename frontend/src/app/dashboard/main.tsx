@@ -125,18 +125,6 @@ export default function Main(){
     return <div className="p-4">Loading...</div>;
   }
 
-  const confirmAddIndividual = async() => {
-    const confirmed = await confirm({
-      title:"",
-      description:"This will create an entire skeleton. Are you sure you want to continue? (It doesn't really matter though you can do whatever you want it's your life)",
-      confirmText:"OK",
-      cancelText:"Cancel"
-    })
-    if (!confirmed) return;
-    setLoading(true);
-    PageManager.handleCreateSkeleton();
-  }
-
   // NEW: row click handlers to push to detail pages
   const goBone = (b: Bone) => PageManager.handleEditBone(b.id, b.name);
   const goInd  = (i: Individual) => PageManager.handleEditSkeleton(i.id);
