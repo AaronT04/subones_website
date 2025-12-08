@@ -14,7 +14,7 @@ import "@/components/editor/skeleton-editor//InventoryStyles.css";
 import Taphonomy from "@/components/temp-allcomponents/SmallTaphonomy";
 import { filterTaphonomyDropdownTags } from "@/components/editor/skeleton-editor/postcranial-inventory-list";
 import TaphonomyDropdown from '@/components/temp-allcomponents/TaphonomyDropdown'
-import InventorySelect from "@/components/InventorySelect";
+import InventorySelect from "@/components/temp-allcomponents/InventorySelect";
 import {produce} from 'immer'
 
 type PostcranialType = {
@@ -60,7 +60,7 @@ export default function PostcranialInventory(props : PostcranialInventoryProps) 
       // --- CHECKBOX ---
       case BoxTypeEnum.CHECKBOX:
         return (
-          <InventorySelect apiPath={["postcranial_inventory", `${entryName}`]}/>
+          <InventorySelect entryName={entryName} inventoryContext={props.postcranialInventoryContext}/>
         );
 
       // --- SELECT DROPDOWN ---

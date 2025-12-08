@@ -40,7 +40,7 @@ function Left() {
                 </Button>
             </div>
 
-            <div className="flex items-center justify-between space-x-2">
+            <div className="flex flex-col items-center justify-between h-[50px] w-[90%]">
                 <p>Individual: </p>
                 <Input
                     className="h-[40px] w-2/3 max-w-sm bg-white"
@@ -49,13 +49,13 @@ function Left() {
                 />
             </div>
 
-            <div className="flex flex-col items-center w-[90%] h-[350px]">
+            <div className="flex flex-col items-center w-[90%] h-[300px]">
                 <Specimen formContext={formContext} userData={userData}/>
             </div>
             
             
 
-            <div className="flex-col w-full justify-center items-center max-w-md p-4">
+            <div className="flex-col justify-center items-center max-w-md p-4">
 
                 <Dialog>
                     <DialogTrigger asChild>

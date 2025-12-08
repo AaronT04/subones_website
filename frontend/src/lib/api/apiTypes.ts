@@ -34,5 +34,6 @@ export type MorphologyBody = {
 
 export type SkeletonBody = {
     specimen_id : number,
+    skeleton_type : "full",
     skeleton_name : string
 }

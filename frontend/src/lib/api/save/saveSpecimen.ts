@@ -1,7 +1,12 @@
 import type {SpecimenBody} from '@/lib/api/apiTypes'
+import {post} from "@/lib/api/post-crud"
 
-export const saveSpecimen = async (specimenBody : SpecimenBody, specimenId, token) => {
+export const saveSpecimen = async (specimenBody : SpecimenBody, specimenId) => {
 // Check if specimen already exists (update) or create new
+    const token = localStorage.getItem('token');
+    if(!token) {
+      throw new Error();
+    }
     const specimenMethod = specimenId && specimenId > 0 ? "PUT" : "POST";
     const specimenUrl =
       specimenMethod === "PUT"

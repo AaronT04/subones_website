@@ -89,7 +89,7 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
         }
         let specimenId = PageManager.getDatabaseID("skull-editor");
         const specimenBody = getSpecimenBody(formContext, localityContext, userData);
-        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId, token);
+        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId);
         await saveSkull(skullContext, resultSpecimenId)
         await saveCraniometrics(craniometricsContext, resultSpecimenId);
         await saveNonmetrics(cranialNonmetricsContext.allNonmetrics, resultSpecimenId);

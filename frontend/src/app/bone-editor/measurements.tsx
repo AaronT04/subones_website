@@ -1,10 +1,8 @@
 import { postcranialmetrics_list } from "@/app/metrics/postcranialmetrics"
 import MeasurementsBox from "@/components/ui/measurements_box"
 import { Vertebrae } from "./vertebrae"
-import Skull from "./skull"
 import React, { useState, useEffect } from 'react';
 import { useBoneData } from "./context/BoneDataContext"
-import { EditSkeletonAPIProvider } from "@/app/skeleton-editor/EditSkeletonAPIContext"
 import { useRouter, useSearchParams } from 'next/navigation';
 
 function Measurements() {
@@ -45,8 +43,6 @@ function Measurements() {
             return <div><Vertebrae selectedList={boneID}></Vertebrae></div>;
         } else if (boneID === "lumbar_vertebrae") {
             return <div><Vertebrae selectedList={boneID}></Vertebrae></div>;
-        } else if (boneID === "skull") {
-            return <div><EditSkeletonAPIProvider><Skull></Skull></EditSkeletonAPIProvider></div>;
         }
         // Otherwise render appendicular bones
         else {

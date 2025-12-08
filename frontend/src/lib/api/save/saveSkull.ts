@@ -6,5 +6,5 @@ export async function saveSkull(data : SkullData, specimenId : number) {
         has_cranium: data.hasCranium,
         has_mandible: data.hasMandible
     }
-    post(body, "skull", specimenId);
+    await post(body, "skull", specimenId);
 }

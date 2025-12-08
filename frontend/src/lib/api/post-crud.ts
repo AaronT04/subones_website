@@ -12,9 +12,10 @@ export async function post(body : any, endpoint: string, id: number) {
         });
 
         if (!saveRes.ok) {
-        const err = await saveRes.json();
-        throw new Error(err.error || `Failed to save ${endpoint}`);
+            const err = await saveRes.json();
+            throw new Error(err.error || `Failed to save ${endpoint}`);
         }
 
         console.log(`✅ ${endpoint} POST successful`);
+        return saveRes;
 }

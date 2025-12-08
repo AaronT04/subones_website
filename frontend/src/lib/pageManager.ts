@@ -21,11 +21,11 @@ export function handleCreateBone (boneName : string) {
 }
 export function handleEditSkeleton (id : number) {
     localStorage.setItem("skeleton-editor", JSON.stringify({db_id: id, mode: "Edit"}));
-    router.push('/skeleton-editor');
+    router.push('/skeleton-editor-refactor');
 }
 export function handleCreateSkeleton () {
     localStorage.setItem("skeleton-editor", JSON.stringify({db_id: -1, mode: "Create"}));
-    router.push('/skeleton-editor');
+    router.push('/skeleton-editor-refactor');
 }
 export function handleEditDental (id : number) {
     localStorage.setItem("dental-editor", JSON.stringify({db_id: id, mode: "Edit"}));

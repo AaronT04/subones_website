@@ -58,7 +58,7 @@ export function DentalEditorContextProvider({children} : {children : ReactNode})
         }
         let specimenId = PageManager.getDatabaseID("dental-editor");
         const specimenBody = getSpecimenBody(formContext, localityContext, userData);
-        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId, token);
+        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId);
         await saveDentalInventory(dentalContext.inventory, resultSpecimenId);
         await saveMorphology(dentalContext.morphology, resultSpecimenId);
         PageManager.switchToEditModeAfterSave("dental-editor", resultSpecimenId);

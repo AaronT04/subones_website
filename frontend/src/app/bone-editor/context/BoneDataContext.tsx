@@ -215,7 +215,7 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
                 user_id: formData.userID || -1
             }
             console.log(specimenId);
-            let resultSpecimenID = await saveSpecimen(specimenBody, specimenId, token);
+            let resultSpecimenID = await saveSpecimen(specimenBody, specimenId);
             console.log(resultSpecimenID);
             //save taxonomy
             //save bone

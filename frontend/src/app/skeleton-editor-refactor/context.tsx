@@ -1,6 +1,6 @@
 import React, {ReactNode, useContext, createContext, useEffect, useState} from 'react'
 import type {LocalityData, TaphonomyData, Inventory, FormData, DentalInventory, DecodedToken, SkeletonData, PostcranialMetrics, CranialNonmetric} from "@/lib/api/dataTypes"
-import type {IForm, ILocality, ICraniometrics, ISkeleton, IAllTaphonomy, IInventory, ISkull, IDental, ICranialNonmetrics, IPostcranialMetrics} from "@/lib/api/componentTypes"
+import type {IForm, ILocality, ICraniometrics, ISkeleton, IAllTaphonomy, IInventory, IDental, ICranialNonmetrics, IPostcranialMetrics} from "@/lib/api/componentTypes"
 import {loadUser} from "@/lib/loadUser"
 import * as PageManager from "@/lib/pageManager"
 import {saveSpecimen} from "@/lib/api/save/saveSpecimen"
@@ -41,6 +41,8 @@ const SkeletonEditorContext = createContext<SkeletonEditorContextType | undefine
 
 export function SkeletonEditorContextProvider({children} : {children : ReactNode}) {
     const [userData, setUserData] = useState<DecodedToken | undefined>(undefined);
+    const [specimenId, setSpecimenId] = useState<number>(-1);
+    const [skeletonId, setSkeletonId] = useState<number>(-1);
     useEffect(() => {
         setUserData(loadUser());
         handleLoad();
@@ -88,19 +90,39 @@ export function SkeletonEditorContextProvider({children} : {children : ReactNode
             return;
         }
         const skeletonId = PageManager.getDatabaseID("skeleton-editor");
-        const specimenId = await loadSkeleton(skeletonId, skeletonContext);
-        await loadSpecimen(specimenId, formContext, localityContext);
-        await loadCraniometrics(specimenId, craniometricsContext);
-        await loadNonmetrics(specimenId, cranialNonmetricsContext);
-        await loadPostcranialMetrics(specimenId, postcranialMetricsContext);
-        await loadInventory(specimenId, "cranial", cranialInventoryContext);
-        await loadInventory(specimenId, "postcranial", postcranialInventoryContext);
-        await loadAllTaphonomy(specimenId, taphonomyContext);
-        await loadDental(specimenId, dentalContext);
+        setSkeletonId(skeletonId);
+        const resultSpecimenId = await loadSkeleton(skeletonId, skeletonContext);
+        setSpecimenId(resultSpecimenId);
+        await loadSpecimen(resultSpecimenId, formContext, localityContext);
+        await loadCraniometrics(resultSpecimenId, craniometricsContext);
+        await loadNonmetrics(resultSpecimenId, cranialNonmetricsContext);
+        await loadPostcranialMetrics(skeletonId, postcranialMetricsContext);
+        await loadInventory(resultSpecimenId, "cranial", cranialInventoryContext);
+        await loadInventory(resultSpecimenId, "postcranial", postcranialInventoryContext);
+        await loadAllTaphonomy(resultSpecimenId, taphonomyContext);
+        await loadDental(resultSpecimenId, dentalContext);
     }
     async function handleSave() {
         const skeletonId = PageManager.getDatabaseID("skeleton-editor");
-        const specimenId = await saveSkeleton(skeletonId, skeletonContext);
+        if (!userData) {
+            alert("Save error - Invalid User");
+            return;
+        }
+        const resultSkeletonId = await saveSkeleton(skeletonId, specimenId, skeletonContext);
+        setSkeletonId(resultSkeletonId);
+        const resultSpecimenId = await saveSpecimen(getSpecimenBody(formContext, localityContext, userData), specimenId);
+        setSpecimenId(resultSpecimenId);
+        await saveCraniometrics(craniometricsContext, resultSpecimenId);
+        await saveNonmetrics(cranialNonmetricsContext.allNonmetrics, resultSpecimenId);
+        await saveInventory("cranial", cranialInventoryContext.inventory, resultSpecimenId);
+        await saveInventory("postcranial", postcranialInventoryContext.inventory, resultSpecimenId);
+        await savePostcranialMetrics(postcranialMetricsContext.metrics, resultSkeletonId);
+        await saveAllTaphonomy(taphonomyContext.allTaphonomy, resultSpecimenId);
+        await saveDentalInventory(dentalContext.inventory, resultSpecimenId);
+        await saveMorphology(dentalContext.morphology, resultSpecimenId);
+        PageManager.switchToEditModeAfterSave("skeleton-editor", resultSkeletonId);
+        alert("Save completed - check console for details");
+
     }
     return(<SkeletonEditorContext.Provider value={{
         userData,
