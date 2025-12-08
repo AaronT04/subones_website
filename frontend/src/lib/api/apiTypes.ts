@@ -31,3 +31,8 @@ export type MorphologyBody = {
     morph_name: string
     morph_value: number
 }
+
+export type SkeletonBody = {
+    specimen_id : number,
+    skeleton_name : string
+}

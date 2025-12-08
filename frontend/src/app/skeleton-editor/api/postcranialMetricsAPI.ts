@@ -4,7 +4,7 @@ const API_ROOT = process.env.NEXT_PUBLIC_API_URL || "";
 
 export async function loadPostcranialMetrics(skeleton_id: number, setAPI : any) {
   try {
-    const res = await fetch(`${API_ROOT}/api/postcranial_metrics/${skeleton_id}`);
+    const res = await fetch(`${API_ROOT}/api/postcranial_metrics_object/${skeleton_id}`);
     if (!res.ok) {
       console.warn(`⚠️ Failed to load postcranial metrics: ${res.status}`);
       return [];
@@ -23,7 +23,7 @@ export async function savePostcranialMetrics(
   metrics: { metric_name: string; metric_value: number | null }[]
 ) {
   try {
-    const res = await fetch(`${API_ROOT}/api/postcranial_metrics/${skeleton_id}`, {
+    const res = await fetch(`${API_ROOT}/api/postcranial_metrics_object/${skeleton_id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ metrics }),

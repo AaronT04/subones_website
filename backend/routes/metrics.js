@@ -3,7 +3,7 @@ const { db } = require('../db');
 const router = express.Router();
 
 // Load all postcranial metrics for a skeleton
-router.get('/api/postcranial_metrics/:skeleton_id', (req, res) => {
+router.get('/api/postcranial_metrics_object/:skeleton_id', (req, res) => {
   const { skeleton_id } = req.params;
   //console.log(skeleton_id);
   db.query(
@@ -26,7 +26,7 @@ router.get('/api/postcranial_metrics/:skeleton_id', (req, res) => {
   );
 });
 
-router.post('/api/postcranial_metrics/:skeleton_id', async (req, res) => {
+router.post('/api/postcranial_metrics_object/:skeleton_id', async (req, res) => {
   try {
     const { skeleton_id } = req.params;
     const { metrics } = req.body; // array of { metric_name, metric_value }

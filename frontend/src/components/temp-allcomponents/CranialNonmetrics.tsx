@@ -18,7 +18,7 @@ import type { ICranialNonmetrics, ISkull } from "@/lib/api/componentTypes"
 
 interface CranialNonmetricsProps{
     cranialNonmetricsContext: ICranialNonmetrics
-    skullContext : ISkull
+    skullContext? : ISkull
 }
 
 

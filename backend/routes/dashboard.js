@@ -51,7 +51,7 @@ router.get('/api/list/individuals', (req, res) => {
       s.skeleton_name AS name,
       COALESCE(m.museum_name, '') AS museum,
       COALESCE(u.name, '') AS user
-    FROM skeletal_inventory s
+    FROM skeleton s
     LEFT JOIN specimen sp ON s.specimen_id = sp.specimen_id
     LEFT JOIN museum m ON sp.museum_id = m.museum_id
     LEFT JOIN user   u ON sp.user_id   = u.user_id

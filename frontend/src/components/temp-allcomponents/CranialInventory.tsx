@@ -43,7 +43,7 @@ export default function CranialInventory(props: CranialInventoryProps) {
     function enableRowCondition(bone : CranialInventoryRow) {
         
         let result = (hasCranium && bone.boneName !== "Mandible") || (hasMandible && bone.boneName === "Mandible");
-        console.log(result);
+        //console.log(result);
         return result;
     }
 

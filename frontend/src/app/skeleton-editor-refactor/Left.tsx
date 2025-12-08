@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button"
 import {useRouter} from 'next/navigation'
 import "@/app/globals.css"
-import Specimen from "../../components/temp-allcomponents/Specimen"
+import Specimen from "@/components/temp-allcomponents/Specimen"
 import Taxonomy from "../../components/temp-allcomponents/Taxonomy"
 import Locality from "../../components/temp-allcomponents/Locality"
-import { useDentalEditorContext } from "./DentalEditorContext"
+import { useSkeletonEditorContext } from "./context"
 import {useState} from 'react'
+import { Input } from "@/components/ui/input"
 
 import {
     Dialog,
@@ -19,7 +20,7 @@ import {
 
 function Left() {
     const [loading, setLoading] = useState(false);
-    const { handleSave, localityContext, formContext, userData} = useDentalEditorContext();
+    const { handleSave, localityContext, formContext, skeletonContext, userData} = useSkeletonEditorContext();
     
     const router = useRouter();
     if (loading) {
@@ -37,6 +38,15 @@ function Left() {
                     Exit
                     
                 </Button>
+            </div>
+
+            <div className="flex items-center justify-between space-x-2">
+                <p>Individual: </p>
+                <Input
+                    className="h-[40px] w-2/3 max-w-sm bg-white"
+                    value={skeletonContext.skeleton_name}
+                    onChange={(e) => skeletonContext.update({skeleton_name : e.target.value})}
+                />
             </div>
 
             <div className="flex flex-col items-center w-[90%] h-[350px]">
@@ -99,8 +109,7 @@ function Left() {
                             console.error('handleSave is undefined!');
                         }
                     }}
-                >
-                    Save
+                >Save
                 </Button>
             </div>
         </div>

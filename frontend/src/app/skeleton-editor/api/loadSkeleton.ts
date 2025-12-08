@@ -21,7 +21,7 @@ type DecodedToken = {
 
 export async function loadSkeletonData(API_URL_ROOT: string, setAPI: any, id: number) {
   try {
-    const response = await fetch(`${API_URL_ROOT}/api/skeletal_inventory/${id}`);
+    const response = await fetch(`${API_URL_ROOT}/api/skeleton/${id}`);
     if (!response.ok) throw new Error(`Failed to fetch skeleton: ${response.status}`);
     const skeletonData = await response.json();
 

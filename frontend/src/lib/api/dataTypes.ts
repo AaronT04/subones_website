@@ -16,6 +16,12 @@ export type Craniometrics = {
   mandibleMetrics: Record<string, number>
 }
 
+export type SkeletonData = {
+    skeleton_name: string
+}
+
+export type PostcranialMetrics = Record<string, number>
+
 
 export type LocalityData = {
   broadRegion: string;

@@ -136,7 +136,7 @@ function useCrudRoutes(app) {
     makeCrudRoutes('taxonomy', 'taxonomy_id', ['parvorder','superfamily','family','subfamily','genus','species','specimen_id']);
     makeCrudRoutes('taphonomy', 'taphonomy_id', ['specimen_id','bone_id','date_of_record']);
     makeCrudRoutes('bone', 'bone_id', ['skeleton_id','bone_type','bone_name','condition','specimen_id']);
-    makeCrudRoutes('skeletal_inventory', 'skeleton_id', ['skeleton_name', 'specimen_id','condition','skeleton_type','measurements']);
+    makeCrudRoutes('skeleton', 'skeleton_id', ['specimen_id', 'skeleton_type', 'skeleton_name']);
     makeCrudRoutes('cranium_measurements', 'specimen_id', ['maximum_cranial_length', 'maximum_cranial_breadth',
                 'bizygomatic_diameter', 'basion_bregma_height', 'cranial_base_length', 'basion_prosthion_length',
                 'maxillo_alveolar_breadth', 'maxillo_alveolar_length', 'biauricular_breadth', 'upper_facial_height',
@@ -204,5 +204,71 @@ function useCrudRoutes(app) {
     ]);
 
     makeCrudRoutes('skull', 'specimen_id', ['has_cranium', 'has_mandible']);
+
+    makeCrudRoutes('postcranial_metrics', 'skeleton_id', [
+  'clavicle_maximum_length',
+  'clavicle_anterior_sagittal_posterior_diameter_at_midshaft',
+  'clavicle_superior_vertical_inferior_diameter_at_midshaft',
+
+  'scapula_height_anatomical_breadth',
+  'scapula_breadth_anatomical_length',
+
+  'humerus_maximum_length',
+  'humerus_epicondylar_breadth',
+  'humerus_vertical_diameter_of_head',
+  'humerus_maximum_diameter_at_midshaft',
+  'humerus_minimum_diameter_at_midshaft',
+
+  'radius_maximum_length',
+  'radius_anterior_posterior_sagittal_diameter_at_midshaft',
+  'radius_medial_lateral_transverse_diameter_at_midshaft',
+
+  'ulna_maximum_length',
+  'ulna_anterior_posterior_dorso_volar_diameter',
+  'ulna_medial_lateral_transverse_diameter',
+  'ulna_physiological_length',
+  'ulna_minimum_circumference',
+
+  'sacrum_anterior_length',
+  'sacrum_anterior_superior_breadth',
+  'sacrum_maximum_transverse_diameter_of_base',
+  'sacrum_s1_height',
+
+  'os_coxae_height',
+  'os_coxae_iliac_breadth',
+  'os_coxae_pubis_length',
+  'os_coxae_ischium_length',
+
+  'femur_maximum_length',
+  'femur_bicondylar_length',
+  'femur_epicondylar_breadth',
+  'femur_maximum_head_diameter',
+  'femur_anterior_posterior_sagittal_subtrochanteric_diameter',
+  'femur_medial_lateral_transverse_subtrochanteric_diameter',
+  'femur_anterior_posterior_sagittal_midshaft_diameter',
+  'femur_medial_lateral_transverse_midshaft_diameter',
+  'femur_midshaft_circumference',
+
+  'tibia_condylo_malleolar_length',
+  'tibia_maximum_proximal_epiphyseal_breadth',
+  'tibia_distal_epiphyseal_breadth',
+  'tibia_maximum_diameter_at_the_nutrient_foramen',
+  'tibia_medial_lateral_transverse_diameter_at_the_nutrient_foramen',
+  'tibia_circumference_at_the_nutrient_foramen',
+
+  'fibula_maximum_length',
+  'fibula_maximum_diameter_at_midshaft',
+
+  'calcaneus_maximum_length',
+  'calcaneus_middle_breadth',
+
+  'talus_talus_height',
+
+  'cervical_vertebrae_c2',
+  'cervical_vertebrae_max_c3_c7_height',
+  'thoracic_vertebrae_max_t1_t12_height',
+  'lumbar_vertebrae_max_l1_l5_height'
+]);
+
 }
 module.exports = {useCrudRoutes}

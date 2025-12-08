@@ -132,8 +132,8 @@ const saveSkeleton = async (skeletonBody, skeletonId, token) => {
   const skeletonMethod = skeletonId && skeletonId > 0 ? "PUT" : "POST";
   const skeletonUrl =
     skeletonMethod === "PUT"
-      ? `${process.env.NEXT_PUBLIC_API_URL}/api/skeletal_inventory/${skeletonId}`
-      : `${process.env.NEXT_PUBLIC_API_URL}/api/skeletal_inventory`;
+      ? `${process.env.NEXT_PUBLIC_API_URL}/api/skeleton/${skeletonId}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/api/skeleton`;
 
   const skeletonRes = await fetch(skeletonUrl, {
     method: skeletonMethod,
