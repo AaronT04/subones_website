@@ -2,8 +2,8 @@
 
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { morphology_list } from "@/components/editor/skeleton-editor/morphology_list";
-import { morph_help } from "@/components/editor/skeleton-editor/morph_help_data";
+import { morphology_list } from "@/components/lists/morphology_list";
+import { morph_help } from "@/components/lists/morph_help_data";
 import {basePath} from "@/lib/basePath"
 import {ISkull, IDental} from "@/lib/api/componentTypes"
 import {produce} from 'immer'

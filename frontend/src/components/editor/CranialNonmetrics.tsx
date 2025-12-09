@@ -11,8 +11,8 @@ import {produce} from 'immer'
 
 import {Table, Select} from '@radix-ui/themes'
 
-import { cranial_nonmetrics_list } from "@/components/editor/skeleton-editor/cranial-nonmetrics-list"
-import type { CranialNonmetricRow } from "@/components/editor/skeleton-editor/cranial-nonmetrics-list"
+import { cranial_nonmetrics_list } from "@/components/lists/cranial-nonmetrics-list"
+import type { CranialNonmetricRow } from "@/components/lists/cranial-nonmetrics-list"
 import Macromorphoscopics from "./Macromorphoscopics"
 import type { ICranialNonmetrics, ISkull } from "@/lib/api/componentTypes"
 

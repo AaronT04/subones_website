@@ -7,11 +7,11 @@ import {
   } from "@/components/ui/tabs"
 
 import {Table, TextField} from '@radix-ui/themes'
-import {craniometrics_list} from "@/components/editor/skeleton-editor/craniometrics-list"
-import Craniometrics from "../../components/temp-allcomponents/Craniometrics"
-import CranialNonmetrics from "../../components/temp-allcomponents/CranialNonmetrics"
-import CranialInventory from '../../components/temp-allcomponents/CranialInventory'
-import Dental from '../../components/temp-allcomponents/Dental'
+import {craniometrics_list} from "@/components/lists/craniometrics-list"
+import Craniometrics from "../../components/editor/Craniometrics"
+import CranialNonmetrics from "../../components/editor/CranialNonmetrics"
+import CranialInventory from '../../components/editor/CranialInventory'
+import Dental from '../../components/editor/Dental'
 import { useSkullContext } from "./context/SkullContext"
 
 function Right(props) {

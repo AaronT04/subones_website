@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import {useRouter} from 'next/navigation'
 import "@/app/globals.css"
-import Specimen from "../../components/temp-allcomponents/Specimen"
-import Taxonomy from "../../components/temp-allcomponents/Taxonomy"
-import Locality from "../../components/temp-allcomponents/Locality"
+import Specimen from "../../components/editor/Specimen"
+import Taxonomy from "../../components/editor/Taxonomy"
+import Locality from "../../components/editor/Locality"
 import { useDentalEditorContext } from "./DentalEditorContext"
 import {useState} from 'react'
 

@@ -1,6 +1,6 @@
 import TCheckbox from "@/components/ui/TCheckbox";
 import React, {useState, useContext} from 'react';
-import {taphonomy_options} from "@/components/editor/taphonomy-options-list";
+import {taphonomy_options} from "@/components/lists/taphonomy-options-list";
 import HorizontalRadioButton from "@/components/ui/HorizontalRadioButton";
 import { Button } from "@/components/ui/button"
 import {produce} from "immer"
@@ -15,7 +15,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
-import { showBoneConditionInfo } from "@/components/boneConditionInfo";
+import { showBoneConditionInfo } from "@/components/editor/boneConditionInfo";
 
 interface SmallTaphonomyProps {
     taphonomyContext: IAllTaphonomy

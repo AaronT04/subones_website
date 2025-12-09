@@ -1,7 +1,7 @@
 "use client"
 
-import LoginForm from "@/components/LoginForm"
-import CreateAccountForm from "@/components/CreateAccountForm"
+import LoginForm from "./LoginForm"
+import CreateAccountForm from "./CreateAccountForm"
 import {useState} from 'react'
 import {basePath} from "@/lib/basePath"
 import "dotenv/config";

@@ -6,7 +6,7 @@ import {
   } from "@/components/ui/tabs"
 
 import {Table, TextField} from '@radix-ui/themes'
-import {craniometrics_list} from "@/components/editor/skeleton-editor/craniometrics-list"
+import {craniometrics_list} from "@/components/lists/craniometrics-list"
 import type { ICraniometrics, ISkull } from "@/lib/api/componentTypes"
 import {produce} from 'immer'
 

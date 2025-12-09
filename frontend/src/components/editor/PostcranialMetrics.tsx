@@ -1,7 +1,7 @@
 import type {IPostcranialMetrics} from "@/lib/api/componentTypes"
 import {Table, TextField} from '@radix-ui/themes'
-import { postcranialmetrics_list } from '@/app/metrics/postcranialmetrics' 
-import { pcm_extra } from '@/app/metrics/pcm_extra'
+import { postcranialmetrics_list } from '@/components/lists/postcranialmetrics' 
+import { pcm_extra } from '@/components/lists/pcm_extra'
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
 import {produce} from 'immer'
 

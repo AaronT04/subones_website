@@ -1,4 +1,4 @@
-import { postcranialmetrics_list } from "@/app/metrics/postcranialmetrics"
+import { postcranialmetrics_list } from "@/components/lists/postcranialmetrics"
 import MeasurementsBox from "@/components/ui/measurements_box"
 import { Vertebrae } from "./vertebrae"
 import React, { useState, useEffect } from 'react';

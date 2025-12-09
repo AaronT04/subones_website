@@ -12,7 +12,7 @@ import Measurements from "./measurements"
 import { Button } from "@/components/ui/button"
 import Taphonomy from "./Taphonomy"
 import { useBoneData } from "./context/BoneDataContext"
-import { boneCategories } from "../metrics/handsfeet" // Update this import path
+import { boneCategories } from "../../components/lists/handsfeet" // Update this import path
  
 function InnerRight() {
     const { selectedBone } = useBoneData();

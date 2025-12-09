@@ -12,7 +12,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useBoneData } from "./context/BoneDataContext";
-import { showBoneConditionInfo } from "@/components/boneConditionInfo";
+import { showBoneConditionInfo } from "@/components/editor/boneConditionInfo";
 import { useConfirmDialog } from "@/components/confirm-dialog-context";
 
 function Taphonomy(props) {

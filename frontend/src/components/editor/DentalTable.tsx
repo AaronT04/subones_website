@@ -1,7 +1,7 @@
 "use client";
 
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from "@/components/ui/table";
-import { tooth_layout } from "@/components/editor/skeleton-editor/tooth_layout";
+import { tooth_layout } from "@/components/lists/tooth_layout";
 import React from "react";
 import type {ISkull, IDental} from "@/lib/api/componentTypes"
 import {produce} from "immer"

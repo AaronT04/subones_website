@@ -1,7 +1,7 @@
 "use client"
 
-import { metrics_list } from "../metrics/fullmetricslist"
-import { boneCategories } from "../metrics/handsfeet" // Update this import path
+import { metrics_list } from "../../components/lists/fullmetricslist"
+import { boneCategories } from "../../components/lists/handsfeet" // Update this import path
 import React, {useState, useContext} from 'react';
 import { useRouter } from 'next/navigation'
 import * as PageManager from "@/lib/pageManager";

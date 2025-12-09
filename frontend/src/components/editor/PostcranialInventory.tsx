@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/tabs";
 import { Table, TextField, Select } from "@radix-ui/themes";
 import { useState } from "react";
-import type { PostcranialCategory, PostcranialRow } from "@/components/editor/skeleton-editor/postcranial-inventory-list";
-import { postcranial_inventory_list, BoxTypeEnum, doesNotRequireBoneSideDropdown, excludeCategoriesFromTaphonomy } from "@/components/editor/skeleton-editor/postcranial-inventory-list";
-import "@/components/editor/skeleton-editor//InventoryStyles.css";
-import Taphonomy from "@/components/temp-allcomponents/SmallTaphonomy";
-import { filterTaphonomyDropdownTags } from "@/components/editor/skeleton-editor/postcranial-inventory-list";
-import TaphonomyDropdown from '@/components/temp-allcomponents/TaphonomyDropdown'
-import InventorySelect from "@/components/temp-allcomponents/InventorySelect";
+import type { PostcranialCategory, PostcranialRow } from "@/components/lists/postcranial-inventory-list";
+import { postcranial_inventory_list, BoxTypeEnum, doesNotRequireBoneSideDropdown, excludeCategoriesFromTaphonomy } from "@/components/lists/postcranial-inventory-list";
+import "@/components/lists/InventoryStyles.css";
+import Taphonomy from "@/components/editor/SmallTaphonomy";
+import { filterTaphonomyDropdownTags } from "@/components/lists/postcranial-inventory-list";
+import TaphonomyDropdown from '@/components/editor/TaphonomyDropdown'
+import InventorySelect from "@/components/editor/InventorySelect";
 import {produce} from 'immer'
 
 type PostcranialType = {

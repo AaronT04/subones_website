@@ -1,5 +1,5 @@
 
-import Dental from '../../components/temp-allcomponents/Dental'
+import Dental from '../../components/editor/Dental'
 import { useDentalEditorContext } from "./DentalEditorContext"
 
 function Right(props) {

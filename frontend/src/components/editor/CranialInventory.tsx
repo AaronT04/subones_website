@@ -2,12 +2,12 @@
 import { useState } from "react";
 import { Table, TextField } from "@radix-ui/themes";
 import * as Checkbox from "@radix-ui/react-checkbox";
-import { cranial_inventory_list, CranialInventoryList, CranialInventoryRow } from "@/components/editor/skeleton-editor/cranial-inventory-list";
+import { cranial_inventory_list, CranialInventoryList, CranialInventoryRow } from "@/components/lists/cranial-inventory-list";
 import SmallTaphonomy from "./SmallTaphonomy"
-import "@/components/editor/skeleton-editor/InventoryStyles.css"
-import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "@/components/editor/skeleton-editor/cranial-inventory-list";
+import "@/components/lists/InventoryStyles.css"
+import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "@/components/lists/cranial-inventory-list";
 import InventorySelect from "./InventorySelect";
-import TaphonomyDropdown from "@/components/temp-allcomponents/TaphonomyDropdown"
+import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
 import type {IInventory, ISkull, IAllTaphonomy} from "@/lib/api/componentTypes"
 
 interface CranialInventoryProps {
