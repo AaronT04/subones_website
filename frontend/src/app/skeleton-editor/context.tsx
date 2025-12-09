@@ -1,6 +1,6 @@
 import React, {ReactNode, useContext, createContext, useEffect, useState} from 'react'
 import type {LocalityData, TaphonomyData, Inventory, FormData, DentalInventory, DecodedToken, SkeletonData, PostcranialMetrics, CranialNonmetric} from "@/lib/api/dataTypes"
-import type {IForm, ILocality, ICraniometrics, ISkeleton, IAllTaphonomy, IInventory, IDental, ICranialNonmetrics, IPostcranialMetrics} from "@/lib/api/componentTypes"
+import type {IForm, ILocality, ICraniometrics, ISkeleton, IAllTaphonomy, IInventory, IDental, ICranialNonmetrics, IPostcranialMetrics, GenericEditorContextType} from "@/lib/api/componentTypes"
 import {loadUser} from "@/lib/loadUser"
 import * as PageManager from "@/lib/pageManager"
 import {saveSpecimen} from "@/lib/api/save/saveSpecimen"
@@ -22,11 +22,8 @@ import {loadDental} from "@/lib/api/load/loadDental"
 import { loadSkeleton } from '@/lib/api/load/loadSkeleton'
 import { loadPostcranialMetrics } from '@/lib/api/load/loadPostcranialMetrics'
 
-interface SkeletonEditorContextType {
-    userData : DecodedToken | undefined
+interface SkeletonEditorContextType extends GenericEditorContextType {
     skeletonContext : ISkeleton
-    formContext : IForm
-    localityContext : ILocality
     craniometricsContext : ICraniometrics
     taphonomyContext : IAllTaphonomy
     cranialInventoryContext : IInventory
@@ -70,15 +67,15 @@ export function SkeletonEditorContextProvider({children} : {children : ReactNode
     const craniometricsContext : ICraniometrics = {craniumMetrics, updateCranium : setCraniumMetrics,
             mandibleMetrics, updateMandible: setMandibleMetrics};
     const [allTaphonomy, setAllTaphonomy] = useState<Record<string, TaphonomyData>>({});
-    const taphonomyContext : IAllTaphonomy = {allTaphonomy, update: setAllTaphonomy}
+    const taphonomyContext : IAllTaphonomy = {data: allTaphonomy, update: setAllTaphonomy}
     const [c_inventory, setCInventory] = useState<Record<string, Inventory>>({});
-    const cranialInventoryContext : IInventory = {inventory: c_inventory, update: setCInventory};
+    const cranialInventoryContext : IInventory = {data: c_inventory, update: setCInventory};
     const [p_inventory, setPInventory] = useState<Record<string, Inventory>>({});
-    const postcranialInventoryContext : IInventory = {inventory: p_inventory, update: setPInventory};
+    const postcranialInventoryContext : IInventory = {data: p_inventory, update: setPInventory};
     const [allNonmetrics, setAllNonmetrics] = useState<Record<string, CranialNonmetric>>({})
-    const cranialNonmetricsContext : ICranialNonmetrics = {allNonmetrics, update: setAllNonmetrics}
+    const cranialNonmetricsContext : ICranialNonmetrics = {data: allNonmetrics, update: setAllNonmetrics}
     const [pc_metrics, setPcMetrics] = useState<PostcranialMetrics>({})
-    const postcranialMetricsContext : IPostcranialMetrics = {metrics: pc_metrics, update: setPcMetrics}
+    const postcranialMetricsContext : IPostcranialMetrics = {data: pc_metrics, update: setPcMetrics}
     const [dentInv, setDentInv] = useState<Record<string, DentalInventory>>({});
     const [morphology, setMorphology] = useState<Record<string, Record<string, number | null>>>({});
     const dentalContext : IDental = {inventory: dentInv, updateInventory: setDentInv, morphology, updateMorphology: setMorphology}
@@ -113,11 +110,11 @@ export function SkeletonEditorContextProvider({children} : {children : ReactNode
         const resultSpecimenId = await saveSpecimen(getSpecimenBody(formContext, localityContext, userData), specimenId);
         setSpecimenId(resultSpecimenId);
         await saveCraniometrics(craniometricsContext, resultSpecimenId);
-        await saveNonmetrics(cranialNonmetricsContext.allNonmetrics, resultSpecimenId);
-        await saveInventory("cranial", cranialInventoryContext.inventory, resultSpecimenId);
-        await saveInventory("postcranial", postcranialInventoryContext.inventory, resultSpecimenId);
-        await savePostcranialMetrics(postcranialMetricsContext.metrics, resultSkeletonId);
-        await saveAllTaphonomy(taphonomyContext.allTaphonomy, resultSpecimenId);
+        await saveNonmetrics(cranialNonmetricsContext.data, resultSpecimenId);
+        await saveInventory("cranial", cranialInventoryContext.data, resultSpecimenId);
+        await saveInventory("postcranial", postcranialInventoryContext.data, resultSpecimenId);
+        await savePostcranialMetrics(postcranialMetricsContext.data, resultSkeletonId);
+        await saveAllTaphonomy(taphonomyContext.data, resultSpecimenId);
         await saveDentalInventory(dentalContext.inventory, resultSpecimenId);
         await saveMorphology(dentalContext.morphology, resultSpecimenId);
         PageManager.switchToEditModeAfterSave("skeleton-editor", resultSkeletonId);

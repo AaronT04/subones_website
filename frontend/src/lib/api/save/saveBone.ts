@@ -1,4 +1,5 @@
-export const saveBone = async (boneBody, boneId, token) => {
+export const saveBone = async (boneBody, boneId) => {
+    const token = localStorage.getItem("token");
     const boneMethod = boneId && boneId > 0 ? "PUT" : "POST";
     const boneUrl =
       boneMethod === "PUT"

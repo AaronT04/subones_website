@@ -1,5 +1,5 @@
 import type { DecodedToken, FormData, LocalityData, DentalInventory } from "@/lib/api/dataTypes"
-import type { IForm, ILocality, IDental } from "@/lib/api/componentTypes"
+import type { IForm, ILocality, IDental, GenericEditorContextType } from "@/lib/api/componentTypes"
 import {loadUser} from "@/lib/loadUser"
 import * as PageManager from "@/lib/pageManager"
 
@@ -12,10 +12,7 @@ import { loadSpecimen } from "@/lib/api/load/loadSpecimen"
 import { loadDental } from "@/lib/api/load/loadDental"
 
 
-interface DentalEditorContextType {
-    userData : DecodedToken | undefined
-    formContext : IForm
-    localityContext : ILocality
+interface DentalEditorContextType extends GenericEditorContextType {
     dentalContext : IDental
     handleSave: () => Promise<void>;
 }

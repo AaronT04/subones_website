@@ -8,6 +8,16 @@ export type SpecimenBody = {
     region: string
     sex: string
     user_id: number | null
+
+}
+
+export type BoneBody = {
+    bone_id?: number
+    skeleton_id: number | null,
+    bone_type: string,
+    bone_name: string,
+    condition: "",
+    specimen_id: number
 }
 
 export type SkullBody = {

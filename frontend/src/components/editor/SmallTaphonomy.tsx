@@ -25,7 +25,7 @@ interface SmallTaphonomyProps {
 function SmallTaphonomy(props : SmallTaphonomyProps) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
     let [boneCond, setBoneCond] = useState("");
-    const taphonomy = props.taphonomyContext.allTaphonomy[props.boneName] || defaultTaphonomy;
+    const taphonomy = props.taphonomyContext.data[props.boneName] || defaultTaphonomy;
     const boneName = props.boneName;
     const update = props.taphonomyContext.update;
     const confirm = useConfirmDialog();

@@ -6,7 +6,7 @@ export async function loadNonmetrics(specimenId : number, ctx : ICranialNonmetri
         if(res.ok) {
             const body : Record<string, string> = await res.json();
             ctx.update({
-                ...ctx.allNonmetrics,
+                ...ctx.data,
                 [endpoint]: body
             })
         }

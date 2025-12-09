@@ -1,50 +1,34 @@
-"use client"
+import { Suspense } from "react";
+import { useBoneEditorContext } from "./context";
+import { boneCategories } from "@/components/lists/handsfeet"
+import SmallTaphonomy from "@/components/editor/SmallTaphonomy";
+import Measurements from "@/components/editor/Measurements";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { Suspense } from 'react';
 
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs"
-import Measurements from "./measurements"
-import { Button } from "@/components/ui/button"
-import Taphonomy from "./Taphonomy"
-import { useBoneData } from "./context/BoneDataContext"
-import { boneCategories } from "@/components/lists/handsfeet" // Update this import path
- 
 function InnerRight() {
-    const { selectedBone } = useBoneData();
-
-    // Check if the bone is in hands/feet categories (excluding Talus and Calcaneus)
+    const {boneContext, taphonomyContext, measurementsContext} = useBoneEditorContext();
+    const boneName = boneContext.data.boneName;
     const isHandsAndFeetBone = () => {
-        if (!selectedBone || selectedBone === "Talus" || selectedBone === "Calcaneus") {
+        if (!boneName || boneName === "Talus" || boneName === "Calcaneus") {
             return false;
         }
         
         return boneCategories.some(category => 
-            category.items.includes(selectedBone)
+            category.items.includes(boneName)
         );
     };
-
-    return(
+     return(
         <div className = "flex flex-col h-screen col-span-2 lg:col-span-4 space-y-4 bg-gray-100/10">
-            
-            <div className="w-full flex h-[10%] px-20"><h1>{selectedBone}</h1></div>
-
+            <div className="w-full flex h-[10%] px-20"><h1>{boneName}</h1></div>
             <div className="flex justify-center px-4">
-                {selectedBone === "Skull" ? (
-                    // Skull case: just render Measurements without tabs
-                    <div className="bone-container w-full">
-                        <Measurements />
-                    </div>
-                ) : isHandsAndFeetBone() ? (
+                {isHandsAndFeetBone() ? (
                     // Hands and feet bones (except Talus/Calcaneus): only Taphonomy, no tabs
                     <div className="bone-container w-full">
-                        <Taphonomy />
+                        <SmallTaphonomy boneName={boneName} taphonomyContext={taphonomyContext}/>
                     </div>
                 ) : (
+
                     // Other bones (including Talus/Calcaneus): render with tabs structure
                     <Tabs 
                         defaultValue="measurements" 
@@ -56,19 +40,20 @@ function InnerRight() {
                         </TabsList>
                         <TabsContent value="measurements">
                             <div className="bone-container">
-                                <Measurements />
+                                <Measurements boneName={boneName} measurementsContext={measurementsContext} />
                             </div>
                         </TabsContent>
                         <TabsContent value="taphonomy">
                             <div className="bone-container">
-                                <Taphonomy />
+                                <SmallTaphonomy boneName={boneName} taphonomyContext={taphonomyContext}/>
                             </div>
                         </TabsContent>
                     </Tabs>
-                )}
+                )
+                }
             </div>
-        </div>   
-    );
+        </div>
+     );
 }
 
 function Right() {

@@ -2,7 +2,7 @@
 
 import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react'
 import type {LocalityData, TaphonomyData, Inventory, FormData, DentalInventory, DecodedToken, SkullData, CranialNonmetric} from "@/lib/api/dataTypes"
-import type {IForm, ILocality, ICraniometrics, IAllTaphonomy, IInventory, ISkull, IDental, ICranialNonmetrics} from "@/lib/api/componentTypes"
+import type {IForm, ILocality, ICraniometrics, IAllTaphonomy, IInventory, ISkull, IDental, ICranialNonmetrics, GenericEditorContextType} from "@/lib/api/componentTypes"
 import { loadUser } from '@/lib/loadUser'
 import * as PageManager from "@/lib/pageManager"
 import {saveSpecimen} from "@/lib/api/save/saveSpecimen"
@@ -22,19 +22,16 @@ import {loadInventory} from "@/lib/api/load/loadInventory"
 import {loadAllTaphonomy} from "@/lib/api/load/loadTaphonomy"
 import {loadDental} from "@/lib/api/load/loadDental"
 
-interface SkullContextType {
-    userData : DecodedToken | undefined
+interface SkullContextType extends GenericEditorContextType {
     skullContext : ISkull
-    formContext : IForm
-    localityContext : ILocality
     craniometricsContext : ICraniometrics
     taphonomyContext : IAllTaphonomy
     cranialInventoryContext : IInventory
     cranialNonmetricsContext : ICranialNonmetrics
     dentalContext : IDental
     handleSave: () => Promise<void>;
-
 }
+
 const SkullContext = createContext<SkullContextType | undefined>(undefined);
 
 export function SkullContextProvider({children} : {children : ReactNode}) {
@@ -67,11 +64,11 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
     const craniometricsContext : ICraniometrics = {craniumMetrics, updateCranium : setCraniumMetrics,
          mandibleMetrics, updateMandible: setMandibleMetrics};
     const [allTaphonomy, setAllTaphonomy] = useState<Record<string, TaphonomyData>>({});
-    const taphonomyContext : IAllTaphonomy = {allTaphonomy, update: setAllTaphonomy}
+    const taphonomyContext : IAllTaphonomy = {data: allTaphonomy, update: setAllTaphonomy}
     const [inventory, setInventory] = useState<Record<string, Inventory>>({});
-    const cranialInventoryContext : IInventory = {inventory, update: setInventory};
+    const cranialInventoryContext : IInventory = {data: inventory, update: setInventory};
     const [allNonmetrics, setAllNonmetrics] = useState<Record<string, CranialNonmetric>>({})
-    const cranialNonmetricsContext : ICranialNonmetrics = {allNonmetrics, update: setAllNonmetrics}
+    const cranialNonmetricsContext : ICranialNonmetrics = {data: allNonmetrics, update: setAllNonmetrics}
     const [dentInv, setDentInv] = useState<Record<string, DentalInventory>>({});
     const [morphology, setMorphology] = useState<Record<string, Record<string, number | null>>>({});
     const dentalContext : IDental = {inventory: dentInv, updateInventory: setDentInv, morphology, updateMorphology: setMorphology}
@@ -92,9 +89,9 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
         let resultSpecimenId = await saveSpecimen(specimenBody, specimenId);
         await saveSkull(skullContext, resultSpecimenId)
         await saveCraniometrics(craniometricsContext, resultSpecimenId);
-        await saveNonmetrics(cranialNonmetricsContext.allNonmetrics, resultSpecimenId);
-        await saveInventory("cranial", cranialInventoryContext.inventory, resultSpecimenId);
-        await saveAllTaphonomy(taphonomyContext.allTaphonomy, resultSpecimenId);
+        await saveNonmetrics(cranialNonmetricsContext.data, resultSpecimenId);
+        await saveInventory("cranial", cranialInventoryContext.data, resultSpecimenId);
+        await saveAllTaphonomy(taphonomyContext.data, resultSpecimenId);
         await saveDentalInventory(dentalContext.inventory, resultSpecimenId);
         await saveMorphology(dentalContext.morphology, resultSpecimenId);
         PageManager.switchToEditModeAfterSave("skull-editor", resultSpecimenId);

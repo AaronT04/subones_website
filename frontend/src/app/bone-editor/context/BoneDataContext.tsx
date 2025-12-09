@@ -6,7 +6,7 @@ import * as PageManager from "@/lib/pageManager"
 import {saveSpecimen} from "@/lib/api/save/saveSpecimen"
 import {saveBone} from "@/lib/api/save/saveBone"
 import type {FormData, LocalityData, TaphonomyData} from '@/lib/api/dataTypes'
-import { SpecimenBody } from '@/lib/api/apiTypes';
+import { BoneBody, SpecimenBody } from '@/lib/api/apiTypes';
 
 
 interface BoneDataContextType {
@@ -148,7 +148,7 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
             const boneRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bone/bySpecimen/${specimenId}`);
             if(!boneRes.ok) throw new Error(`Failed to fetch bone: ${boneRes.status}`);
             const boneData = await boneRes.json();
-            console.log(boneData);
+            //console.log(boneData);
             setBoneId(boneData.bone_id);
             const measurementsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bone_metrics/${boneData.bone_id}}`);
             const measurementsData = await measurementsRes.json();
@@ -189,6 +189,11 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
             return;
         }
 
+        if(!boneType || !selectedBone) {
+            alert('Invalid bone name');
+            return;
+        }
+
         setIsSaving(true);
         
         try {
@@ -219,14 +224,14 @@ export function BoneDataProvider({ children }: { children: ReactNode }) {
             console.log(resultSpecimenID);
             //save taxonomy
             //save bone
-            const boneBody = {
+            const boneBody : BoneBody = {
                 skeleton_id: null,
                 bone_type: boneType,
                 bone_name: selectedBone,
                 condition: "",
                 specimen_id: resultSpecimenID
             }
-            let resultBoneID = await saveBone(boneBody, boneId, token);
+            let resultBoneID = await saveBone(boneBody, boneId);
             setBoneId(resultBoneID);
             //save measurements
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bone_metrics/save`, {

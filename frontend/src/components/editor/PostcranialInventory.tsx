@@ -48,7 +48,7 @@ export default function PostcranialInventory(props : PostcranialInventoryProps) 
     const [selectedBone, setSelectedBone] = useState("");
     const [selectedRow, setSelectedRow] = useState<PostcranialRow | null>(null);
 
-    const inventory = props.postcranialInventoryContext.inventory;
+    const inventory = props.postcranialInventoryContext.data;
     const update = props.postcranialInventoryContext.update;
 
   

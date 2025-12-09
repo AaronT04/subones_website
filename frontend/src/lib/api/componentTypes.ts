@@ -1,4 +1,4 @@
-import type {FormData, LocalityData, PostcranialMetrics, Craniometrics, Measurement, TaphonomyData, Inventory, DentalInventory, SkullData, SkeletonData, Morphology, CranialNonmetric} from "@/lib/api/dataTypes"
+import type {FormData, DecodedToken, LocalityData, PostcranialMetrics, Craniometrics, Measurements, TaphonomyData, Inventory, DentalInventory, SkullData, SkeletonData, Morphology, CranialNonmetric, Bone} from "@/lib/api/dataTypes"
 import React from 'react'
 
 export interface IForm extends FormData {
@@ -22,29 +22,33 @@ export interface ISkeleton extends SkeletonData {
     update: React.Dispatch<React.SetStateAction<SkeletonData>>
 }
 
-export interface IPostcranialMetrics {
-    metrics : PostcranialMetrics
-    update: React.Dispatch<React.SetStateAction<PostcranialMetrics>>
-}
+export interface IPostcranialMetrics extends GenericComponentInterface<PostcranialMetrics> {}
 
-export interface IAllTaphonomy {
-    allTaphonomy : Record<string, TaphonomyData>
-    update : React.Dispatch<React.SetStateAction<Record<string, TaphonomyData>>>
-}
+export interface IAllTaphonomy extends GenericComponentInterface<Record<string, TaphonomyData>> {}
 
-export interface IInventory {
-    inventory: Record<string, Inventory>
-    update : React.Dispatch<React.SetStateAction<Record<string, Inventory>>>
-}
+export interface IInventory extends GenericComponentInterface<Record<string, Inventory>> {}
 
-export interface ICranialNonmetrics {
-    allNonmetrics : Record<string, CranialNonmetric>
-    update : React.Dispatch<React.SetStateAction<Record<string, CranialNonmetric>>>
-}
+export interface IMeasurements extends GenericComponentInterface<Measurements> {}
+
+export interface ICranialNonmetrics extends GenericComponentInterface<Record<string, CranialNonmetric>> {}
 
 export interface IDental {
     inventory : Record<string, DentalInventory>
     updateInventory: React.Dispatch<React.SetStateAction<Record<string, DentalInventory>>>
     morphology : Morphology
     updateMorphology: React.Dispatch<React.SetStateAction<Morphology>>
+}
+
+export interface IBone extends GenericComponentInterface<Bone> {}
+
+export interface GenericEditorContextType {
+    userData : DecodedToken | undefined
+    formContext : IForm
+    localityContext : ILocality
+    handleSave : () => Promise<void> 
+}
+
+export interface GenericComponentInterface<T> {
+    data : T
+    update : React.Dispatch<React.SetStateAction<T>>
 }

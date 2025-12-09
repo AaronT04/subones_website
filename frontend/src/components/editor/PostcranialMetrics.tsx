@@ -36,7 +36,7 @@ interface PostcranialMetricsProps {
 
 export default function PostcranialMetrics(props: PostcranialMetricsProps) {
     const infoPanel = useConfirmDialog();
-    const metrics = props.postcranialMetricsContext.metrics;
+    const metrics = props.postcranialMetricsContext.data;
     const update = props.postcranialMetricsContext.update;
     const displayInfo = async(boneName : string, info : string) => {
         const ok = await infoPanel({

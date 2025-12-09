@@ -1,4 +1,4 @@
-import type {SpecimenBody, MorphologyBody} from "@/lib/api/apiTypes"
+import type {SpecimenBody, MorphologyBody, BoneBody} from "@/lib/api/apiTypes"
 import type {FormData, LocalityData, DecodedToken, Craniometrics, Morphology, DentalInventory} from "@/lib/api/dataTypes"
 
 export const getSpecimenBody = (formContext: FormData, localityContext : LocalityData, userData : DecodedToken) => {
@@ -14,6 +14,17 @@ export const getSpecimenBody = (formContext: FormData, localityContext : Localit
         user_id: userData.id
     }
     return specimenBody;
+}
+
+export const getBoneBody = (boneName : string, specimenId : number) => {
+    const boneBody : BoneBody = {
+                    skeleton_id: null,
+                    bone_type: boneName.toLowerCase().replace(/\s+/g, '_'),
+                    bone_name: boneName,
+                    condition: "",
+                    specimen_id: specimenId
+                }
+    return boneBody;
 }
 
 

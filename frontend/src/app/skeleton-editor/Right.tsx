@@ -8,12 +8,12 @@ import {
 
 import {Table, TextField} from '@radix-ui/themes'
 import {craniometrics_list} from "@/components/lists/craniometrics-list"
-import Craniometrics from "../../components/editor/Craniometrics"
-import CranialNonmetrics from "../../components/editor/CranialNonmetrics"
-import CranialInventory from '../../components/editor/CranialInventory'
+import Craniometrics from "@/components/editor/Craniometrics"
+import CranialNonmetrics from "@/components/editor/CranialNonmetrics"
+import CranialInventory from '@/components/editor/CranialInventory'
 import PostcranialInventory from "@/components/editor/PostcranialInventory"
 import PostcranialMetrics from "@/components/editor/PostcranialMetrics"
-import Dental from '../../components/editor/Dental'
+import Dental from '@/components/editor/Dental'
 import { useSkeletonEditorContext } from "./context"
 
 function Right(props) {

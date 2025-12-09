@@ -24,7 +24,7 @@ interface CranialNonmetricsProps{
 
 function CranialNonmetrics(props : CranialNonmetricsProps) {
     const update = props.cranialNonmetricsContext.update;
-    const allNonmetrics = props.cranialNonmetricsContext.allNonmetrics;
+    const allNonmetrics = props.cranialNonmetricsContext.data;
     const hasCranium = props.skullContext ? props.skullContext.hasCranium : true;
     const hasMandible = props.skullContext ? props.skullContext.hasMandible : true;
 

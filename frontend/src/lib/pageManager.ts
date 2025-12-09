@@ -12,12 +12,14 @@ export function connectRouter(r : AppRouterInstance) {
 
 export function handleEditBone (id : number, boneName : string) {
     localStorage.setItem("bone-editor", JSON.stringify({db_id: id, mode: "Edit", boneName: boneName}));
-    router.push(`/bone-editor?boneName=${encodeURIComponent(boneName)}`);
+    //router.push(`/bone-editor?boneName=${encodeURIComponent(boneName)}`);
+    router.push("/bone-editor-refactor");
 }
 export function handleCreateBone (boneName : string) {
     //console.log("handleCreateBone called");
     localStorage.setItem("bone-editor", JSON.stringify({db_id: -1, mode: "Create", boneName: boneName}));
-    router.push(`/bone-editor?boneName=${encodeURIComponent(boneName)}`);
+    //router.push(`/bone-editor?boneName=${encodeURIComponent(boneName)}`);
+    router.push("/bone-editor-refactor");
 }
 export function handleEditSkeleton (id : number) {
     localStorage.setItem("skeleton-editor", JSON.stringify({db_id: id, mode: "Edit"}));

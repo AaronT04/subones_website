@@ -1,17 +1,17 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import {useRouter} from 'next/navigation'
 import "@/app/globals.css"
 import Specimen from "@/components/editor/Specimen"
 import Taxonomy from "@/components/editor/Taxonomy"
 import Locality from "@/components/editor/Locality"
-import { useSkullContext } from "./context/SkullContext"
+import { useBoneEditorContext } from "./context"
 import {useState} from 'react'
 
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -19,7 +19,7 @@ import {
 
 function Left() {
     const [loading, setLoading] = useState(false);
-    const { handleSave, localityContext, formContext, skullContext, userData} = useSkullContext();
+    const { userData, formContext, localityContext, handleSave } = useBoneEditorContext();
     
     const router = useRouter();
     if (loading) {
@@ -39,25 +39,9 @@ function Left() {
                 </Button>
             </div>
 
-            <div className="flex flex-col items-center w-[90%] h-[350px]">
-                <Specimen formContext={formContext} userData={userData}/>
-                <div className="flex flex-row w-full justify-center">
-                    <label className="mt-[10px] mx-[30px]">Has Cranium:</label>
-                    <input checked={skullContext.hasCranium} 
-                    onChange={(e) => skullContext.update(prev =>
-                        ({...prev, hasCranium: e.target.checked}))}
-                        type="checkbox"/>
-                </div>
-                <br/>
-                <div className="flex flex-row w-full justify-center">
-                    <label className="mt-[10px] mx-[30px]">Has Mandible:</label>
-                    <input checked={skullContext.hasMandible} 
-                    onChange={(e) => skullContext.update(prev =>
-                        ({...prev, hasMandible: e.target.checked}))}
-                        type="checkbox"/>
-                </div>
+            <div className="w-[90%] py-20">
+                <Specimen userData={userData} formContext={formContext}/>
             </div>
-            
             
 
             <div className="flex-col w-full justify-center items-center max-w-md p-4">
@@ -95,7 +79,7 @@ function Left() {
                         <DialogHeader>
                             <DialogTitle>Locality Information</DialogTitle>
                         </DialogHeader>
-                        <Locality localityContext={localityContext} formContext={formContext}/>
+                        <Locality formContext={formContext} localityContext={localityContext}/>
                     </DialogContent>
                 </Dialog>
 
@@ -120,7 +104,5 @@ function Left() {
         </div>
     );
 } 
-
-
 
 export default Left

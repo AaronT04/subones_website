@@ -15,7 +15,7 @@ interface InventorySelectProps {
 
 export default function InventorySelect(props : InventorySelectProps) {
 
-    const inventory = props.inventoryContext.inventory;
+    const inventory = props.inventoryContext.data;
     const entryName = props.entryName;
     const update = props.inventoryContext.update;
 

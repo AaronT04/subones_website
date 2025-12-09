@@ -16,6 +16,10 @@ export type Craniometrics = {
   mandibleMetrics: Record<string, number>
 }
 
+export type Bone = {
+    boneName : string
+}
+
 export type SkeletonData = {
     skeleton_name: string
 }
@@ -67,10 +71,7 @@ export const defaultTaphonomy : TaphonomyData = {
     comments: ""
 }
 
-export type Measurement = {
-    metric_name: string,
-    metric_value: number
-}
+export type Measurements = Record<string, number>
 
 export type Inventory = {
     inv_entry_name: string

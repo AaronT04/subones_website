@@ -21,7 +21,7 @@ const getImage = (trait, code) => {
 export default function Macromorphoscopics(props : MacromorphoscopicsProps) {
 
     const update = props.cranialNonmetricsContext.update;
-    const allNonmetrics = props.cranialNonmetricsContext.allNonmetrics;
+    const allNonmetrics = props.cranialNonmetricsContext.data;
 
     let [trait, selectTrait] = useState("Anterior Nasal Spine");
     let [code, selectCode] = useState(0);
