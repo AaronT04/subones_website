@@ -3,7 +3,7 @@ import Left from "./Left"
 import Right from "./Right"
 import ResponsiveLayout from "@/components/editor/responsiveLayout"
 import { Suspense } from "react"
-import {DentalEditorContextProvider} from "./DentalEditorContext"
+import {DentalEditorContextProvider} from "./context"
 
 function Left2() {
     return (

@@ -12,11 +12,11 @@ import Craniometrics from "@/components/editor/Craniometrics"
 import CranialNonmetrics from "@/components/editor/CranialNonmetrics"
 import CranialInventory from '@/components/editor/CranialInventory'
 import Dental from '@/components/editor/Dental'
-import { useSkullContext } from "./context/SkullContext"
+import { useSkullEditorContext } from "./context"
 
 function Right(props) {
     const { skullContext,  craniometricsContext, cranialNonmetricsContext,
-         cranialInventoryContext, taphonomyContext, dentalContext} = useSkullContext();
+         cranialInventoryContext, taphonomyContext, dentalContext} = useSkullEditorContext();
     return(
             <div>
                 <Tabs defaultValue="Craniometrics" className="relative w-full">

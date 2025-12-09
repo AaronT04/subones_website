@@ -1,4 +1,4 @@
-import type {FormData, DecodedToken, LocalityData, PostcranialMetrics, Craniometrics, Measurements, TaphonomyData, Inventory, DentalInventory, SkullData, SkeletonData, Morphology, CranialNonmetric, Bone} from "@/lib/api/dataTypes"
+import type {FormData, DecodedToken, LocalityData, PostcranialMetrics, Craniometrics, Measurements, TaphonomyData, Inventory, DentalInventory, SkullData, SkeletonData, Morphology, CranialNonmetrics, Bone} from "@/lib/api/dataTypes"
 import React from 'react'
 
 export interface IForm extends FormData {
@@ -30,7 +30,7 @@ export interface IInventory extends GenericComponentInterface<Record<string, Inv
 
 export interface IMeasurements extends GenericComponentInterface<Measurements> {}
 
-export interface ICranialNonmetrics extends GenericComponentInterface<Record<string, CranialNonmetric>> {}
+export interface ICranialNonmetrics extends GenericComponentInterface<CranialNonmetrics> {}
 
 export interface IDental {
     inventory : Record<string, DentalInventory>

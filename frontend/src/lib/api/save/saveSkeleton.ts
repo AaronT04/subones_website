@@ -12,14 +12,14 @@ export async function saveSkeleton(skeletonId : number, specimenId : number, ctx
         skeleton_type: "full",
         skeleton_name: ctx.skeleton_name
     }
-    const skeletonMethod = skeletonId && skeletonId > 0 ? "PUT" : "POST";
+
     const skeletonUrl =
-    skeletonMethod === "PUT"
+    skeletonId && skeletonId > 0 
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/skeleton/${skeletonId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/api/skeleton`;
 
     const skeletonRes = await fetch(skeletonUrl, {
-    method: skeletonMethod,
+    method: "POST",
     headers: { "Content-Type": "application/json",
         "authorization": `Bearer ${token}`
         },

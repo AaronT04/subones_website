@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import {produce} from "immer"
 import type { IAllTaphonomy } from "@/lib/api/componentTypes";
 import {defaultTaphonomy} from "@/lib/api/dataTypes"
-import {useEffect} from 'react'
 import {
     Select,
     SelectContent,
@@ -17,14 +16,13 @@ import {
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
 import { showBoneConditionInfo } from "@/components/editor/boneConditionInfo";
 
-interface SmallTaphonomyProps {
+interface TaphonomyProps {
     taphonomyContext: IAllTaphonomy
     boneName: string
 }
 
-function SmallTaphonomy(props : SmallTaphonomyProps) {
+function Taphonomy(props : TaphonomyProps) {
     let [activeSubmenu, setActiveSubmenu] = useState("bone color");
-    let [boneCond, setBoneCond] = useState("");
     const taphonomy = props.taphonomyContext.data[props.boneName] || defaultTaphonomy;
     const boneName = props.boneName;
     const update = props.taphonomyContext.update;
@@ -57,7 +55,10 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
         if(activeSubmenu == "bone color") {
             return <div>
                 <div className="p-2.5 flex flex-col justify-start items-start">
-                {taphonomy_options.bone_color.map((color, i) => <HorizontalRadioButton name={color} key={i} onChange={() => 
+                {taphonomy_options.bone_color.map((color, i) => <HorizontalRadioButton value={color} key={i}
+                name={"taph-bone-color-radio"}
+                checked={taphonomy?.bone_color === color}
+                onChange={() => 
                 update(prev =>
                     produce(prev, draft => {
                         draft[boneName] = {
@@ -139,7 +140,7 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                 <div className = "w-1/2 justify-left">
                     <div className="flex items-center">
                 <label htmlFor="bone-cond">Bone Condition: </label>
-                <Select value={String(taphonomy?.bone_condition ?? "")} onValueChange={(value) => {setBoneCond(value); 
+                <Select value={String(taphonomy?.bone_condition ?? "")} onValueChange={(value) => {
                 update(prev =>
                         produce(prev, draft => {
                             draft[boneName] = {
@@ -163,13 +164,12 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
                 <Button className="bg-maroon hover:bg-maroon/90 ml-[20]" onClick={() => showBoneConditionInfo(confirm)}>?</Button>
             </div>
                     <div className="flex mt-4 gap-2">
-                        <input type="checkbox" checked={surfChecked} onChange={ () => {
-                            setSurfChecked(!surfChecked);
+                        <input type="checkbox" checked={taphonomy?.surface_exposure} onChange={ (e) => {
                             update(prev =>
                                 produce(prev, draft => {
                                     draft[boneName] = {
                                         ...taphonomy,
-                                        surface_exposure: !surfChecked
+                                        surface_exposure: e.target.checked
                                     }
                                 }))}}/>
                         <p className = "" >Surface Exposure </p>
@@ -191,4 +191,4 @@ function SmallTaphonomy(props : SmallTaphonomyProps) {
         );
     
 }
-export default SmallTaphonomy
+export default Taphonomy

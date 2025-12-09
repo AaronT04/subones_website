@@ -34,7 +34,7 @@ export type LocalityData = {
   region: string;
 }
 
-export type CranialNonmetric = Record<string, string>
+export type CranialNonmetrics = Record<string, Record<string, string>>
 
 export interface TaphonomyData {
     bone_name : string,

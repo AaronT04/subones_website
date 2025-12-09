@@ -3,7 +3,7 @@ import Left from "./Left"
 import Right from "./Right"
 import ResponsiveLayout from "@/components/editor/responsiveLayout"
 import { Suspense } from "react"
-import {SkullContextProvider} from "./context/SkullContext"
+import {SkullEditorContextProvider} from "./context"
 
 function Left2() {
     return (
@@ -28,9 +28,9 @@ function HomeContent() {
 export default function Home() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-                <SkullContextProvider>
+                <SkullEditorContextProvider>
                     <HomeContent />
-                </SkullContextProvider>
+                </SkullEditorContextProvider>
         </Suspense>
     )
 }

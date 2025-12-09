@@ -133,7 +133,6 @@ router.get('/api/bone/bySpecimen/:specimen_id', (req, res) => {
   catch(error) {
     console.log(error);
   }
-  
 });
 
 module.exports = router;

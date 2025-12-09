@@ -1,7 +1,7 @@
-import type { CranialNonmetric } from "../dataTypes";
+import type { CranialNonmetrics } from "../dataTypes";
 import {extractColumnsAndSave} from "../extractColumnsAndSave";
 
-export async function saveNonmetrics(data : Record<string, CranialNonmetric>, specimenId : number) {
+export async function saveNonmetrics(data : CranialNonmetrics, specimenId : number) {
     if (!specimenId || specimenId < 1) throw new Error("Invalid specimen ID");
 
     await extractColumnsAndSave<string>("facial", data["facial"], specimenId);

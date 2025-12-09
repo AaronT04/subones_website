@@ -21,7 +21,7 @@ interface DentalProps {
     dentalContext: IDental
 }
 export default function Dental(props : DentalProps) {
-    const [activeSubmenu, setActiveSubmenu] = useState("");
+    const [activeSubmenu, setActiveSubmenu] = useState("Permanent");
     const skullContext = props.skullContext || undefined;
     const dentalContext = props.dentalContext;
     const getWindow = () => {

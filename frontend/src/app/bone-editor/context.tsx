@@ -26,10 +26,14 @@ export function BoneEditorContextProvider({children} : {children : ReactNode}) {
     const [userData, setUserData] = useState<DecodedToken | undefined>(undefined);
     const [specimenId, setSpecimenId] = useState<number>(-1);
     const [boneId, setBoneId] = useState<number>(-1);
+    const [bone, setBone] = useState<Bone>({boneName: ""})
+    const boneContext = {data: bone, update: setBone}
     
     useEffect(() => {
         setUserData(loadUser());
-        handleLoad();
+        if(PageManager.getPageMode("bone-editor") === "Edit") {console.log("loading"); handleLoad();}
+        setBone({...bone, boneName: PageManager.getBoneName()})
+        
     }, []);
         
     const [formData, setFormData] = useState<FormData>({
@@ -45,8 +49,7 @@ export function BoneEditorContextProvider({children} : {children : ReactNode}) {
         region: ''
     });
     const localityContext : ILocality = {...localityData, update: setLocalityData}
-    const [bone, setBone] = useState<Bone>({boneName: ""})
-    const boneContext = {data: bone, update: setBone}
+
     const [measurements, setMeasurements] = useState<Record<string, number>>({})
     const measurementsContext : IMeasurements = {data: measurements, update: setMeasurements}
     const [allTaphonomy, setAllTaphonomy] = useState<Record<string, TaphonomyData>>({});
@@ -57,14 +60,19 @@ export function BoneEditorContextProvider({children} : {children : ReactNode}) {
             alert("Save error - invalid token");
             return;
         }
+        console.log("got token");
         let specimenId = PageManager.getDatabaseID("bone-editor");
         setSpecimenId(specimenId);
+        console.log(specimenId);
         let boneId = await loadBone(specimenId, boneContext);
+        console.log("loaded bone");
         if(boneId === -1) {
+            console.log("-1");
             alert("Couldn't load - Specimen was not linked to bone")
             return;
         }
         setBoneId(boneId);
+        console.log(boneId);
         await loadSpecimen(specimenId, formContext, localityContext);
         await loadMeasurements(boneId, measurementsContext);
         await loadAllTaphonomy(specimenId, taphonomyContext);
@@ -79,14 +87,17 @@ export function BoneEditorContextProvider({children} : {children : ReactNode}) {
             alert("Save error - invalid token");
             return;
         }
+
         const specimenBody = getSpecimenBody(formContext, localityContext, userData);
         let resultSpecimenId = await saveSpecimen(specimenBody, specimenId);
         setSpecimenId(resultSpecimenId);
-        const boneBody = getBoneBody(boneContext.data.boneName, specimenId);
+
+        const boneBody = getBoneBody(boneContext.data.boneName, resultSpecimenId);
         let resultBoneId = await saveBone(boneBody, boneId);
         setBoneId(resultBoneId);
-        await saveMeasurements(measurementsContext.data, boneId);
-        await saveAllTaphonomy(taphonomyContext.data, specimenId);
+        
+        await saveMeasurements(measurementsContext.data, resultBoneId);
+        await saveAllTaphonomy(taphonomyContext.data, resultSpecimenId);
         PageManager.switchToEditModeAfterSave("bone-editor", resultSpecimenId);
         alert("Save completed - check console for details");
 

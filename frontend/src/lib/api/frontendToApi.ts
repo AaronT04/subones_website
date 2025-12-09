@@ -21,7 +21,6 @@ export const getBoneBody = (boneName : string, specimenId : number) => {
                     skeleton_id: null,
                     bone_type: boneName.toLowerCase().replace(/\s+/g, '_'),
                     bone_name: boneName,
-                    condition: "",
                     specimen_id: specimenId
                 }
     return boneBody;

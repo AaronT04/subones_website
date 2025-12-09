@@ -101,17 +101,17 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
                     <p className="font-bold text-center text-lg font-sans w-full border border-black text-black">Morphology</p>
                     <div className="text-[15px] ml-[5px]">
                         {commonTraits.map((t, i) => 
-                            <HorizontalRadioButton key={i} name={t} onChange={() => selectTrait(t)}/>)}
+                            <HorizontalRadioButton key={i} value={t} name={"mrph-radio"} onChange={() => selectTrait(t)}/>)}
                     </div>
                     <p className="font-bold text-lg text-center inline-block border-t-2 border-black">Maxillary</p>
                     <div className="text-[15px] ml-[5px]">
                         {maxillaryTraits.map((t, i) => 
-                            <HorizontalRadioButton key={i} name={t} onChange={() => selectTrait(t)}/>)}
+                            <HorizontalRadioButton key={i} value={t} name={"mrph-radio"}onChange={() => selectTrait(t)}/>)}
                     </div>
                     <p className="font-bold text-lg text-center inline-block border-t-2 border-black">Mandibular</p>
                     <div className="text-[15px] ml-[5px]">
                         {mandibularTraits.map((t, i) => 
-                            <HorizontalRadioButton key={i} name={t} onChange={() => selectTrait(t)}/>)}
+                            <HorizontalRadioButton key={i} value={t} name={"mrph-radio"} onChange={() => selectTrait(t)}/>)}
                     </div>
                 </div>
 

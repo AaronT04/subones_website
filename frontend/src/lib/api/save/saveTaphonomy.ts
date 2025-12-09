@@ -12,14 +12,15 @@ export async function saveSingleTaphonomy(data : TaphonomyData, specimenId : num
         modifications: data.modifications,
         comments: data.comments ?? "",
     };
+    console.log(body);
     const token = localStorage.getItem('token');
     const res = await fetch(url, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(body),
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
     });
     if (!res.ok) {
         const text = await res.text();

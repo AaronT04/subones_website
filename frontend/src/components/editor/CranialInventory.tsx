@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Table, TextField } from "@radix-ui/themes";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { cranial_inventory_list, CranialInventoryList, CranialInventoryRow } from "@/components/lists/cranial-inventory-list";
-import SmallTaphonomy from "./SmallTaphonomy"
+import Taphonomy from "./Taphonomy"
 import "@/components/lists/InventoryStyles.css"
 import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "@/components/lists/cranial-inventory-list";
 import InventorySelect from "./InventorySelect";
@@ -119,7 +119,7 @@ export default function CranialInventory(props: CranialInventoryProps) {
             </Table.Body>
             </Table.Root>
         </div>
-        {selectedBone != "" && <SmallTaphonomy taphonomyContext={taphonomyContext} boneName={selectedBone}/>}
+        {selectedBone != "" && <Taphonomy taphonomyContext={taphonomyContext} boneName={selectedBone}/>}
         </div>
         
     </div>

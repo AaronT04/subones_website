@@ -210,7 +210,7 @@ function rowToTaphonomy(row) {
     ) {
       surface_damage.push(label);
     } else if (
-      Object.keys(COLUMN_MAP).slice(20, 31).includes(label)
+      Object.keys(COLUMN_MAP).slice(20, 29).includes(label)
     ) {
       adherent_materials.push(label);
     } else {

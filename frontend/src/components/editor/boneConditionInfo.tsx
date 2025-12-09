@@ -30,7 +30,7 @@ and may outlast all traces of the former more compact, outer parts of the bones.
 function BoneConditionInfo() {
     return(<div className="grid grid-cols-2">
         {Object.keys(stageMap).map((i) => 
-        <div className="m-[10px]"><label className={labelStyle}>{`Stage ${i}`}</label><p className={textStyle}>{stageMap[i]}</p></div>)}
+        <div key={i} className="m-[10px]"><label className={labelStyle}>{`Stage ${i}`}</label><p className={textStyle}>{stageMap[i]}</p></div>)}
     </div>)
 }
 

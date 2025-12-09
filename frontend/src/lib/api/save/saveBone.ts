@@ -1,12 +1,13 @@
 export const saveBone = async (boneBody, boneId) => {
     const token = localStorage.getItem("token");
-    const boneMethod = boneId && boneId > 0 ? "PUT" : "POST";
+
     const boneUrl =
-      boneMethod === "PUT"
+      boneId && boneId > 0 
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/bone/${boneId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/api/bone`;
+        
     const boneRes = await fetch(boneUrl, {
-        method: boneMethod,
+        method: "POST",
         headers: { "Content-Type": "application/json",
         "authorization": `Bearer ${token}`
         },
@@ -15,7 +16,6 @@ export const saveBone = async (boneBody, boneId) => {
     if (!boneRes.ok) throw new Error(`Specimen save failed (${boneRes.status})`);
     const boneResult = await boneRes.json();
 
-    // If new, update the ID
-    if (!boneId || boneId < 0) boneId = boneResult.bone_id;
-    return boneId;
+    if (!boneId || boneId < 0) boneId = boneResult.specimen_id;
+    return Number(boneId);
 }

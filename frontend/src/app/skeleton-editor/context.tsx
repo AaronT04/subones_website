@@ -1,5 +1,5 @@
 import React, {ReactNode, useContext, createContext, useEffect, useState} from 'react'
-import type {LocalityData, TaphonomyData, Inventory, FormData, DentalInventory, DecodedToken, SkeletonData, PostcranialMetrics, CranialNonmetric} from "@/lib/api/dataTypes"
+import type {LocalityData, TaphonomyData, Inventory, FormData, DentalInventory, DecodedToken, SkeletonData, PostcranialMetrics, CranialNonmetrics} from "@/lib/api/dataTypes"
 import type {IForm, ILocality, ICraniometrics, ISkeleton, IAllTaphonomy, IInventory, IDental, ICranialNonmetrics, IPostcranialMetrics, GenericEditorContextType} from "@/lib/api/componentTypes"
 import {loadUser} from "@/lib/loadUser"
 import * as PageManager from "@/lib/pageManager"
@@ -42,7 +42,7 @@ export function SkeletonEditorContextProvider({children} : {children : ReactNode
     const [skeletonId, setSkeletonId] = useState<number>(-1);
     useEffect(() => {
         setUserData(loadUser());
-        handleLoad();
+        if(PageManager.getPageMode("skeleton-editor") === "Edit") {console.log("loading"); handleLoad();}
     }, []);
     
     const [formData, setFormData] = useState<FormData>({
@@ -72,7 +72,7 @@ export function SkeletonEditorContextProvider({children} : {children : ReactNode
     const cranialInventoryContext : IInventory = {data: c_inventory, update: setCInventory};
     const [p_inventory, setPInventory] = useState<Record<string, Inventory>>({});
     const postcranialInventoryContext : IInventory = {data: p_inventory, update: setPInventory};
-    const [allNonmetrics, setAllNonmetrics] = useState<Record<string, CranialNonmetric>>({})
+    const [allNonmetrics, setAllNonmetrics] = useState<CranialNonmetrics>({})
     const cranialNonmetricsContext : ICranialNonmetrics = {data: allNonmetrics, update: setAllNonmetrics}
     const [pc_metrics, setPcMetrics] = useState<PostcranialMetrics>({})
     const postcranialMetricsContext : IPostcranialMetrics = {data: pc_metrics, update: setPcMetrics}
@@ -105,10 +105,12 @@ export function SkeletonEditorContextProvider({children} : {children : ReactNode
             alert("Save error - Invalid User");
             return;
         }
-        const resultSkeletonId = await saveSkeleton(skeletonId, specimenId, skeletonContext);
-        setSkeletonId(resultSkeletonId);
         const resultSpecimenId = await saveSpecimen(getSpecimenBody(formContext, localityContext, userData), specimenId);
         setSpecimenId(resultSpecimenId);
+
+        const resultSkeletonId = await saveSkeleton(skeletonId, resultSpecimenId, skeletonContext);
+        setSkeletonId(resultSkeletonId);
+        
         await saveCraniometrics(craniometricsContext, resultSpecimenId);
         await saveNonmetrics(cranialNonmetricsContext.data, resultSpecimenId);
         await saveInventory("cranial", cranialInventoryContext.data, resultSpecimenId);

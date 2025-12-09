@@ -7,14 +7,14 @@ export const saveSpecimen = async (specimenBody : SpecimenBody, specimenId) => {
     if(!token) {
       throw new Error();
     }
-    const specimenMethod = specimenId && specimenId > 0 ? "PUT" : "POST";
+
     const specimenUrl =
-      specimenMethod === "PUT"
+      specimenId && specimenId > 0 
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/specimen/${specimenId}`
         : `${process.env.NEXT_PUBLIC_API_URL}/api/specimen`;
 
     const specimenRes = await fetch(specimenUrl, {
-      method: specimenMethod,
+      method: "POST",
       headers: { "Content-Type": "application/json",
         "authorization": `Bearer ${token}`
        },

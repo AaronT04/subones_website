@@ -35,9 +35,9 @@ router.post('/api/login', (req, res) => {
     if (!rows.length) return res.status(401).json({ error: 'Invalid email' });
 
     const user = rows[0];
-    console.log('DEBUG: User found:', user);
-    console.log('DEBUG: Input kpassword:', password);
-    console.log('DEBUG: Stored hash:', user.password);
+    //console.log('DEBUG: User found:', user);
+    //console.log('DEBUG: Input kpassword:', password);
+    //console.log('DEBUG: Stored hash:', user.password);
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: 'Invalid password' });
 

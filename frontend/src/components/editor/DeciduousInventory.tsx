@@ -11,7 +11,6 @@ import {dental_help_text} from "@/components/lists/DentalHelp";
 import {useState} from 'react'
 import { Button } from "@/components/ui/button";
 import {morphology_list} from "@/components/lists/morphology_list";
-import HorizontalRadioButton from "@/components/ui/HorizontalRadioButton";
 import type {ISkull, IDental} from "@/lib/api/componentTypes"
 
 interface DeciduousInventoryProps {

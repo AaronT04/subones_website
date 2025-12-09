@@ -9,6 +9,8 @@ import {
 import React from 'react'
 import {produce} from 'immer'
 
+import { toSQLColumn } from "@/lib/toSQLColumn"
+
 import {Table, Select} from '@radix-ui/themes'
 
 import { cranial_nonmetrics_list } from "@/components/lists/cranial-nonmetrics-list"
@@ -46,12 +48,12 @@ function CranialNonmetrics(props : CranialNonmetricsProps) {
                     <Table.Cell className="w-200">
                         <Select.Root
                         value={allNonmetrics[tab_str]?
-                            (allNonmetrics[tab_str])[row[0]] || "" : ""}
+                            (allNonmetrics[tab_str])[toSQLColumn(row[0])] || "" : ""}
                         onValueChange={(value) => {update(prev =>
                             produce(prev, draft => {
                                 draft[tab_str] = {
                                     ...prev[tab_str] || {},
-                                    [row[0]]: value
+                                    [toSQLColumn(row[0])]: value
                                 };
                             }))}}>
                             <Select.Trigger/>

@@ -16,7 +16,6 @@ export type BoneBody = {
     skeleton_id: number | null,
     bone_type: string,
     bone_name: string,
-    condition: "",
     specimen_id: number
 }
 

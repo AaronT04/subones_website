@@ -22,7 +22,7 @@ import {loadInventory} from "@/lib/api/load/loadInventory"
 import {loadAllTaphonomy} from "@/lib/api/load/loadTaphonomy"
 import {loadDental} from "@/lib/api/load/loadDental"
 
-interface SkullContextType extends GenericEditorContextType {
+interface SkullEditorContextType extends GenericEditorContextType {
     skullContext : ISkull
     craniometricsContext : ICraniometrics
     taphonomyContext : IAllTaphonomy
@@ -32,9 +32,9 @@ interface SkullContextType extends GenericEditorContextType {
     handleSave: () => Promise<void>;
 }
 
-const SkullContext = createContext<SkullContextType | undefined>(undefined);
+const SkullEditorContext = createContext<SkullEditorContextType | undefined>(undefined);
 
-export function SkullContextProvider({children} : {children : ReactNode}) {
+export function SkullEditorContextProvider({children} : {children : ReactNode}) {
     const [userData, setUserData] = useState<DecodedToken | undefined>(undefined)
     useEffect(() => {
         setUserData(loadUser());
@@ -114,18 +114,18 @@ export function SkullContextProvider({children} : {children : ReactNode}) {
     }
         
 
-    return (<SkullContext.Provider value={
+    return (<SkullEditorContext.Provider value={
         {userData, skullContext, formContext, localityContext, craniometricsContext, 
         taphonomyContext, cranialInventoryContext, cranialNonmetricsContext, dentalContext, handleSave}
 
     }>
         {children}
-        </SkullContext.Provider>
+        </SkullEditorContext.Provider>
     )
 }
 
-export function useSkullContext() {
-    const context = useContext(SkullContext);
+export function useSkullEditorContext() {
+    const context = useContext(SkullEditorContext);
     if (context === undefined) {
         throw new Error('useSkullContext must be used within a SkullProvider... you know what I mean');
     }

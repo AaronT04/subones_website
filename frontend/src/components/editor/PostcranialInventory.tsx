@@ -11,7 +11,7 @@ import { useState } from "react";
 import type { PostcranialCategory, PostcranialRow } from "@/components/lists/postcranial-inventory-list";
 import { postcranial_inventory_list, BoxTypeEnum, doesNotRequireBoneSideDropdown, excludeCategoriesFromTaphonomy } from "@/components/lists/postcranial-inventory-list";
 import "@/components/lists/InventoryStyles.css";
-import Taphonomy from "@/components/editor/SmallTaphonomy";
+import Taphonomy from "@/components/editor/Taphonomy";
 import { filterTaphonomyDropdownTags } from "@/components/lists/postcranial-inventory-list";
 import TaphonomyDropdown from '@/components/editor/TaphonomyDropdown'
 import InventorySelect from "@/components/editor/InventorySelect";

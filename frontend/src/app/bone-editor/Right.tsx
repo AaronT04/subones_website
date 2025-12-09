@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { useBoneEditorContext } from "./context";
 import { boneCategories } from "@/components/lists/handsfeet"
-import SmallTaphonomy from "@/components/editor/SmallTaphonomy";
+import Taphonomy from "@/components/editor/Taphonomy";
 import Measurements from "@/components/editor/Measurements";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -25,7 +25,7 @@ function InnerRight() {
                 {isHandsAndFeetBone() ? (
                     // Hands and feet bones (except Talus/Calcaneus): only Taphonomy, no tabs
                     <div className="bone-container w-full">
-                        <SmallTaphonomy boneName={boneName} taphonomyContext={taphonomyContext}/>
+                        <Taphonomy boneName={boneName} taphonomyContext={taphonomyContext}/>
                     </div>
                 ) : (
 
@@ -45,7 +45,7 @@ function InnerRight() {
                         </TabsContent>
                         <TabsContent value="taphonomy">
                             <div className="bone-container">
-                                <SmallTaphonomy boneName={boneName} taphonomyContext={taphonomyContext}/>
+                                <Taphonomy boneName={boneName} taphonomyContext={taphonomyContext}/>
                             </div>
                         </TabsContent>
                     </Tabs>

@@ -61,3 +61,8 @@ export function getDatabaseID (pageName : string) {
     if (p) return JSON.parse(p).db_id;
     return undefined;
 }
+
+export function getBoneName() {
+    let b = localStorage.getItem("bone-editor");
+    if(b) return JSON.parse(b).boneName ?? ""
+}

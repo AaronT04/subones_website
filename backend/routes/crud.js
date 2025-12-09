@@ -135,7 +135,7 @@ function useCrudRoutes(app) {
     makeCrudRoutes('museum', 'museum_id', ['museum_name','broad_region','country','locality','region']);
     makeCrudRoutes('taxonomy', 'taxonomy_id', ['parvorder','superfamily','family','subfamily','genus','species','specimen_id']);
     makeCrudRoutes('taphonomy', 'taphonomy_id', ['specimen_id','bone_id','date_of_record']);
-    makeCrudRoutes('bone', 'bone_id', ['skeleton_id','bone_type','bone_name','condition','specimen_id']);
+    makeCrudRoutes('bone', 'bone_id', ['skeleton_id','bone_type','bone_name', 'specimen_id']);
     makeCrudRoutes('skeleton', 'skeleton_id', ['specimen_id', 'skeleton_type', 'skeleton_name']);
     makeCrudRoutes('cranium_measurements', 'specimen_id', ['maximum_cranial_length', 'maximum_cranial_breadth',
                 'bizygomatic_diameter', 'basion_bregma_height', 'cranial_base_length', 'basion_prosthion_length',
