@@ -1,7 +1,7 @@
 "use client"
 
 import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react'
-import type {LocalityData, TaphonomyData, Inventory, FormData, DentalInventory, DecodedToken, SkullData, CranialNonmetric} from "@/lib/api/dataTypes"
+import type {LocalityData, TaphonomyData, Inventory, FormData, DentalInventory, DecodedToken, SkullData, CranialNonmetrics} from "@/lib/api/dataTypes"
 import type {IForm, ILocality, ICraniometrics, IAllTaphonomy, IInventory, ISkull, IDental, ICranialNonmetrics, GenericEditorContextType} from "@/lib/api/componentTypes"
 import { loadUser } from '@/lib/loadUser'
 import * as PageManager from "@/lib/pageManager"
@@ -67,7 +67,7 @@ export function SkullEditorContextProvider({children} : {children : ReactNode}) 
     const taphonomyContext : IAllTaphonomy = {data: allTaphonomy, update: setAllTaphonomy}
     const [inventory, setInventory] = useState<Record<string, Inventory>>({});
     const cranialInventoryContext : IInventory = {data: inventory, update: setInventory};
-    const [allNonmetrics, setAllNonmetrics] = useState<Record<string, CranialNonmetric>>({})
+    const [allNonmetrics, setAllNonmetrics] = useState<CranialNonmetrics>({})
     const cranialNonmetricsContext : ICranialNonmetrics = {data: allNonmetrics, update: setAllNonmetrics}
     const [dentInv, setDentInv] = useState<Record<string, DentalInventory>>({});
     const [morphology, setMorphology] = useState<Record<string, Record<string, number | null>>>({});
