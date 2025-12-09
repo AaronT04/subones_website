@@ -133,15 +133,11 @@ router.post('/api/postcranial_inventory/:specimen_id', (req, res) => {
 
       db.query(insertQuery, [insertValues], err => {
         if (err) {
-          console.log(err);
           db.rollback(() => res.status(500).json({ error: err.message }));
           return;
         }
         db.commit(err => {
-          if (err) {
-            console.log(err);
-            db.rollback(() => res.status(500).json({ error: err.message }));
-          }
+          if (err) db.rollback(() => res.status(500).json({ error: err.message }));
           else res.json({ ok: true });
         });
       });

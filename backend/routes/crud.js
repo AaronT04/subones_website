@@ -71,7 +71,6 @@ function useCrudRoutes(app) {
     }
     });
 
-    // Upsert logic
     app.post(`/api/${table}/:id`, authenticateToken, async (req, res) => {
         try {
         const id = req.params.id;
@@ -82,6 +81,10 @@ function useCrudRoutes(app) {
         if (!Object.keys(body).length)
             return res.status(400).json({ error: "No valid fields" });
 
+        // Ensure the PK is in the body so MySQL accepts the insert
+        //body[pk] = id;
+
+        // Upsert logic
         const sql = `
             INSERT INTO ${table} (${[pk, ...Object.keys(body)].map(c => `\`${c}\``).join(", ")})
             VALUES (${[pk, ...Object.keys(body)].map(() => "?").join(", ")})
@@ -103,7 +106,6 @@ function useCrudRoutes(app) {
     // Update
     app.put(`/api/${table}/:id`, authenticateToken, (req, res) => {
         const body = {};
-        const id = req.params.id;
         for (const f of allowedFields) {
         if (req.body[f] !== undefined) body[f] = req.body[f];
         }
@@ -115,7 +117,7 @@ function useCrudRoutes(app) {
             console.error("Error in app.put:", err);
             return res.status(500).json({ error: err.message });
         }
-        res.json({ [pk]: id, ...body });
+        res.json({ id: req.params.id, ...body });
         });
     });
 
@@ -136,14 +138,14 @@ function useCrudRoutes(app) {
     makeCrudRoutes('taxonomy', 'taxonomy_id', ['parvorder','superfamily','family','subfamily','genus','species','specimen_id']);
     makeCrudRoutes('taphonomy', 'taphonomy_id', ['specimen_id','bone_id','date_of_record']);
     makeCrudRoutes('bone', 'bone_id', ['skeleton_id','bone_type','bone_name','condition','specimen_id']);
-    makeCrudRoutes('skeleton', 'skeleton_id', ['specimen_id', 'skeleton_type', 'skeleton_name']);
-    makeCrudRoutes('cranium_measurements', 'specimen_id', ['maximum_cranial_length', 'maximum_cranial_breadth',
+    makeCrudRoutes('skeletal_inventory', 'skeleton_id', ['specimen_id','condition','skeleton_type','measurements']);
+    makeCrudRoutes('cranium_measurements', 'specimen_id', ['specimen_id', 'maximum_cranial_length', 'maximum_cranial_breadth',
                 'bizygomatic_diameter', 'basion_bregma_height', 'cranial_base_length', 'basion_prosthion_length',
                 'maxillo_alveolar_breadth', 'maxillo_alveolar_length', 'biauricular_breadth', 'upper_facial_height',
                 'minimum_frontal_breadth', 'upper_facial_breadth', 'nasal_height', 'nasal_breadth', 'orbital_breadth',
                 'orbital_height', 'biorbital_breadth', 'interorbital_breadth', 'frontal_chord', 'parietal_chord',
                 'occipital_chord', 'foramen_magnum_length', 'foramen_magnum_breadth', 'mastoid_height']);
-    makeCrudRoutes('mandible_measurements', 'specimen_id', ['chin_height', 'height_of_the_mandibular_body_at_the_mental_foramen',
+    makeCrudRoutes('mandible_measurements', 'specimen_id', ['specimen_id', 'chin_height', 'height_of_the_mandibular_body_at_the_mental_foramen',
                 'breadth_of_the_mandibular_body_at_the_mental_foramen', 'bigonial_width', 'bicondylar_breadth',
                 'minimum_ramus_breadth', 'maximum_ramus_breadth', 'maximum_ramus_height', 'mandibular_length', 'mandibular_angle']);
     makeCrudRoutes('has_skeleton', 'specimen_id', ['specimen_id', 'skeleton_id']);
@@ -202,75 +204,5 @@ function useCrudRoutes(app) {
     'posterior_zygomatic_tubercule', 'supranasal_suture',
     'zygomaticomaxillary_suture_course', 'transverse_palatine_suture'
     ]);
-
-    makeCrudRoutes('skull', 'specimen_id', ['has_cranium', 'has_mandible']);
-
-    makeCrudRoutes('postcranial_metrics', 'skeleton_id', [
-  'clavicle_maximum_length',
-  'clavicle_anterior_sagittal_posterior_diameter_at_midshaft',
-  'clavicle_superior_vertical_inferior_diameter_at_midshaft',
-
-  'scapula_height_anatomical_breadth',
-  'scapula_breadth_anatomical_length',
-
-  'humerus_maximum_length',
-  'humerus_epicondylar_breadth',
-  'humerus_vertical_diameter_of_head',
-  'humerus_maximum_diameter_at_midshaft',
-  'humerus_minimum_diameter_at_midshaft',
-
-  'radius_maximum_length',
-  'radius_anterior_posterior_sagittal_diameter_at_midshaft',
-  'radius_medial_lateral_transverse_diameter_at_midshaft',
-
-  'ulna_maximum_length',
-  'ulna_anterior_posterior_dorso_volar_diameter',
-  'ulna_medial_lateral_transverse_diameter',
-  'ulna_physiological_length',
-  'ulna_minimum_circumference',
-
-  'sacrum_anterior_length',
-  'sacrum_anterior_superior_breadth',
-  'sacrum_maximum_transverse_diameter_of_base',
-  'sacrum_s1_height',
-
-  'os_coxae_height',
-  'os_coxae_iliac_breadth',
-  'os_coxae_pubis_length',
-  'os_coxae_ischium_length',
-
-  'femur_maximum_length',
-  'femur_bicondylar_length',
-  'femur_epicondylar_breadth',
-  'femur_maximum_head_diameter',
-  'femur_anterior_posterior_sagittal_subtrochanteric_diameter',
-  'femur_medial_lateral_transverse_subtrochanteric_diameter',
-  'femur_anterior_posterior_sagittal_midshaft_diameter',
-  'femur_medial_lateral_transverse_midshaft_diameter',
-  'femur_midshaft_circumference',
-
-  'tibia_condylo_malleolar_length',
-  'tibia_maximum_proximal_epiphyseal_breadth',
-  'tibia_distal_epiphyseal_breadth',
-  'tibia_maximum_diameter_at_the_nutrient_foramen',
-  'tibia_medial_lateral_transverse_diameter_at_the_nutrient_foramen',
-  'tibia_circumference_at_the_nutrient_foramen',
-
-  'fibula_maximum_length',
-  'fibula_maximum_diameter_at_midshaft',
-
-  'calcaneus_maximum_length',
-  'calcaneus_middle_breadth',
-
-  'talus_talus_height',
-
-  'cervical_vertebrae_c2',
-  'cervical_vertebrae_max_c3_c7_height',
-  'thoracic_vertebrae_max_t1_t12_height',
-  'lumbar_vertebrae_max_l1_l5_height'
-]);
-
-
-
 }
 module.exports = {useCrudRoutes}

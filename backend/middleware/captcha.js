@@ -1,17 +1,40 @@
-async function captchaHandler(req, res) {
-    const secretKey = process.env.REACT_CAPTCHA_SECRET_KEY;
+async function captchaHandler(req, res, next) {
+  console.log("Received CAPTCHA token:", req.body.captchaToken);
 
-    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captchaToken}`;
-    const captchaResponse = await fetch(verifyUrl, { method: 'POST' });
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+  const token = req.body.captchaToken;
+
+  if (!token) {
+    return res.status(400).json({ message: "Missing CAPTCHA token" });
+  }
+
+  const verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
+
+  const params = new URLSearchParams();
+  params.append("secret", secretKey);
+  params.append("response", token);
+
+  try {
+    const captchaResponse = await fetch(verifyUrl, {
+      method: "POST",
+      body: params
+    });
+
     const captchaData = await captchaResponse.json();
 
-    if (!captchaData.success) {
+    console.log("Google response:", captchaData);
 
-        res.status(400).json({ message: 'CAPTCHA verification failed' });
-        console.log(captchaData);
-        throw new Error("Captcha failed");
-        
+    if (!captchaData.success) {
+      return res.status(400).json({
+        message: "CAPTCHA verification failed",
+        details: captchaData["error-codes"]
+      });
     }
+
+    next();
+  } catch (err) {
+    return res.status(500).json({ message: "CAPTCHA validation failed" });
+  }
 }
 
-module.exports = {captchaHandler}
+module.exports = { captchaHandler };

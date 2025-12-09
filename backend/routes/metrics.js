@@ -2,15 +2,15 @@ const express = require('express');
 const { db } = require('../db');
 const router = express.Router();
 
-// Load all postcranial metrics for a skeleton
-router.get('/api/postcranial_metrics_object/:skeleton_id', (req, res) => {
+router.get('/api/postcranial_metrics/:skeleton_id', (req, res) => {
   const { skeleton_id } = req.params;
-  //console.log(skeleton_id);
+  console.log(skeleton_id);
   db.query(
     'SELECT * FROM postcranial_metrics WHERE skeleton_id = ?',
     [skeleton_id],
     (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
+      console.log(rows);
       if (!rows.length) return res.json([]);
 
       const row = rows[0];
@@ -26,16 +26,15 @@ router.get('/api/postcranial_metrics_object/:skeleton_id', (req, res) => {
   );
 });
 
-router.post('/api/postcranial_metrics_object/:skeleton_id', async (req, res) => {
+router.post('/api/postcranial_metrics/:skeleton_id', async (req, res) => {
   try {
     const { skeleton_id } = req.params;
-    const { metrics } = req.body; // array of { metric_name, metric_value }
+    const { metrics } = req.body; 
 
     if (!Array.isArray(metrics)) {
       return res.status(400).json({ error: "metrics array required" });
     }
 
-    // Build dynamic columns and values
     const columns = ["skeleton_id"];
     const values = [skeleton_id];
     const placeholders = ["?"];
@@ -50,9 +49,7 @@ router.post('/api/postcranial_metrics_object/:skeleton_id', async (req, res) => 
       }
     });
 
-    // ✅ Handle empty case
     if (columns.length === 1) {
-      // No metrics provided — just ensure the row exists
       const insertSkeletonRow = `
         INSERT IGNORE INTO postcranial_metrics (skeleton_id)
         VALUES (?)
@@ -61,7 +58,6 @@ router.post('/api/postcranial_metrics_object/:skeleton_id', async (req, res) => 
       return res.json({ ok: true, message: "No metrics to update" });
     }
 
-    // ✅ Safe upsert if metrics exist
     const sql = `
       INSERT INTO postcranial_metrics (${columns.join(", ")})
       VALUES (${placeholders.join(", ")})

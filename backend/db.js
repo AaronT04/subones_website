@@ -1,26 +1,28 @@
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
 dotenv.config();
-
-// MySQL connection setup
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST, // Use environment variables for sensitive information
-  user: process.env.DB_USER,
-  port: process.env.DB_PORT,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
+  host: 'sql5.freesqldatabase.com',
+  user: 'sql5764904',
+  port: 3306,
+  password: 'ZhPF13x6SU',
+  database: 'sql5764904'
 });
 
 connection.connect(err => {
-  if (err) console.error('DB connection failed:', err);
-  else console.log('Connected to MySQL');
+  if (err) {
+    console.error('DB connection failed:', err);
+  } else {
+    console.log('Connected to MySQL database!');
+  }
+});
+
+connection.on('error', err => {
+  console.error('MySQL error:', err);
+  if (err.code === 'PROTOCOL_CONNECTION_LOST') process.exit(1);
 });
 
 const db = connection;
+const pdb = connection.promise();
 
-db.on('error', err => {
-  console.error('MySQL error', err);
-  if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') process.exit(1);
-});
-
-module.exports = { db};
+module.exports = { db, pdb };
