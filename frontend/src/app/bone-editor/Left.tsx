@@ -3,17 +3,15 @@
 import { Button } from "@/components/ui/button"
 import {useRouter} from 'next/navigation'
 import "@/app/globals.css"
-import Field from "./fields"
-import TaxField from "./taxfields"
-import LocField from "./locfields"
-import { useBoneData } from "./context/BoneDataContext"
+import Specimen from "@/components/editor/Specimen"
+import Taxonomy from "@/components/editor/Taxonomy"
+import Locality from "@/components/editor/Locality"
+import { useBoneEditorContext } from "./context"
 import {useState} from 'react'
 
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -21,7 +19,7 @@ import {
 
 function Left() {
     const [loading, setLoading] = useState(false);
-    const { handleSave, isSaving } = useBoneData();
+    const { userData, formContext, localityContext, handleSave } = useBoneEditorContext();
     
     const router = useRouter();
     if (loading) {
@@ -42,7 +40,7 @@ function Left() {
             </div>
 
             <div className="w-[90%] py-20">
-                <Field />
+                <Specimen userData={userData} formContext={formContext}/>
             </div>
             
 
@@ -62,7 +60,7 @@ function Left() {
                         <DialogHeader>
                             <DialogTitle>Taxonomy Information</DialogTitle>
                         </DialogHeader>
-                        <TaxField/>
+                        <Taxonomy/>
                     </DialogContent>
                 </Dialog>
 
@@ -81,7 +79,7 @@ function Left() {
                         <DialogHeader>
                             <DialogTitle>Locality Information</DialogTitle>
                         </DialogHeader>
-                        <LocField />
+                        <Locality formContext={formContext} localityContext={localityContext}/>
                     </DialogContent>
                 </Dialog>
 
@@ -100,9 +98,7 @@ function Left() {
                             console.error('handleSave is undefined!');
                         }
                     }}
-                    disabled={isSaving}
-                >
-                    {isSaving ? 'Saving...' : 'Save'}
+                >Save
                 </Button>
             </div>
         </div>
