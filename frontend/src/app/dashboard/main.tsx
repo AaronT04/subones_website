@@ -1,10 +1,20 @@
 // main.tsx
 "use client"
 
-import * as PageManager from "@/lib/pageManager";
 import { api } from "@/lib/api"
-import type {DecodedToken} from "@/lib/api/dataTypes"
-import {loadUser} from "@/lib/loadUser";
+
+async function getIndData(): Promise<Individual[]> {
+  return api.get<Individual[]>("/list/individuals");
+}
+
+async function getBoneData(): Promise<Bone[]> {
+  return api.get<Bone[]>("/list/bones");
+}
+
+async function getDentalData(): Promise<Dental[]> {
+  return api.get<Dental[]>("/list/dental");
+}
+
 import { useRouter } from 'next/navigation';
 import {
   Tabs,
@@ -18,127 +28,64 @@ import { DataTable } from "./data-table"
 import { Individual, indColumns } from "./columns/ind-columns"
 import { Dental, dentalColumns } from "./columns/dental-columns"
 import { Bone, boneColumns } from "./columns/bone-columns"
-import { Skull, skullColumns} from "./columns/skull-columns"
 import { useEffect, useState } from 'react';
 import { useConfirmDialog } from '@/components/confirm-dialog-context';
 
-async function getIndData(user? : DecodedToken): Promise<Individual[]> {
-  try {
-    console.log(user);
-    const result = api.get<Individual[]>(`/api/list/individuals?id=${user?.id}`);
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-  
-}
-
-async function getBoneData(user? : DecodedToken): Promise<Bone[]> {
-  try {
-    const result = api.get<Bone[]>(`/api/list/bones?id=${user?.id}`);
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-}
-
-async function getDentalData(user? : DecodedToken): Promise<Dental[]> {
-  try {
-    const result = api.get<Dental[]>(`/api/list/dental?id=${user?.id}`);
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-}
-
-async function getSkullData(user? : DecodedToken): Promise<Skull[]> {
-  try {
-    const result = api.get<Skull[]>(`/api/list/skull?id=${user?.id}`);
-    return result;
-  }
-  catch(err) {
-    return [];
-  }
-}
-
-
-
 export default function Main(){
   const router = useRouter();
-  PageManager.connectRouter(router);
+
   const [indData, setIndData] = useState<Individual[]>([]);
   const [boneData, setBoneData] = useState<Bone[]>([]);
   const [dentalData, setDentalData] = useState<Dental[]>([]);
-  const [skullData, setSkullData] = useState<Skull[]>([]);
   const [loading, setLoading] = useState(true);
 
   const confirm = useConfirmDialog();
 
   useEffect(() => {
-  let cancelled = false;
-
-  async function fetchData() {
-    try {
-      const user = loadUser();
-      const [ind, bone, dental, skull] = await Promise.allSettled([
-        getIndData(user),
-        getBoneData(user),
-        getDentalData(user),
-        getSkullData(user)
+    async function fetchData() {
+      const [ind, bone, dental] = await Promise.all([
+        getIndData(),
+        getBoneData(),
+        getDentalData(),
       ]);
-
-      if (cancelled) return;
-
-      setIndData(ind.status === "fulfilled" ? ind.value : []);
-      setBoneData(bone.status === "fulfilled" ? bone.value : []);
-      setDentalData(dental.status === "fulfilled" ? dental.value : []);
-      setSkullData(skull.status === "fulfilled" ? skull.value : []);
-    } catch (err) {
-      console.error("Unexpected error fetching data:", err);
-    } finally {
-      if (!cancelled) setLoading(false);
-    }
-  }
-
-  // Safety timeout: stop loading even if backend is unresponsive
-  const timeout = setTimeout(() => {
-    if (!cancelled) {
-      console.warn("Fetch timeout: backend may be down, showing empty data");
+      setIndData(ind);
+      setBoneData(bone);
+      setDentalData(dental);
       setLoading(false);
     }
-  }, 6000); // 6 seconds fallback
 
-  fetchData();
-  
-  
-
-  return () => {
-    cancelled = true;
-    clearTimeout(timeout);
-  };
-}, []);
+    fetchData();
+  }, []);
 
   if (loading) {
     return <div className="p-4">Loading...</div>;
   }
 
-  // NEW: row click handlers to push to detail pages
-  const goBone = (b: Bone) => PageManager.handleEditBone(b.id, b.name);
-  const goInd  = (i: Individual) => PageManager.handleEditSkeleton(i.id);
-  const goDent = (d: Dental) => PageManager.handleEditDental(d.id);
-  const goSkull = (s: Skull) => {PageManager.handleEditSkull(s.id)}
+  const confirmAddIndividual = async() => {
+    const confirmed = await confirm({
+      title:"",
+      description:"This will create an entire skeleton. Are you sure you want to continue?",
+      confirmText:"OK",
+      cancelText:"Cancel"
+    })
+    if (!confirmed) return;
+    setLoading(true);
+    router.push('/skeleton-editor');
+  }
+
+  // Row click handlers
+  // 👇 CHANGE IS HERE: goBone now pushes to /bone-viewer with boneId query param
+  const goBone = (b: Bone) => router.push(`/bone-viewer?boneId=${b.id}`)
+  const goInd  = (i: Individual) => router.push(`/individuals/${i.id}`)
+  const goDent = (d: Dental) => router.push(`/dental/${d.id}`)
 
   return (
     <div>
       <div className="rounded-md">
         <Tabs defaultValue="bone" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="bone">Bone</TabsTrigger>
             <TabsTrigger value="individual">Individuals</TabsTrigger>
-            <TabsTrigger value="skull">Skull</TabsTrigger>
             <TabsTrigger value="dental">Dental</TabsTrigger>
           </TabsList>
 
@@ -149,7 +96,7 @@ export default function Main(){
                 data={boneData}
                 type="Bone"
                 onAddClick={() => router.push('/add-bone')}
-                onRowClick={goBone}            // NEW
+                onRowClick={goBone}
               />
             </div>
           </TabsContent>
@@ -160,21 +107,9 @@ export default function Main(){
                 columns={indColumns}
                 data={indData}
                 type="Individual"
-                //onAddClick={confirmAddIndividual}
-                onAddClick={() => PageManager.handleCreateSkeleton()}
-                onRowClick={goInd}             // NEW
+                onAddClick={confirmAddIndividual}
+                onRowClick={goInd}
               />
-            </div>
-          </TabsContent>
-          <TabsContent value="skull">
-            <div>
-              <DataTable
-                columns={skullColumns}
-                data={skullData}
-                type="Skull"
-                onAddClick={() => PageManager.handleCreateSkull()}
-                onRowClick={goSkull}
-                />
             </div>
           </TabsContent>
 
@@ -184,8 +119,8 @@ export default function Main(){
                 columns={dentalColumns}
                 data={dentalData}
                 type="Dental"
-                onAddClick={() => PageManager.handleCreateDental()}
-                onRowClick={goDent}            // NEW
+                onAddClick={() => router.push("/add-bone")}
+                onRowClick={goDent}
               />
             </div>
           </TabsContent>

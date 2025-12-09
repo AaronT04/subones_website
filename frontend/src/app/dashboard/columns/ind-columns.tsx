@@ -58,7 +58,7 @@ export const indColumns: ColumnDef<Individual>[] = [
         </Button>
       </div>
     ),
-    cell: ({ row }) => <div className="text-right font-medium">{row.original.menuID}</div>,
+    cell: ({ row }) => <div className="text-right font-medium">{row.getValue("id")}</div>,
     filterFn: (row, _id, value) => {
       const v = String(value ?? "").trim()
       if (v === "") return true

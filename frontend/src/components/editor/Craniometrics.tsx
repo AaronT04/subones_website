@@ -6,45 +6,17 @@ import {
   } from "@/components/ui/tabs"
 
 import {Table, TextField} from '@radix-ui/themes'
-import {craniometrics_list} from "@/components/lists/craniometrics-list"
-import type { ICraniometrics, ISkull } from "@/lib/api/componentTypes"
-import {produce} from 'immer'
+import {craniometrics_list} from "@/components/editor/craniometrics-list"
 
-interface CraniometricsProps {
-    craniometricsContext : ICraniometrics
-    skullContext? : ISkull
-}
-
-export default function Craniometrics(props : CraniometricsProps) {
-    const hasCranium = props.skullContext ? props.skullContext.hasCranium : true;
-    const hasMandible = props.skullContext ? props.skullContext.hasMandible : true;
-    const craniumMetrics = props.craniometricsContext.craniumMetrics;
-    const mandibleMetrics = props.craniometricsContext.mandibleMetrics;
-    const updateCranium = props.craniometricsContext.updateCranium;
-    const updateMandible = props.craniometricsContext.updateMandible;
-
-    const displayName = (info) => info.split("\t")[0].trim(' ');
-    function storageName(info: string): string {
-        // Extract the part before the first tab — the descriptive label
-        let name = info.split("\t")[0].trim();
-
-        // Normalize: lowercase, remove special chars, replace spaces/dashes/slashes with underscores
-        return name
-            .toLowerCase()
-            .replace(/[()/]/g, "")     // remove parentheses and slashes
-            .replace(/[-\s]+/g, "_")   // replace spaces and dashes with underscores
-            .replace(/[^a-z0-9_]/g, ""); // strip anything weird
-    }
-    
+export default function Craniometrics() {
     return(
         <div className = "bone-container">
             <h3 className = "text-center">Craniometrics</h3>
             <Tabs defaultValue = "Cranium" className = "relative w-full">
                 <TabsList className = "grid w-full grid-cols-2">
-                    {hasCranium && <TabsTrigger value="Cranium">Cranium</TabsTrigger>}
-                    {hasMandible && <TabsTrigger value="Mandible">Mandible</TabsTrigger>}
+                    <TabsTrigger value="Cranium">Cranium</TabsTrigger>
+                    <TabsTrigger value="Mandible">Mandible</TabsTrigger>
                 </TabsList>
-                {hasCranium &&
                 <TabsContent value="Cranium">
                     <Table.Root>
                         <Table.Header>
@@ -57,25 +29,18 @@ export default function Craniometrics(props : CraniometricsProps) {
                         </Table.Header>
 
                         <Table.Body>
-                            {craniometrics_list.metrics_cranium.map((row_info, i) => 
+                            {craniometrics_list.metrics_cranium.map((info, i) => 
                             <Table.Row key = {i}>
-                                <Table.RowHeaderCell>{displayName(row_info)}</Table.RowHeaderCell>
-                                <Table.Cell>{row_info.split("\t")[1]}</Table.Cell>
-                                <Table.Cell>{row_info.split("\t")[2]}</Table.Cell>
+                                <Table.RowHeaderCell>{info.split("\t")[0]}</Table.RowHeaderCell>
+                                <Table.Cell>{info.split("\t")[1]}</Table.Cell>
+                                <Table.Cell>{info.split("\t")[2]}</Table.Cell>
                                 <Table.Cell>
-                                    <TextField.Root type="number" 
-                                    value={craniumMetrics[storageName(row_info)] || ''}
-                                    onChange={(e) => updateCranium(prev =>
-                                                        produce(prev, draft => {
-                                                            draft[storageName(row_info)] = Number(e.target.value);
-                                                        }))}/>
+                                    <TextField.Root type="number"/>
                                 </Table.Cell>
                             </Table.Row>)}
                         </Table.Body>
                     </Table.Root>
                 </TabsContent>
-                }
-                {hasMandible &&
                 <TabsContent value="Mandible">
                     <Table.Root>
                         <Table.Header>
@@ -88,24 +53,18 @@ export default function Craniometrics(props : CraniometricsProps) {
                         </Table.Header>
 
                         <Table.Body>
-                            {craniometrics_list.metrics_mandible.map((row_info, i) => 
+                            {craniometrics_list.metrics_mandible.map((info, i) => 
                             <Table.Row>
-                                <Table.RowHeaderCell>{displayName(row_info)}</Table.RowHeaderCell>
-                                <Table.Cell>{row_info.split("\t")[1]}</Table.Cell>
-                                <Table.Cell>{row_info.split("\t")[2]}</Table.Cell>
+                                <Table.RowHeaderCell>{info.split("\t")[0]}</Table.RowHeaderCell>
+                                <Table.Cell>{info.split("\t")[1]}</Table.Cell>
+                                <Table.Cell>{info.split("\t")[2]}</Table.Cell>
                                 <Table.Cell>
-                                    <TextField.Root type="number" 
-                                    value={mandibleMetrics[storageName(row_info)] || ''}
-                                    onChange={(e) => updateMandible(prev =>
-                                                        produce(prev, draft => {
-                                                            draft[storageName(row_info)] = Number(e.target.value);
-                                                        }))}/>
+                                    <TextField.Root type="number"/>
                                 </Table.Cell>
                             </Table.Row>)}
                         </Table.Body>
                     </Table.Root>
                 </TabsContent>
-                }
             </Tabs>
         </div>
     )

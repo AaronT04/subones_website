@@ -1,6 +1,4 @@
 import type { NextConfig } from "next";
-import "dotenv/config";
-
 
 const nextConfig: NextConfig = {
   eslint: {
@@ -8,8 +6,8 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  output: 'export',
-  basePath: process.env.ASSET_BASEPATH
+  output: 'export' //Creates a static build in the folder /out. On cloudflare, "output directory" has to be "/out"
+                   //For a dynamic build, we would delete this line.
 };
 
 export default nextConfig;

@@ -1,62 +1,54 @@
-// src/lib/api.ts
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:7286/";
+// src/lib/apiClient.ts
+type Json = Record<string, unknown> | unknown[] | null;
 
-type Json = Record<string, unknown> | unknown[];
+const BASE = "http://localhost:7286";
 
-function normalize(path: string) {
-  const b = BASE.replace(/\/+$/, "");
-  const p = path.startsWith("/") ? path : `/${path}`;
-  return `${b}${p}`;
+/** ensure absolute URL and ensure it begins with /api */
+function buildUrl(input: string): string {
+  try { new URL(input); return input; } catch {/* not absolute */}
+  const path = input.startsWith("/api/") ? input : `/api/${input.replace(/^\/+/, "")}`;
+  return `${BASE}${path}`;
 }
 
-// Helper to get auth token from localStorage
-function getAuthToken(): string | null {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('authToken');
-  }
-  return null;
-}
-
-async function handle<T>(res: Response): Promise<T> {
+async function parseJson<T>(res: Response, url: string): Promise<T> {
+  const text = await res.text();
+  const data = text ? (() => { try { return JSON.parse(text); } catch { return text; } })() : null;
   if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    console.error(`[api] ${res.status} ${res.statusText} → ${res.url}\n${text.slice(0, 400)}`);
-    throw new Error(`[api] ${res.status} ${res.statusText} — see console`);
+    const detail = typeof data === "string" ? data.slice(0, 300) : JSON.stringify(data);
+    throw new Error(`HTTP ${res.status} ${res.statusText} — ${url}\n${detail || "no body"}`);
   }
-  if (res.status === 204) return undefined as unknown as T;
-  const raw = await res.text();
-  return (raw ? (JSON.parse(raw) as T) : (undefined as unknown as T));
+  return data as T;
 }
 
-async function req<T>(method: string, path: string, init?: RequestInit, body?: unknown) {
-  const url = normalize(path);
+export async function http<T>(
+  method: string,
+  url: string,
+  body?: Json,
+  init?: RequestInit
+): Promise<T> {
+  const m = (method || "GET").toUpperCase();
+  const abs = buildUrl(url);
   const headers = new Headers(init?.headers);
 
-  // Add authentication token if available
-  const token = getAuthToken();
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+  let finalBody: BodyInit | undefined;
+  if (m !== "GET" && m !== "HEAD" && body != null) {
+    if (typeof FormData !== "undefined" && body instanceof FormData) {
+      finalBody = body as BodyInit; // let browser set boundary
+    } else {
+      if (!headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+      finalBody = JSON.stringify(body);
+    }
+  } else {
+    if (headers.get("Content-Type") === "application/json") headers.delete("Content-Type");
   }
 
-  if (body != null && !headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
-  }
-
-  const res = await fetch(url, {
-    ...init,
-    method,
-    headers,
-    body: body == null ? undefined : JSON.stringify(body)
-  });
-
-  return handle<T>(res);
+  const res = await fetch(abs, { ...init, method: m, headers, body: finalBody, cache: "no-store" });
+  return parseJson<T>(res, abs);
 }
 
 export const api = {
-  get: <T = Json>(path: string, init?: RequestInit) => req<T>("GET", path, init),
-  post: <T = Json>(path: string, body?: unknown, init?: RequestInit) => req<T>("POST", path, init, body),
-  put:  <T = Json>(path: string, body?: unknown, init?: RequestInit) => req<T>("PUT", path, init, body),
-  del:  <T = Json>(path: string, init?: RequestInit) => req<T>("DELETE", path, init),
+  get:  <T>(url: string, init?: RequestInit) => http<T>("GET", url, undefined, init),
+  post: <T>(url: string, body?: Json, init?: RequestInit) => http<T>("POST", url, body, init),
+  put:  <T>(url: string, body?: Json, init?: RequestInit) => http<T>("PUT", url, body, init),
+  del:  <T>(url: string, init?: RequestInit) => http<T>("DELETE", url, undefined, init),
 };
-
-console.log("NEXT_PUBLIC_API_URL =", BASE);

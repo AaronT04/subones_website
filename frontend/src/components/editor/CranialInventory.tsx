@@ -1,127 +1,116 @@
-"use client"
 import { useState } from "react";
 import { Table, TextField } from "@radix-ui/themes";
 import * as Checkbox from "@radix-ui/react-checkbox";
-import { cranial_inventory_list, CranialInventoryList, CranialInventoryRow } from "@/components/lists/cranial-inventory-list";
-import SmallTaphonomy from "./SmallTaphonomy"
-import "@/components/lists/InventoryStyles.css"
-import { excludeCategoriesFromTaphonomy, doesNotRequireBoneSideDropdown } from "@/components/lists/cranial-inventory-list";
-import InventorySelect from "./InventorySelect";
-import TaphonomyDropdown from "@/components/editor/TaphonomyDropdown"
-import type {IInventory, ISkull, IAllTaphonomy} from "@/lib/api/componentTypes"
+import { cranial_inventory_list } from "./cranial-inventory-list";
+import Taphonomy from "@/components/editor/Taphonomy"
+import "./InventoryStyles.css"
 
-interface CranialInventoryProps {
-    cranialInventoryContext: IInventory
-    taphonomyContext: IAllTaphonomy
-    skullContext?: ISkull
-}
+export default function CranialInventory() {
+  const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
+  const [selectedBone, setSelectedBone] = useState("")
 
-export default function CranialInventory(props: CranialInventoryProps) {
-    const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
-    const [selectedBone, setSelectedBone] = useState("")
+  function getCheckboxLabels(numBoxes: number): string[] {
+    if (numBoxes === 1) return [];
+    if (numBoxes === 2) return ["L", "R"];
+    if (numBoxes === 3) return ["L", "Body", "R"];
+    return [];
+  }
 
-    const cranialInventoryContext = props.cranialInventoryContext;
-    const taphonomyContext = props.taphonomyContext;
-    const hasCranium = props.skullContext ? props.skullContext.hasCranium : true;
-    const hasMandible = props.skullContext ? props.skullContext.hasMandible : true;
+  function createCheckboxes(numBoxes: number) {
+    return Array.from({ length: numBoxes }).map((_, idx) => (
+      <Checkbox.Root
+        key={idx}
+        className="w-6 h-6 mx-2 border border-gray-400 rounded flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <Checkbox.Indicator>
+          <svg
+            className="w-4 h-4 text-blue-600"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </Checkbox.Indicator>
+      </Checkbox.Root>
+    ));
+  }
 
-
-    function buildEntryName(row: CranialInventoryRow, label?: string): string {
-        const parts: string[] = [];
-        if (row.boneName) parts.push(row.boneName); // e.g., "L", "R"
-        if (label) parts.push(label); // e.g., "Prox 1/3"
-        return parts.join(" ").trim();
-    }
-
-    function getCheckboxLabels(numBoxes: number): string[] {
-        if (numBoxes === 1) return [];
-        if (numBoxes === 2) return ["L", "R"];
-        if (numBoxes === 3) return ["L", "Body", "R"];
-        return [];
-    }
-
-    function enableRowCondition(bone : CranialInventoryRow) {
-        
-        let result = (hasCranium && bone.boneName !== "Mandible") || (hasMandible && bone.boneName === "Mandible");
-        //console.log(result);
-        return result;
-    }
-
-    function createCheckboxes(bone : CranialInventoryRow) {
-        const numBoxes : number = bone.numBoxes;
-        const labels = getCheckboxLabels(bone.numBoxes);
-        const entryName = (idx) => labels[idx] ? bone.boneName + " " + labels[idx] : bone.boneName;
-        return Array.from({ length: numBoxes }).map((_, idx) => (
-            <InventorySelect entryName={entryName(idx)} inventoryContext={cranialInventoryContext} />
-        ));
-    }
-
-    return (
+  return (
     <div className="bone-container">
-        <div className="grid w-full grid-cols-2">
+      <div className="grid w-full grid-cols-2">
         <div className="flex flex-col">
-            <h3>Cranial Inventory</h3>
-            <Table.Root className="table-root">
+          <h3>Cranial Inventory</h3>
+          <Table.Root className="table-root">
             <Table.Header>
-                <Table.ColumnHeaderCell className="table-header-cell bone">Bone</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="table-header-cell inventory">Inventory Options</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="table-header-cell edit">Taphonomy</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="table-header-cell bone">Bone</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="table-header-cell inventory">Inventory Options</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="table-header-cell edit">Edit Information</Table.ColumnHeaderCell>
             </Table.Header>
             <Table.Body>
-                {cranial_inventory_list.contents.map((bone, i) => {
+              {cranial_inventory_list.contents.map((bone, i) => {
                 const labels = getCheckboxLabels(bone.numBoxes);
 
                 return (
-                    enableRowCondition(bone) &&
-                    <Table.Row
+                  <Table.Row
                     key={i}
                     onMouseEnter={() => setHoveredRowIndex(i)}
+                    onMouseLeave={() => setHoveredRowIndex(null)}
                     className="align-top" // Ensure vertical alignment at top
-                    >
+                  >
                     <Table.RowHeaderCell className="table-row-header-cell bone">{bone.boneName}</Table.RowHeaderCell>
+                    {bone.boneName != "Teeth" ?
                     <Table.Cell className="table-cell inventory">
-                        <div className="flex flex-col items-center">
+                      <div className="flex flex-col items-center">
                         {/* Labels row */}
                         {labels.length > 0 && (
-                            <div className="flex justify-center gap-8 mb-1 w-full ">
+                          <div className="flex justify-center gap-8 mb-1 w-full ">
                             {labels.map((label, idx) => (
-                                <span
+                              <span
                                 key={idx}
                                 className="text-sm font-medium text-gray-700"
                                 style={{ width: "48px", textAlign: "center", whiteSpace: "nowrap" }}
-                                >
+                              >
                                 {label}
-                                </span>
+                              </span>
                             ))}
-                            </div>
+                          </div>
                         )}
 
                         {/* Checkboxes row */}
                         <div className="flex justify-center gap-6 w-full ">
-                            {createCheckboxes(bone)}
+                          {createCheckboxes(bone.numBoxes)}
                         </div>
-                        </div>
+                      </div>
                     </Table.Cell>
+                    : //for teeth row only
+                    <Table.Cell className="table-cell inventory">
+                        <div className = "flex flex-col items-center gap-1">
+                            <p>Enter number of teeth:</p>
+                            <TextField.Root className="w-20" type="number" />
+                        </div>
+                        
+                    </Table.Cell>
+                    }
                     <Table.Cell className="table-cell edit flex justify-center items-center">
-                        {hoveredRowIndex === i && !excludeCategoriesFromTaphonomy(bone) && (
-                        <TaphonomyDropdown 
-                            doesNotRequireBoneSide={doesNotRequireBoneSideDropdown(bone)}
-                            filteredDropdownTags={["L", "R"]}
-                            onEditClick={() => setSelectedBone(buildEntryName(bone))}
-                            onSideClick={(side) => setSelectedBone(buildEntryName(bone, side))}
-                            />
-                        )}
+                      {hoveredRowIndex === i && (
+                        <button className="w-10"
+                                onClick={() => setSelectedBone(bone.boneName)}>Edit</button>
+                      )}
                     </Table.Cell>
-                    </Table.Row>
-                    
+                  </Table.Row>
                 );
-                })}
+              })}
             </Table.Body>
-            </Table.Root>
+          </Table.Root>
         </div>
-        {selectedBone != "" && <SmallTaphonomy taphonomyContext={taphonomyContext} boneName={selectedBone}/>}
-        </div>
-        
+        {selectedBone != "" && <Taphonomy boneName={selectedBone}/>}
+      </div>
+      
     </div>
-    );
-    }
+  );
+}

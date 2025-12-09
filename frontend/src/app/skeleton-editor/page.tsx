@@ -1,36 +1,36 @@
 "use client"
-import Left from "./Left"
+
+import Left from "@/components/editor/Left"
 import Right from "./Right"
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import ResponsiveLayout from "@/components/editor/responsiveLayout"
-import { Suspense } from "react"
-import {SkeletonEditorContextProvider} from "./context"
 
-function Left2() {
-    return (
+
+function Left2(){
+    return(
         <div>
-            <Left />
+            <Left/>
         </div>
     )
 }
 
-function Right2() {
-    return (
+function Right2(){
+    return(
         <div>
-            <Right />
+            <Right/>
         </div>
     )
 }
 
-function HomeContent() {
+export default function Home(){
+
+    const router = useRouter();
+    useEffect(() => {
+        const token = localStorage.getItem('authToken')
+        //if (!token) {
+         //   router.push('/login')
+       // }
+        }, [])
     return <ResponsiveLayout Left={Left2} Right={Right2} />
-}
-
-export default function Home() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-                <SkeletonEditorContextProvider>
-                    <HomeContent />
-                </SkeletonEditorContextProvider>
-        </Suspense>
-    )
 }

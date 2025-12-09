@@ -3,15 +3,17 @@
 import { Button } from "@/components/ui/button"
 import {useRouter} from 'next/navigation'
 import "@/app/globals.css"
-import Specimen from "@/components/editor/Specimen"
-import Taxonomy from "@/components/editor/Taxonomy"
-import Locality from "@/components/editor/Locality"
-import { useBoneEditorContext } from "./context"
+import Field from "./fields"
+import TaxField from "./taxfields"
+import LocField from "./locfields"
+import { useBoneData } from "./context/BoneDataContext"
 import {useState} from 'react'
 
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -19,7 +21,7 @@ import {
 
 function Left() {
     const [loading, setLoading] = useState(false);
-    const { userData, formContext, localityContext, handleSave } = useBoneEditorContext();
+    const { handleSave, isSaving } = useBoneData();
     
     const router = useRouter();
     if (loading) {
@@ -40,7 +42,7 @@ function Left() {
             </div>
 
             <div className="w-[90%] py-20">
-                <Specimen userData={userData} formContext={formContext}/>
+                <Field />
             </div>
             
 
@@ -60,7 +62,7 @@ function Left() {
                         <DialogHeader>
                             <DialogTitle>Taxonomy Information</DialogTitle>
                         </DialogHeader>
-                        <Taxonomy/>
+                        <TaxField/>
                     </DialogContent>
                 </Dialog>
 
@@ -79,7 +81,7 @@ function Left() {
                         <DialogHeader>
                             <DialogTitle>Locality Information</DialogTitle>
                         </DialogHeader>
-                        <Locality formContext={formContext} localityContext={localityContext}/>
+                        <LocField />
                     </DialogContent>
                 </Dialog>
 
@@ -92,13 +94,18 @@ function Left() {
                     className="bg-maroon hover:bg-maroon/90 text-white hover:text-white 
                     h-16 w-full text-base sm:text-lg md:text-xl font-medium transition-all duration-200"
                     onClick={() => {
+                        alert('Button clicked!'); // Does this show?
+                        console.log('Button clicked!');
+                        console.log('handleSave exists?', typeof handleSave);
                         if (handleSave) {
                             handleSave();
                         } else {
                             console.error('handleSave is undefined!');
                         }
                     }}
-                >Save
+                    disabled={isSaving}
+                >
+                    {isSaving ? 'Saving...' : 'Save'}
                 </Button>
             </div>
         </div>

@@ -59,7 +59,7 @@ export const boneColumns: ColumnDef<Bone>[] = [
         </Button>
       </div>
     ),
-    cell: ({ row }) => <div className="text-right font-medium">{row.original.menuID}</div>,
+    cell: ({ row }) => <div className="text-right font-medium">{row.getValue("id")}</div>,
     // Numeric-aware filter: full digits → exact; otherwise → prefix match
     filterFn: (row, _id, value) => {
       const v = String(value ?? "").trim()

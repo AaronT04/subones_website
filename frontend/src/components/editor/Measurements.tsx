@@ -1,61 +1,35 @@
-import { postcranialmetrics_list } from "@/components/lists/postcranialmetrics"
+import { postcranialmetrics_list } from "@/app/metrics/postcranialmetrics"
 import MeasurementsBox from "@/components/ui/measurements_box"
-import { Vertebrae } from "./Vertebrae"
-import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { IMeasurements } from "@/lib/api/componentTypes";
+import React, {useState, useContext, useEffect} from 'react';
 
-interface MeasurementsProps {
-    measurementsContext: IMeasurements
-    boneName : string
-}
-function Measurements(props: MeasurementsProps) {
+function Measurements( {selectedBone} ){
 
-    const update = props.measurementsContext.update;
-    const measurements = props.measurementsContext.data;
-    const boneName = props.boneName;
+    let [boneID, setBoneID] = useState("fallback");
 
-    // Handle measurement changes
-    const handleMeasurementChange = (name: string, value: string) => {
-        update(prev => ({
-            ...prev,
-            [name]: Number(value)
-        }));
-    };
-
-    const normalizeBone = (boneName: string | null) => {
-        return boneName?.toLowerCase().replace(/\s+/g, '_') || '';
-    };
-
-    const renderContent = () => {
-        // Check if it's a vertebrae type
-        if (normalizeBone(boneName) === "cervical_vertebrae") {
-            return <div><Vertebrae selectedList={normalizeBone(boneName)}></Vertebrae></div>;
-        } else if (boneName === "thoracic_vertebrae") {
-            return <div><Vertebrae selectedList={normalizeBone(boneName)}></Vertebrae></div>;
-        } else if (boneName === "lumbar_vertebrae") {
-            return <div><Vertebrae selectedList={normalizeBone(boneName)}></Vertebrae></div>;
+    
+    useEffect(() => {
+        const normalized = normalizeBone(selectedBone);
+        if (postcranialmetrics_list.hasOwnProperty(normalized)) {
+            setBoneID(normalized);
+        } else {
+            console.warn(`Unknown bone type: ${selectedBone}`);
+            setBoneID("fallback"); // fallback
         }
-        // Otherwise render appendicular bones
-        else {
-            return postcranialmetrics_list[normalizeBone(boneName)]?.map((name, i) => (
-                <MeasurementsBox 
-                    name={name} 
-                    key={i}
-                    value={measurements[name] || ''}
-                    onChange={(e) => handleMeasurementChange(name, e.target.value)}
-                />
-            ));
-        }
+    }, [selectedBone]);
+
+    const normalizeBone = (boneName) => {
+        return boneName?.toLowerCase().replace(/\s+/g, '_');
     };
 
     return(
         <div>
+        <form>
             <section>
-                {renderContent()}
+                {postcranialmetrics_list[boneID].map((name, i) => (
+                    <MeasurementsBox name={name} key={i} />
+                ))}
             </section>
-        </div>
+        </form>
+    </div>
     )
-} 
-
-export default Measurements
+} export default Measurements

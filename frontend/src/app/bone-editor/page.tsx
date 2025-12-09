@@ -1,9 +1,10 @@
 "use client"
+
 import Left from "./Left"
 import Right from "./Right"
-import ResponsiveLayout from "@/components/editor/responsiveLayout"
+import ResponsiveLayout from "./responsiveLayout"
+import { BoneDataProvider } from "./context/BoneDataContext"
 import { Suspense } from "react"
-import {BoneEditorContextProvider} from "./context"
 
 function Left2() {
     return (
@@ -28,9 +29,9 @@ function HomeContent() {
 export default function Home() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-                <BoneEditorContextProvider>
-                    <HomeContent />
-                </BoneEditorContextProvider>
+            <BoneDataProvider>
+                <HomeContent />
+            </BoneDataProvider>
         </Suspense>
     )
 }
