@@ -72,7 +72,7 @@ export default function CranialInventory(props: CranialInventoryProps) {
                 const labels = getCheckboxLabels(bone.numBoxes);
 
                 return (
-                    enableRowCondition(bone) &&
+                    enableRowCondition(bone) ?
                     <Table.Row
                     key={i}
                     onMouseEnter={() => setHoveredRowIndex(i)}
@@ -112,7 +112,7 @@ export default function CranialInventory(props: CranialInventoryProps) {
                             />
                         )}
                     </Table.Cell>
-                    </Table.Row>
+                    </Table.Row> : null
                     
                 );
                 })}

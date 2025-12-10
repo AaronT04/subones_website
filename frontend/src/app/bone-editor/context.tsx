@@ -60,12 +60,12 @@ export function BoneEditorContextProvider({children} : {children : ReactNode}) {
             alert("Save error - invalid token");
             return;
         }
-        console.log("got token");
+        //console.log("got token");
         let specimenId = PageManager.getDatabaseID("bone-editor");
         setSpecimenId(specimenId);
-        console.log(specimenId);
+        //console.log(specimenId);
         let boneId = await loadBone(specimenId, boneContext);
-        console.log("loaded bone");
+        //console.log("loaded bone");
         if(boneId === -1) {
             console.log("-1");
             alert("Couldn't load - Specimen was not linked to bone")

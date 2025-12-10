@@ -6,6 +6,7 @@ const { db } = require("../db");
 // Mapping of string labels → SQL column names
 const COLUMN_MAP = {
   // STAINING
+  staining: {
   "Green (copper)": "green_copper",
   "Green (algae)": "green_algae",
   "Red (ocher, cinnabar, vermillion)": "red_ocher_cinnabar_vermillion",
@@ -15,7 +16,8 @@ const COLUMN_MAP = {
   "Roots/Plant": "roots_plant",
   "Mottled Pattern": "mottled_pattern",
   "Other Staining": "other_staining",
-
+  },
+  surface_damage: {
   // SURFACE DAMAGE
   "Sunbleaching": "sunbleaching",
   "Plant Root damage": "plant_root_damage",
@@ -28,6 +30,8 @@ const COLUMN_MAP = {
   "Contact erosion (eg. coffin wear)": "contact_erosion_eg_coffin_wear",
   "Burning": "burning",
   "Other Damage": "other_damage",
+  },
+  adherent_materials: {
 
   // ADHERENT MATERIALS
   "Dried Body Fluids": "dried_body_fluids",
@@ -37,9 +41,11 @@ const COLUMN_MAP = {
   "Insect Debris/Pupae": "insect_debris_pupae",
   "Lichens": "lichens",
   "Roots/Rootlets": "roots_rootlets",
-  "Soil": "soil_adherent",  // careful: different from staining Soil
+  "Soil Adherent": "soil_adherent",  // careful: different from staining Soil
   "Textile/Impression": "textile_impression",
   "Other Material": "other_material",
+  },
+  modifications: {
 
   // CURATION MODIFICATIONS
   "Excavation Damage": "excavation_damage",
@@ -55,11 +61,18 @@ const COLUMN_MAP = {
   "Cut Marks": "cut_marks",
   "Intentional Fracture": "intentional_fracture",
   "PM Drilling/Cutting, etc.": "pm_drilling_cutting_etc"
+  }
 };
 
 const COLUMN_TO_LABEL = Object.fromEntries(
-  Object.entries(COLUMN_MAP).map(([label, col]) => [col, label])
+    Object.entries(COLUMN_MAP).flatMap(([category, group]) => (
+    Object.entries(group).map(([label, col]) => [col, label])
+    ))
 );
+
+const LABEL_TO_COLUMN = Object.fromEntries(
+  Object.entries(COLUMN_MAP).flatMap(([category, group]) => Object.entries(group))
+)
 
 // SAVE or UPDATE TAPHONOMY ENTRY
 router.post("/api/taphonomy/:specimen_id/:bone_name", async (req, res) => {
@@ -101,7 +114,7 @@ router.post("/api/taphonomy/:specimen_id/:bone_name", async (req, res) => {
 
     // Mark columns = 1 for selected options
     for (const label of optionStrings) {
-      const col = COLUMN_MAP[label];
+      const col = LABEL_TO_COLUMN[label]
       if (!col) continue;
 
       columns.push(col);
@@ -203,14 +216,14 @@ function rowToTaphonomy(row) {
 
     // figure out which group it belongs to
 
-    if (Object.keys(COLUMN_MAP).slice(0, 9).includes(label)) {
+    if (Object.keys(COLUMN_MAP["staining"]).includes(label)) {
       staining.push(label);
     } else if (
-      Object.keys(COLUMN_MAP).slice(9, 20).includes(label)
+      Object.keys(COLUMN_MAP["surface_damage"]).includes(label)
     ) {
       surface_damage.push(label);
     } else if (
-      Object.keys(COLUMN_MAP).slice(20, 29).includes(label)
+      Object.keys(COLUMN_MAP["adherent_materials"]).includes(label)
     ) {
       adherent_materials.push(label);
     } else {

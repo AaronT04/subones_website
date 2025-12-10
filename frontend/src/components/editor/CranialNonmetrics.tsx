@@ -80,21 +80,21 @@ function CranialNonmetrics(props : CranialNonmetricsProps) {
                 <h3 className = "text-center">Cranial Nonmetrics</h3>
                     <Tabs defaultValue = "facial">
                         <TabsList>
-                            {tab_values.map((tab, i) => tabCondition(tab) &&
-                            <TabsTrigger value={tab}>{tab.charAt(0).toUpperCase() + tab.slice(1)}</TabsTrigger>)}
+                            {tab_values.map((tab, i) => tabCondition(tab) ?
+                            <TabsTrigger value={tab}>{tab.charAt(0).toUpperCase() + tab.slice(1)}</TabsTrigger> : null)}
                             
                         </TabsList>
                         {tab_values.map((tab, i) => tab != "macromorphoscopics" &&
-                        tabCondition(tab) &&
+                        tabCondition(tab) ?
                             <TabsContent value={tab}>
                                 {renderTable(tab)}
-                            </TabsContent>
+                            </TabsContent> : null
                         )}
-                        {tabCondition("macromorphoscopics") &&
+                        {tabCondition("macromorphoscopics") ?
                         <TabsContent value="macromorphoscopics">
                             <Macromorphoscopics
                             cranialNonmetricsContext={props.cranialNonmetricsContext}/>
-                        </TabsContent>
+                        </TabsContent> : null
                         }
                     </Tabs>
             </div>)

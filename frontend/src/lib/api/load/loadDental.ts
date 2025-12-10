@@ -18,13 +18,10 @@ export async function loadDental(specimenId : number, ctx : IDental) {
         const morph : MorphologyBody[] = await morph_res.json();
         const record : Morphology = {}
         if(morph == undefined) return;
-        for(const m of morph) {
-            let teeth_map = morph.find((t) => t.morph_name == m.morph_name && t.tooth_name == m.tooth_name)
-            if(teeth_map) {
-                for(const t of Object.keys(teeth_map)) {
-                    (record[m.morph_name])[t] = m.morph_value;
-                }
-            }
+        console.log(morph);
+        for(const {morph_name, tooth_name, morph_value} of morph) {
+            record[morph_name] ??= {};
+            record[morph_name][tooth_name] = morph_value
         }
         ctx.updateMorphology(record);
     }

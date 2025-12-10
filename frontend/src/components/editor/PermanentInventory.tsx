@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tabs";
 import DentalTable from "./DentalTable";
 import ToothDisplay from "./ToothDisplay";
-import {dental_help_text} from "@/components/lists/DentalHelp";
+import {dental_help_text} from "@/components/editor/DentalHelp";
 import {useState} from 'react'
 import { Button } from "@/components/ui/button";
 import {morphology_list} from "@/components/lists/morphology_list";
@@ -77,7 +77,7 @@ export default function PermanentInventory(props : PermanentInventoryProps) {
                 
                 <Tabs  className="flex items-center" value={displayMode} onValueChange={setDisplayMode}>
                     <TabsList>
-                        {displayModeNames.map((mode, i) => <TabsTrigger value={mode}>{mode}</TabsTrigger>)}
+                        {displayModeNames.map((mode, i) => <TabsTrigger key={i} value={mode}>{mode}</TabsTrigger>)}
                     </TabsList>
                 </Tabs>
                 <ToothDisplay dentition="perm" dentalContext={dentalContext}

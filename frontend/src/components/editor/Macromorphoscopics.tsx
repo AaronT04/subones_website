@@ -4,6 +4,7 @@ import { ICranialNonmetrics, ISkull } from "@/lib/api/componentTypes"
 import { RadioGroup, TextArea } from "@radix-ui/themes"
 import {useState} from 'react'
 import {produce} from 'immer'
+import { toSQLColumn } from "@/lib/toSQLColumn"
 
 
 interface MacromorphoscopicsProps {
@@ -14,7 +15,9 @@ const getImage = (trait, code) => {
     console.log("trait: " + trait + " code: " + code);
     //console.log(mms_list.dict[trait][2][code].src);
         if(trait != null && code != null) {
-            return mms_list.dict[trait][2] != null && mms_list.dict[trait][2][code].src;
+            return mms_list.dict[trait][2] != null &&
+                mms_list.dict[trait][2][code] != null &&
+                    mms_list.dict[trait][2][code].src;
         }
     }
 
@@ -42,7 +45,7 @@ export default function Macromorphoscopics(props : MacromorphoscopicsProps) {
                                 type="radio"
                                 name={`codeSelect-${trait}`}
                                 value={number}
-                                checked={selected === number}
+                                checked={selected === "" ? false : number === Number(selected)}
                                 onChange={() => {
                                     selectCode(i);
                                     update(prev =>
@@ -52,7 +55,7 @@ export default function Macromorphoscopics(props : MacromorphoscopicsProps) {
                                                 [trait] : number
                                             }
                                         })
-                                    )
+                                    );
                                     }
                                 }
                             />
@@ -74,7 +77,7 @@ export default function Macromorphoscopics(props : MacromorphoscopicsProps) {
                         onValueChange={(traitName) => {
                         const index = Object.keys(mms_list.dict).indexOf(traitName);
                         selectTrait(traitName);
-                        selectCode(0);
+                        //selectCode(0);
                         }}
                     >
                         {Object.keys(mms_list.dict).map((traitName) => (

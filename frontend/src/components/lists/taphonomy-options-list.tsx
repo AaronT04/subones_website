@@ -42,7 +42,7 @@ export const taphonomy_options = {
                             "Insect Debris/Pupae",
                             "Lichens",
                             "Roots/Rootlets",
-                            "Soil",
+                            "Soil Adherent",
                             "Textile/Impression",
                             "Other Material"
     ]

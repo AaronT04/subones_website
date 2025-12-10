@@ -203,7 +203,7 @@ export default function ToothDisplay(props : ToothDisplayProps) {
         </label>
         <select id="autofill-select">
             {getValidCodes(props.displayMode, props.trait)?.map((code) => (
-              <option value={code}>{code}</option>
+              <option key={code} value={code}>{code}</option>
             ))}
           </select>
             <Button

@@ -43,7 +43,7 @@ export const getMorphologyBody = (record : Morphology) => {
     const arr : MorphologyBody[] = [];
     for(const morph_name of Object.keys(record)) {
         for(const tooth_name of Object.keys(record[morph_name])) {
-            if((record[morph_name])[tooth_name]) {
+            if((record[morph_name])[tooth_name] != null) {
                 arr.push({
                     morph_name,
                     tooth_name,

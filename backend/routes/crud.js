@@ -165,7 +165,7 @@ function useCrudRoutes(app) {
     'bregmatic_bone', 'saggital_ossicle',
     'left_parietal_foramen', 'midline_parietal_foramen', 'right_parietal_foramen',
     'apical_bone', 'inca_bone',
-    'left_lambdoid_ossicle', 'right_lamdoid_ossicle',
+    'left_lambdoid_ossicle', 'right_lambdoid_ossicle',
     'left_asterionic_bone', 'right_asterionic_bone',
     'left_ossicle_in_occipitomastoid_suture', 'right_ossicle_in_occipitomastoid_suture',
     'left_parietal_notch_bone', 'right_parietal_notch_bone',

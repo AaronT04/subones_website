@@ -6,6 +6,9 @@ export async function loadSpecimen(
     form_ctx : IForm, 
     loc_ctx : ILocality,
 ) {
+    if(specimenId == -1) {
+        alert("Specimen ID = -1 - Load Error")
+    }
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/specimen/${specimenId}`);
     if(res.ok) {
         const body : SpecimenBody = await res.json();

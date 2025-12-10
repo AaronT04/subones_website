@@ -36,10 +36,11 @@ const SkullEditorContext = createContext<SkullEditorContextType | undefined>(und
 
 export function SkullEditorContextProvider({children} : {children : ReactNode}) {
     const [userData, setUserData] = useState<DecodedToken | undefined>(undefined)
+
     useEffect(() => {
-        setUserData(loadUser());
-        handleLoad();
-    }, []);
+            setUserData(loadUser());
+            if(PageManager.getPageMode("skull-editor") === "Edit") {console.log("loading"); handleLoad();}
+        }, []);
     
     const [formData, setFormData] = useState<FormData>({
         specimenNumber: '',
@@ -84,9 +85,10 @@ export function SkullEditorContextProvider({children} : {children : ReactNode}) 
             alert("Save error - invalid token");
             return;
         }
-        let specimenId = PageManager.getDatabaseID("skull-editor");
+        let specimenId = PageManager.getDatabaseID("skull-editor"); //-1 if new
         const specimenBody = getSpecimenBody(formContext, localityContext, userData);
-        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId);
+        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId); //specimen id = -1 -> x if new entry
+ 
         await saveSkull(skullContext, resultSpecimenId)
         await saveCraniometrics(craniometricsContext, resultSpecimenId);
         await saveNonmetrics(cranialNonmetricsContext.data, resultSpecimenId);
@@ -103,8 +105,9 @@ export function SkullEditorContextProvider({children} : {children : ReactNode}) 
             alert("Save error - invalid token");
             return;
         }
-        let specimenId = PageManager.getDatabaseID("skull-editor");
-        await loadSpecimen(specimenId, formContext, localityContext);
+        let specimenId = PageManager.getDatabaseID("skull-editor"); //should never load -1
+
+        await loadSpecimen(specimenId, formContext, localityContext); //
         await loadSkull(specimenId, skullContext);
         await loadCraniometrics(specimenId, craniometricsContext);
         await loadNonmetrics(specimenId, cranialNonmetricsContext);

@@ -24,7 +24,8 @@ export function DentalEditorContextProvider({children} : {children : ReactNode})
     const [userData, setUserData] = useState<DecodedToken | undefined>(undefined)
     useEffect(() => {
         setUserData(loadUser());
-        handleLoad();
+        if(PageManager.getPageMode("dental-editor") === "Edit") {//console.log("loading"); 
+        handleLoad();}
     }, []);
     
     const [formData, setFormData] = useState<FormData>({
@@ -53,9 +54,9 @@ export function DentalEditorContextProvider({children} : {children : ReactNode})
             alert("Save error - invalid token");
             return;
         }
-        let specimenId = PageManager.getDatabaseID("dental-editor");
+        let specimenId = PageManager.getDatabaseID("dental-editor"); //will be -1 if new
         const specimenBody = getSpecimenBody(formContext, localityContext, userData);
-        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId);
+        let resultSpecimenId = await saveSpecimen(specimenBody, specimenId); //automatically handles -1 by doing POST without id
         await saveDentalInventory(dentalContext.inventory, resultSpecimenId);
         await saveMorphology(dentalContext.morphology, resultSpecimenId);
         PageManager.switchToEditModeAfterSave("dental-editor", resultSpecimenId);

@@ -41,10 +41,10 @@ export default function Craniometrics(props : CraniometricsProps) {
             <h3 className = "text-center">Craniometrics</h3>
             <Tabs defaultValue = "Cranium" className = "relative w-full">
                 <TabsList className = "grid w-full grid-cols-2">
-                    {hasCranium && <TabsTrigger value="Cranium">Cranium</TabsTrigger>}
-                    {hasMandible && <TabsTrigger value="Mandible">Mandible</TabsTrigger>}
+                    {hasCranium ? <TabsTrigger value="Cranium">Cranium</TabsTrigger> : null}
+                    {hasMandible ? <TabsTrigger value="Mandible">Mandible</TabsTrigger> : null}
                 </TabsList>
-                {hasCranium &&
+                {hasCranium ?
                 <TabsContent value="Cranium">
                     <Table.Root>
                         <Table.Header>
@@ -74,8 +74,8 @@ export default function Craniometrics(props : CraniometricsProps) {
                         </Table.Body>
                     </Table.Root>
                 </TabsContent>
-                }
-                {hasMandible &&
+                : null}
+                {hasMandible ?
                 <TabsContent value="Mandible">
                     <Table.Root>
                         <Table.Header>
@@ -89,7 +89,7 @@ export default function Craniometrics(props : CraniometricsProps) {
 
                         <Table.Body>
                             {craniometrics_list.metrics_mandible.map((row_info, i) => 
-                            <Table.Row>
+                            <Table.Row key={i}>
                                 <Table.RowHeaderCell>{displayName(row_info)}</Table.RowHeaderCell>
                                 <Table.Cell>{row_info.split("\t")[1]}</Table.Cell>
                                 <Table.Cell>{row_info.split("\t")[2]}</Table.Cell>
@@ -105,7 +105,7 @@ export default function Craniometrics(props : CraniometricsProps) {
                         </Table.Body>
                     </Table.Root>
                 </TabsContent>
-                }
+                :null }
             </Tabs>
         </div>
     )

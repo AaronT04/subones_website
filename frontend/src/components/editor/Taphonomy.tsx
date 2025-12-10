@@ -1,5 +1,5 @@
 import TCheckbox from "@/components/ui/TCheckbox";
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {taphonomy_options} from "@/components/lists/taphonomy-options-list";
 import HorizontalRadioButton from "@/components/ui/HorizontalRadioButton";
 import { Button } from "@/components/ui/button"
@@ -27,6 +27,10 @@ function Taphonomy(props : TaphonomyProps) {
     const boneName = props.boneName;
     const update = props.taphonomyContext.update;
     const confirm = useConfirmDialog();
+    
+    useEffect(() => {
+        setComment(taphonomy?.comments ?? "");
+        }, [taphonomy?.comments]);
 
     const handleCheckboxChange = (category: string, value: string, checked: boolean) => {
         console.log('handleCheckboxChange called:', { category, value, checked });
@@ -118,8 +122,12 @@ function Taphonomy(props : TaphonomyProps) {
             return (<div>
                 <div className="flex flex-col">
                     <h3>Comments:</h3>
-                    <textarea placeholder={taphonomy?.comments ?? ""}className="p-1 h-40 border-1 border-gray-200 rounded-lg resize-none"
-                    onChange={(e) => setComment(e.target.value)}/>
+                    <textarea
+                        value={comment}
+                        className="p-1 h-40 border-1 border-gray-200 rounded-lg resize-none"
+                        onChange={(e) => setComment(e.target.value)}
+                        />
+
                     <Button className="w-34 ml-auto mt-4 bg-maroon hover:bg-maroon/90" onClick={() => {
                     update(prev =>
                         produce(prev, draft => {

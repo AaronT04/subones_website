@@ -112,8 +112,8 @@ export default function DentalTable(props : DentalTableProps) {
         </TableHeader>
 
         <TableBody>
-            {Object.keys(layout).map((toothName) => (
-            <React.Fragment key={toothName}>
+            {Object.keys(layout).map((toothName, i) => (
+            <React.Fragment key={i}>
                 {renderRow("L" + toothName)}
                 {renderRow("R" + toothName)}
             </React.Fragment>
