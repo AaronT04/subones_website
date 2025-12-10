@@ -1,26 +1,37 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const { db } = require('../db');
+
 const router = express.Router();
 
 router.get('/api/verify-email', async (req, res) => {
   const { token } = req.query;
 
-  if (!token) return res.status(400).send('Missing token');
+  if (!token) return res.status(400).send("Missing token");
 
   try {
     const decoded = jwt.verify(token, process.env.EMAIL_JWT_SECRET);
 
     db.query(
-      'UPDATE user SET isVerified = true WHERE user_id = ?',
-      [decoded.id],
+      `UPDATE user
+       SET isVerified = TRUE,
+           email_verification_token = NULL,
+           verified_at = NOW()
+       WHERE email = ?`,
+      [decoded.email],
       (err, result) => {
         if (err) return res.status(500).send(`Database error: ${err.message}`);
-        res.send('Email verified successfully. You can now log in.');
+
+        if (result.affectedRows === 0) {
+          return res.status(400).send("Invalid or expired token");
+        }
+
+        res.send("Email verified successfully! You may now log in.");
       }
     );
-  } catch (err) {
-    console.error(err);
-    res.status(400).send('Invalid or expired token');
+  } catch (e) {
+    console.error(e);
+    res.status(400).send("Invalid or expired token");
   }
 });
 

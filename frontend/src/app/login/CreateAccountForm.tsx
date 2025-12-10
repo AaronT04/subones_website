@@ -2,6 +2,7 @@ const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL;
 import {useRef, useState} from 'react'
 import ReCAPTCHA from 'react-google-recaptcha';
 
+console.log("API URL:", API_URL_ROOT);
 interface FormProps {
     goLogin: () => void
 }
@@ -37,7 +38,6 @@ export default function CreateAccountForm(props : FormProps) {
             const data = await response.json();
 
             if (response.ok) {
-                //setMessage('Account created. Please check your email to verify your account.');
                 setMessage('Account created [verified by default]');
                 setTimeout(() => {
                 props.goLogin();
