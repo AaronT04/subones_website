@@ -3,8 +3,8 @@
 import LoginForm from "./LoginForm"
 import CreateAccountForm from "./CreateAccountForm"
 import {useState} from 'react'
-import {basePath} from "@/lib/basePath"
 import "dotenv/config";
+import sammy_logo from "@/assets/sammy_logo.svg"
 
 export function LoginPage() {
 
@@ -30,7 +30,7 @@ export function LoginPage() {
           <div className="w-full h-1/2 absolute bottom-0 bg-maroon "/>
           <div className="w-full h-1/2 absolute top-0 bg-gold">
             <div className="flex justify-center items-center h-screen">
-              <img src={basePath('/sammy_logo.svg')} alt="Logo" width="200" height="200" />
+              <img src={sammy_logo.src} alt="Logo" width="200" height="200" />
             </div>
           </div>
         </div>
@@ -41,7 +41,7 @@ export function LoginPage() {
           <div className="w-full h-1/2 absolute bottom-0 bg-maroon "/>
           <div className="w-full h-1/2 absolute top-0 bg-gold">
             <div className="flex justify-center items-center h-screen">
-              <img src={basePath('/sammy_logo.svg')} alt="Logo" width="200" height="200" />
+              <img src={sammy_logo.src} alt="Logo" width="200" height="200" />
             </div>
           </div>
         </div>

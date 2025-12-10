@@ -4,10 +4,13 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { morphology_list } from "@/components/lists/morphology_list";
 import { morph_help } from "@/components/lists/morph_help_data";
-import {basePath} from "@/lib/basePath"
 import {ISkull, IDental} from "@/lib/api/componentTypes"
 import {produce} from 'immer'
 import { Button } from "@radix-ui/themes";
+
+import permdent from "@/assets/dental/permdent.bmp"
+import decdent from "@/assets/dental/decdent.bmp"
+
 
 export type SidedToothBox = {
   unsidedBox: UnsidedToothBox;
@@ -267,13 +270,16 @@ export default function ToothDisplay(props : ToothDisplayProps) {
       </Button>
       </div>
       }
-      <div
-              className={`relative w-[275px] h-[475px] mx-auto mt-[15px] bg-contain bg-center bg-no-repeat`}
-              style={{backgroundImage: 
-                props.dentition === "perm"
-                  ? `url(${basePath("/permdent.bmp")})`
-                  : `url(${basePath("/decdent.bmp")})`}}
-            >
+      <div className="relative w-[275px] h-[475px] mx-auto mt-[15px] flex items-center justify-center">
+        <img
+          src={
+            props.dentition === "perm" ?
+              permdent.src : decdent.src
+          }
+          alt={props.dentition === "perm" ? "Permanent dentition" : "Deciduous dentition"}
+          className="w-full h-full object-contain"
+        />
+
         {/* Center panel logic stays the same */}
         {props.displayMode === "Metrics" ? (
           <div
