@@ -14,7 +14,7 @@ export default function LoginForm(props : FormProps){
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const handleSignIn = async () => {
+    const handleSignIn = async (email: string, password: string) => {
         if(!email || !password) {
             setMessage("All fields are required.");
             return;
@@ -98,12 +98,18 @@ export default function LoginForm(props : FormProps){
                 <div className='mt-8 flex flex-col gap-y-4'>
                     <button className='active:scale-[.98] active:duration-75 hover:scale-[1.02] ease-in-out transition-all py-3 rounded-3xl 
                     bg-maroon hover:bg-maroon text-white text-lg font-medium'
-                    onClick={handleSignIn}>
+                    onClick={() => handleSignIn(email, password)}>
                         Sign In    
                     </button>
                     <button className='active:scale-[.98] active:duration-75 hover:scale-[1.02] ease-in-out transition-all py-3 rounded-3xl 
                     bg-maroon hover:bg-maroon text-white text-lg font-medium'
-                    onClick={() => {setLoading(true); router.push("/dashboard")}}>
+                    onClick={() => {
+                            const testEmail = "test@test.test";
+                            const testPassword = "test"
+                            setEmail(testEmail);
+                            setPassword(testPassword);
+                            handleSignIn(testEmail, testPassword);
+                        }}>
                         I don't care, just take me to the site  
                     </button>
                     <button className='flex rounded-3xl py-3 border-2 border-gray-200 items-center justify-center gap-2 active:scale-[.98] 
