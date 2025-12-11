@@ -23,44 +23,77 @@ import { Skull, createSkullColumns } from "./columns/skull-columns";
 // ────────────────────────────────
 // Fetch helpers
 // ────────────────────────────────
-async function getIndData(): Promise<Individual[]> {
-  try {
-    const result = await api.get<Individual[]>("/api/list/individuals");
-    return result;
-  } catch (err) {
-    console.error("Failed to fetch individuals:", err);
-    return [];
-  }
-}
+// ────────────────────────────────
+// Fetch helpers (Updated to fetch ALL data via CRUD endpoints)
+// ────────────────────────────────
+async function getAllData() {
+  const limit = 10000;
 
-async function getBoneData(): Promise<Bone[]> {
-  try {
-    const result = await api.get<Bone[]>("/api/list/bones");
-    return result;
-  } catch (err) {
-    console.error("Failed to fetch bones:", err);
-    return [];
-  }
-}
+  // Use Promise.allSettled to enable partial success
+  const results = await Promise.allSettled([
+    api.get<any[]>(`/api/bone?limit=${limit}`),
+    api.get<any[]>(`/api/skeleton?limit=${limit}`),
+    api.get<any[]>(`/api/skull?limit=${limit}`),
+    api.get<any[]>(`/api/specimen?limit=${limit}`),
+    api.get<any[]>(`/api/museum?limit=${limit}`)
+  ]);
 
-async function getDentalData(): Promise<Dental[]> {
-  try {
-    const result = await api.get<Dental[]>("/api/list/dental");
-    return result;
-  } catch (err) {
-    console.error("Failed to fetch dental:", err);
-    return [];
-  }
-}
+  const [bonesRes, skeletonsRes, skullsRes, specimensRes, museumsRes] = results;
 
-async function getSkullData(): Promise<Skull[]> {
-  try {
-    const result = await api.get<Skull[]>("/api/list/skull");
-    return result;
-  } catch (err) {
-    console.error("Failed to fetch skull:", err);
-    return [];
-  }
+  const bones = bonesRes.status === "fulfilled" ? bonesRes.value : [];
+  const skeletons = skeletonsRes.status === "fulfilled" ? skeletonsRes.value : [];
+  const skulls = skullsRes.status === "fulfilled" ? skullsRes.value : [];
+  const specimens = specimensRes.status === "fulfilled" ? specimensRes.value : [];
+  const museums = museumsRes.status === "fulfilled" ? museumsRes.value : [];
+
+  // Create lookup maps
+  const specMap = new Map(specimens.map(s => [s.specimen_id, s]));
+  const museumMap = new Map(museums.map(m => [m.museum_id, m.museum_name]));
+
+  // 1. Bones
+  // dashboard.js: s.specimen_id AS id
+  const boneList: Bone[] = bones.map((b: any) => {
+    const s = specMap.get(b.specimen_id);
+    return {
+      id: b.specimen_id,
+      menuID: s ? `B-${s.specimen_number}` : `B-${b.bone_id}`,
+      name: b.bone_name || b.bone_type || 'Bone',
+      museum: s ? (museumMap.get(s.museum_id) || '') : '',
+      user: s ? `User ${s.user_id}` : ''
+    };
+  }).filter(b => b.name !== 'Skull');
+
+  // 2. Individuals
+  // dashboard.js: s.skeleton_id AS id
+  const indList: Individual[] = skeletons.map((sk: any) => {
+    const s = specMap.get(sk.specimen_id);
+    return {
+      id: sk.skeleton_id,
+      menuID: `I-${sk.skeleton_id}`,
+      name: sk.skeleton_name,
+      museum: s ? (museumMap.get(s.museum_id) || '') : '',
+      user: s ? `User ${s.user_id}` : ''
+    };
+  });
+
+  // 3. Skulls
+  // dashboard.js: s.specimen_id AS id
+  const skullList: Skull[] = skulls.map((sk: any) => {
+    const s = specMap.get(sk.specimen_id);
+    return {
+      id: sk.specimen_id, // mapped from specimen_id in crud
+      menuID: s ? `SK-${s.specimen_number}` : `SK-${sk.specimen_id}`,
+      name: (s && (s.specimen_name || s.specimen_number)) || 'Skull',
+      museum: s ? (museumMap.get(s.museum_id) || '') : '',
+      user: s ? `User ${s.user_id}` : ''
+    };
+  });
+
+  // 4. Dental
+  // Cannot reliably fetch dental without tooth_inventory access
+  const dentalList: Dental[] = [];
+
+  return { boneList, indList, skullList, dentalList };
 }
 
 // ────────────────────────────────
@@ -84,18 +117,14 @@ export default function Main() {
 
     async function fetchData() {
       try {
-        const [ind, bone, dental, skull] = await Promise.allSettled([
-          getIndData(),
-          getBoneData(),
-          getDentalData(),
-          getSkullData(),
-        ]);
+        const { boneList, indList, skullList, dentalList } = await getAllData();
+
         if (cancelled) return;
 
-        setIndData(ind.status === "fulfilled" ? ind.value : []);
-        setBoneData(bone.status === "fulfilled" ? bone.value : []);
-        setDentalData(dental.status === "fulfilled" ? dental.value : []);
-        setSkullData(skull.status === "fulfilled" ? skull.value : []);
+        setIndData(indList);
+        setBoneData(boneList);
+        setDentalData(dentalList);
+        setSkullData(skullList);
       } catch (err) {
         console.error("Unexpected error:", err);
       } finally {
