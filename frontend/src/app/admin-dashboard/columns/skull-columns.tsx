@@ -52,11 +52,11 @@ export function createSkullColumns(onDelete: (id: number | string) => void): Col
 
     {
       accessorKey: "id",
-      header: ({column}) => (
+      header: ({ column }) => (
         <div className="text-right">
           <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
             ID
-            <ArrowUpDown className="ml-2 h-4 w-4"/>
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
       ),
@@ -104,7 +104,7 @@ export function createSkullColumns(onDelete: (id: number | string) => void): Col
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -115,7 +115,12 @@ export function createSkullColumns(onDelete: (id: number | string) => void): Col
                 Copy Entry ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onDelete(entry.id)}>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(entry.id);
+                }}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -128,4 +133,4 @@ export function createSkullColumns(onDelete: (id: number | string) => void): Col
 }
 
 // Keep the old export for backward compatibility if needed
-export const skullColumns: ColumnDef<Skull>[] = createSkullColumns(() => {})
+export const skullColumns: ColumnDef<Skull>[] = createSkullColumns(() => { })

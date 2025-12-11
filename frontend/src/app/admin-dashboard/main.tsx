@@ -55,7 +55,7 @@ async function getAllData() {
   const boneList: Bone[] = bones.map((b: any) => {
     const s = specMap.get(b.specimen_id);
     return {
-      id: b.specimen_id,
+      id: b.bone_id,
       menuID: s ? `B-${s.specimen_number}` : `B-${b.bone_id}`,
       name: b.bone_name || b.bone_type || 'Bone',
       museum: s ? (museumMap.get(s.museum_id) || '') : '',
@@ -169,6 +169,7 @@ export default function Main() {
       };
 
       const endpoint = endpointMap[type] || type;
+      console.log(`Deleting ${type} with ID ${id} at endpoint ${endpoint}`);
       await api.del(`/api/${endpoint}/${id}`);
 
       // Now compare with consistent types
