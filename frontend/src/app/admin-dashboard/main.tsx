@@ -177,8 +177,10 @@ export default function Main() {
       if (type === "individual") setIndData(prev => prev.filter(i => String(i.id) !== String(id)));
       if (type === "dental") setDentalData(prev => prev.filter(d => String(d.id) !== String(id)));
       if (type === "skull") setSkullData(prev => prev.filter(s => String(s.id) !== String(id)));
+
     } catch (err) {
       console.error(`Failed to delete ${type}:`, err);
+      alert(`Failed to delete: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 

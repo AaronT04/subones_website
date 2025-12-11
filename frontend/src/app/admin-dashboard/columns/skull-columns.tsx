@@ -116,8 +116,7 @@ export function createSkullColumns(onDelete: (id: number | string) => void): Col
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
+                onSelect={(e) => {
                   onDelete(entry.id);
                 }}
               >

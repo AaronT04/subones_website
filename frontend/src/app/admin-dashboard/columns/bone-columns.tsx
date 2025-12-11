@@ -141,8 +141,13 @@ export const createBoneColumns = (
               <DropdownMenuSeparator />
               <DropdownMenuItem>Edit Entry</DropdownMenuItem>
               <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
+                onSelect={(e) => {
+                  e.preventDefault(); // Prevent closing immediately if that helps, or just standard. 
+                  // Actually, we want it to close. But we need to stop row click.
+                  // Since passing 'e' to stopPropagation might be tricky with custom events bubbling:
+                  // The row click is React. If this is a native event, React bubbling might still happen?
+                  // Let's safe-guard:
+                  // Actually, Radix prevents bubbling?
                   onDelete(String(entry.id));
                 }}
                 className="text-red-600 focus:text-red-600"

@@ -110,8 +110,7 @@ export const createIndColumns = (
               <DropdownMenuSeparator />
               <DropdownMenuItem>Edit Entry</DropdownMenuItem>
               <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
+                onSelect={(e) => {
                   onDelete(entry.id);
                 }}
                 className="text-red-600 focus:text-red-600"
