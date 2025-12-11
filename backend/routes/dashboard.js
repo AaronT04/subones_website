@@ -15,7 +15,7 @@ router.get('/api/health', (_req, res) => {
 
 // ------------------ BONES LIST ------------------
 router.get('/api/list/bones', (req, res) => {
-  const {id} = req.query;
+  const { id } = req.query;
 
   const sql = `
     SELECT
@@ -42,8 +42,8 @@ router.get('/api/list/bones', (req, res) => {
 // ------------------ INDIVIDUALS LIST ------------------
 router.get('/api/list/individuals', (req, res) => {
 
-  const {id} = req.query;
-  
+  const { id } = req.query;
+
   const sql = `
     SELECT
       s.skeleton_id AS id,
@@ -68,7 +68,7 @@ router.get('/api/list/individuals', (req, res) => {
 
 //Skull list
 router.get('/api/list/skull', (req, res) => {
-  const {id} = req.query;
+  const { id } = req.query;
   const sql = `
   SELECT
     s.specimen_id AS id,
@@ -85,7 +85,7 @@ router.get('/api/list/skull', (req, res) => {
     ORDER BY s.specimen_id DESC
     `
 
-    db.query(sql, [id], (err, rows) => {
+  db.query(sql, [id], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(toNumberId(rows));
   });
@@ -94,7 +94,7 @@ router.get('/api/list/skull', (req, res) => {
 
 // ------------------ DENTAL LIST ------------------
 router.get('/api/list/dental', (req, res) => {
-  const {id} = req.query;
+  const { id } = req.query;
 
   const sql = `
     SELECT DISTINCT

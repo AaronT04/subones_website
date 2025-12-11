@@ -24,132 +24,132 @@ export type Bone = {
 export const createBoneColumns = (
   onDelete: (id: string) => void
 ): ColumnDef<Bone>[] => [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
 
-  {
-    accessorKey: "id",
-    header: ({ column }) => {
-      return (
-        <div className="text-right">
+    {
+      accessorKey: "id",
+      header: ({ column }) => {
+        return (
+          <div className="text-right">
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              ID
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        )
+      },
+      cell: ({ row }) => {
+        const id = parseFloat(row.getValue("id"))
+        return <div className="text-right font-medium">{id}</div>
+      },
+    },
+
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
           <Button
             variant="ghost"
             onClick={() =>
               column.toggleSorting(column.getIsSorted() === "asc")
             }
           >
-            ID
+            Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
-        </div>
-      )
+        )
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="text-left ml-3 font-medium">
+            {row.getValue("name")}
+          </div>
+        )
+      },
     },
-    cell: ({ row }) => {
-      const id = parseFloat(row.getValue("id"))
-      return <div className="text-right font-medium">{id}</div>
-    },
-  },
 
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() =>
-            column.toggleSorting(column.getIsSorted() === "asc")
-          }
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
+    {
+      accessorKey: "museum",
+      header: () => <div className="text-left">Museum</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            {row.getValue("museum")}
+          </div>
+        )
+      },
     },
-    cell: ({ row }) => {
-      return (
-        <div className="text-left ml-3 font-medium">
-          {row.getValue("name")}
-        </div>
-      )
-    },
-  },
 
-  {
-    accessorKey: "museum",
-    header: () => <div className="text-left">Museum</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="text-left font-medium">
-          {row.getValue("museum")}
-        </div>
-      )
+    {
+      accessorKey: "user",
+      header: () => <div className="text-left">User</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="text-left font-medium">
+            {row.getValue("user")}
+          </div>
+        )
+      },
     },
-  },
 
-  {
-    accessorKey: "user",
-    header: () => <div className="text-left">User</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="text-left font-medium">
-          {row.getValue("user")}
-        </div>
-      )
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const entry = row.original
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(entry.menuID)}
+              >
+                Copy Entry ID
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Edit Entry</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(String(entry.id))}
+                className="text-red-600 focus:text-red-600"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Entry
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
     },
-  },
-
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const entry = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(entry.menuID)}
-            >
-              Copy Entry ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Entry</DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(entry.id)}
-              className="text-red-600 focus:text-red-600"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete Entry
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
+  ]

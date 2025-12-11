@@ -160,7 +160,16 @@ export default function Main() {
 
       if (!confirmed) return;
 
-      await api.del(`/api/${type}/${id}`);
+      // Map frontend types to backend endpoints
+      const endpointMap: Record<string, string> = {
+        bone: "bone",
+        individual: "skeleton",
+        skull: "skull",
+        dental: "dental"
+      };
+
+      const endpoint = endpointMap[type] || type;
+      await api.del(`/api/${endpoint}/${id}`);
 
       // Now compare with consistent types
       if (type === "bone") setBoneData(prev => prev.filter(b => String(b.id) !== String(id)));
