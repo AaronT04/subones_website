@@ -1,13 +1,14 @@
 "use client"
 const API_URL_ROOT = process.env.NEXT_PUBLIC_API_URL;
-import {useState} from 'react'
-import {useRouter} from 'next/navigation'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { jwtDecode } from "jwt-decode"
 
 interface FormProps {
     goCreateAccount: () => void
 }
 
-export default function LoginForm(props : FormProps){
+export default function LoginForm(props: FormProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -15,7 +16,7 @@ export default function LoginForm(props : FormProps){
     const router = useRouter();
 
     const handleSignIn = async (email: string, password: string) => {
-        if(!email || !password) {
+        if (!email || !password) {
             setMessage("All fields are required.");
             return;
         }
@@ -26,7 +27,7 @@ export default function LoginForm(props : FormProps){
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: email, 
+                    email: email,
                     password: password,
                 }),
             });
@@ -37,24 +38,34 @@ export default function LoginForm(props : FormProps){
                 setMessage(data.error || 'Login failed.');
                 return;
             }
-            
+
             // Save token in localStorage or cookies
             localStorage.setItem('token', data.token);
-            
+
             //document.cookie = `token=${data.token}; path=/;`;
 
+            try {
+                const decoded: any = jwtDecode(data.token);
+                if (decoded.roles === 'admin' || (Array.isArray(decoded.roles) && decoded.roles.includes('admin'))) {
+                    setMessage("Login successful!");
+                    router.push("/admin-dashboard");
+                    return;
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
+            }
 
             // Redirect or update app state here
             setMessage("Login successful!");
             router.push("/dashboard")
         }
-        catch(error : any) {
+        catch (error: any) {
             console.error('Create account error:', error);
             setMessage(`Server error: ${error.message || 'Unexpected issue occurred. Please try again later.'}`);
         }
     }
 
-      if (loading) {
+    if (loading) {
         return <div className="p-4">Loading...</div>;
     }
 
@@ -65,7 +76,7 @@ export default function LoginForm(props : FormProps){
             <div className='mt-6'>
                 <div>
                     <label className='text-lg font-medium'>Email</label>
-                    <input 
+                    <input
                         className='w-full border-2 border-gray-200 rounded-xl p-3 mt-1 bg-transparent'
                         placeholder='Enter your email'
                         value={email}
@@ -74,7 +85,7 @@ export default function LoginForm(props : FormProps){
                 </div>
                 <div className='mt-4'>
                     <label className='text-lg font-medium'>Password</label>
-                    <input 
+                    <input
                         className='w-full border-2 border-gray-200 rounded-xl p-3 mt-1 bg-transparent'
                         placeholder='Enter your password'
                         type='password'
@@ -84,33 +95,33 @@ export default function LoginForm(props : FormProps){
                 </div>
                 <div className='mt-8 flex justify-between items-center'>
                     <div>
-                        <input 
+                        <input
                             type="checkbox"
                             id='remember'
                         />
                         <label className="ml-2 font-medium text-base" htmlFor="remember">Remember this device</label>
-                </div>
+                    </div>
                     <button className='font-medium text-base text-maroon active:scale-[.98] active:duration-75 hover:scale-[1.02] ease-in-out transition-all'
-                    onClick={() => router.push("/forgot-password")}>
-                    Forgot Password?
+                        onClick={() => router.push("/forgot-password")}>
+                        Forgot Password?
                     </button>
                 </div>
                 <div className='mt-8 flex flex-col gap-y-4'>
                     <button className='active:scale-[.98] active:duration-75 hover:scale-[1.02] ease-in-out transition-all py-3 rounded-3xl 
                     bg-maroon hover:bg-maroon text-white text-lg font-medium'
-                    onClick={() => handleSignIn(email, password)}>
-                        Sign In    
+                        onClick={() => handleSignIn(email, password)}>
+                        Sign In
                     </button>
                     <button className='active:scale-[.98] active:duration-75 hover:scale-[1.02] ease-in-out transition-all py-3 rounded-3xl 
                     bg-maroon hover:bg-maroon text-white text-lg font-medium'
-                    onClick={() => {
+                        onClick={() => {
                             const testEmail = "test@test.test";
                             const testPassword = "test"
                             setEmail(testEmail);
                             setPassword(testPassword);
                             handleSignIn(testEmail, testPassword);
                         }}>
-                        I don't care, just take me to the site  
+                        I don't care, just take me to the site
                     </button>
                     <button className='flex rounded-3xl py-3 border-2 border-gray-200 items-center justify-center gap-2 active:scale-[.98] 
                     active:duration-75 hover:scale-[1.02] ease-in-out transition-all'>
@@ -123,7 +134,7 @@ export default function LoginForm(props : FormProps){
                 </div>
             </div>
             {message && (
-            <div className='mt-4 text-sm text-red-500 font-medium'>{message}</div>
+                <div className='mt-4 text-sm text-red-500 font-medium'>{message}</div>
             )}
         </div>
     )
