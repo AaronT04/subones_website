@@ -15,9 +15,10 @@ const getImage = (trait, code) => {
     console.log("trait: " + trait + " code: " + code);
     //console.log(mms_list.dict[trait][2][code].src);
         if(trait != null && code != null) {
-            return mms_list.dict[trait][2] != null &&
-                mms_list.dict[trait][2][code] != null &&
-                    mms_list.dict[trait][2][code].src;
+            return mms_list.dict[trait][2] != null ?
+                mms_list.dict[trait][2][code] != null ?
+                    mms_list.dict[trait][2][code].src
+                    :undefined :undefined;
         }
     }
 
@@ -32,10 +33,12 @@ export default function Macromorphoscopics(props : MacromorphoscopicsProps) {
 
      const getRadioButtons = (trait) => {
         const codes = mms_list.dict[trait][1];
-        console.log(codes);
+        //console.log(codes);
         if(!codes) return null;
 
-        const selected = allNonmetrics["macromorphoscopics"] ? (allNonmetrics["macromorphoscopics"])[trait] ?? "" : "";
+        const selected = allNonmetrics["macromorphoscopics"] ? (allNonmetrics["macromorphoscopics"])[toSQLColumn(trait)] ?? "" : "";
+        console.log(allNonmetrics["macromorphoscopics"]);
+        console.log(`trait: ${trait}, selected: ${selected}`);
         return(
             <div className="flex gap-6">
                 {codes.map((number, i) => (
@@ -52,12 +55,13 @@ export default function Macromorphoscopics(props : MacromorphoscopicsProps) {
                                         produce(prev, draft =>{
                                             draft["macromorphoscopics"] = {
                                                 ...prev["macromorphoscopics"] ?? {},
-                                                [trait] : number
+                                                [toSQLColumn(trait)] : number
                                             }
                                         })
                                     );
-                                    }
-                                }
+                                    
+                                    
+                                }}
                             />
                             {number}
                         </label>
