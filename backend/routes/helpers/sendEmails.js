@@ -9,7 +9,7 @@ async function sendVerificationEmail(email, token) {
 
   try {
     await resend.emails.send({
-      from: "Salisbury Bone Database <onboarding@resend.dev>",
+      from: "Salisbury Bone Database <bonemaster@su-bones.com>",
       to: email,
       subject: "Verify your Salisbury Bone Database account",
       html: `
@@ -30,7 +30,7 @@ async function sendVerificationEmail(email, token) {
 async function sendPasswordResetEmail(email, link) {
   try {
     await resend.emails.send({
-      from: "Salisbury Bone Database <support@resend.dev>",
+      from: "Salisbury Bone Database <bonemaster@su-bones.com>",
       to: email,
       subject: "Reset Your Salisbury Bone Database Password",
       html: `
