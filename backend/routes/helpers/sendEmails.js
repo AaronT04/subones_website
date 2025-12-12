@@ -43,12 +43,19 @@ async function sendVerificationEmail(email, token) {
     </p>
   `;
 
-  await transporter.sendMail({
-    from: `"Salisbury Bone Database" <${process.env.EMAIL_USERNAME}>`,
-    to: email,
-    subject: "Verify Your Salisbury Bone Database Account",
-    html,
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: `"Salisbury Bone Database" <${process.env.EMAIL_USERNAME}>`,
+      to: email,
+      subject: "Verify Your Salisbury Bone Database Account",
+      html,
+    });
+  
+    console.log("EMAIL SENT:", info.response);
+  } catch (err) {
+    console.error("EMAIL ERROR:", err);
+  }
+  
 }
 async function sendPasswordResetEmail(email, link) {
   const html = `
