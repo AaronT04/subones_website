@@ -25,7 +25,6 @@ async function sendVerificationEmail(email, token) {
   }
 }
 
-
 async function sendPasswordResetEmail(email, link) {
   try {
     await resend.emails.send({
