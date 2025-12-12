@@ -16,14 +16,19 @@ router.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
-    if (!email.toLowerCase().endsWith("@gulls.salisbury.edu")) {
+    const lowerEmail = email.toLowerCase();
+
+    // Allow only SU emails
+    const allowedDomains = [
+      "@gulls.salisbury.edu",
+      "@salisbury.edu"
+    ];
+
+    const isAllowed = allowedDomains.some(domain => lowerEmail.endsWith(domain));
+
+    if (!isAllowed) {
       return res.status(400).json({
-        error: "Only Salisbury University gulls.salisbury.edu email addresses are allowed."
-      });
-    }
-    if (!email.toLowerCase().endsWith("@salisbury.edu")) {
-      return res.status(400).json({
-        error: "Only Salisbury University gulls.salisbury.edu email addresses are allowed."
+        error: "Only Salisbury University emails (@gulls.salisbury.edu or @salisbury.edu) are allowed."
       });
     }
 
@@ -57,9 +62,11 @@ router.post('/api/register', async (req, res) => {
     );
 
   } catch (e) {
+    console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
+
 
 router.post('/api/login', (req, res) => {
   const { email, password } = req.body;
