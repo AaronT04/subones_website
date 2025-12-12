@@ -2,6 +2,8 @@ const { Resend } = require("resend");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+console.log("USING RESEND EMAIL HELPER");
+
 async function sendVerificationEmail(email, token) {
   const verifyUrl = `${process.env.BACKEND_URL}/api/verify-email?token=${token}`;
 
