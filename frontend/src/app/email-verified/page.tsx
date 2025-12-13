@@ -1,11 +1,19 @@
-export default function EmailVerified() {
+import { Suspense } from "react";
+import EmailVerifiedClient from "./EmailVerifiedClient";
+
+export default function EmailVerifiedPage() {
   return (
-    <div style={{ textAlign: "center", paddingTop: "100px" }}>
-      <h1>Email Verified!</h1>
-      <p>Your BoneDB account is now activated.</p>
-      <a href="/login" style={{ color: "blue", textDecoration: "underline" }}>
-        Go to Login
-      </a>
+    <Suspense fallback={<EmailVerifiedLoading />}>
+      <EmailVerifiedClient />
+    </Suspense>
+  );
+}
+
+function EmailVerifiedLoading() {
+  return (
+    <div className="p-8 max-w-lg mx-auto text-center">
+      <h1 className="text-2xl font-bold">Loading reset form…</h1>
+      <p className="mt-2 text-gray-600">Please wait…</p>
     </div>
   );
 }

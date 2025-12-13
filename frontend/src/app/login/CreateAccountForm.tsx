@@ -38,7 +38,7 @@ export default function CreateAccountForm(props : FormProps) {
             const data = await response.json();
 
             if (response.ok) {
-                setMessage('Account created [verified by default]');
+                setMessage('Account created. Please check your inbox for a verification link.');
                 setTimeout(() => {
                 props.goLogin();
                 }, 1500);

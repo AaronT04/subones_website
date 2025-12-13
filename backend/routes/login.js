@@ -16,19 +16,9 @@ router.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
-    const lowerEmail = email.toLowerCase();
-
-    // Allow only SU emails
-    const allowedDomains = [
-      "@gulls.salisbury.edu",
-      "@salisbury.edu"
-    ];
-
-    const isAllowed = allowedDomains.some(domain => lowerEmail.endsWith(domain));
-
-    if (!isAllowed) {
+    if (!email.toLowerCase().endsWith("@gulls.salisbury.edu")) {
       return res.status(400).json({
-        error: "Only Salisbury University emails (@gulls.salisbury.edu or @salisbury.edu) are allowed."
+        error: "Only Salisbury University gulls.salisbury.edu email addresses are allowed."
       });
     }
 
@@ -62,11 +52,9 @@ router.post('/api/register', async (req, res) => {
     );
 
   } catch (e) {
-    console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
-
 
 router.post('/api/login', (req, res) => {
   const { email, password } = req.body;
@@ -106,7 +94,6 @@ router.post("/api/reset-password", async (req, res) => {
   const { token, password } = req.body;
 
   try {
-    // Verify JWT with SAME SECRET in all environments
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const email = decoded.email;
 
@@ -118,7 +105,6 @@ router.post("/api/reset-password", async (req, res) => {
       (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
 
-        // If token not found in DB
         if (result.affectedRows === 0) {
           return res.status(400).json({ error: "Invalid or expired reset token." });
         }
@@ -128,50 +114,36 @@ router.post("/api/reset-password", async (req, res) => {
     );
 
   } catch (err) {
-    console.error("JWT verification failed:", err);
     res.status(400).json({ error: "Invalid or expired token." });
   }
 });
 
-
 router.post("/api/forgot-password", (req, res) => {
   const { email } = req.body;
 
-  db.query("SELECT * FROM user WHERE email = ?", [email], (err, rows) => {
+  try {
+    db.query("SELECT * FROM user WHERE email = ?", [email], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    // Always return generic message
     if (rows.length === 0) {
       return res.json({ message: "If this email exists, a reset link was sent." });
     }
 
-    // Create a JWT with short expiration
-    const token = jwt.sign(
-      { email },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    // Save token into DB BEFORE sending the email
-    db.query(
-      "UPDATE user SET reset_token = ? WHERE email = ?",
-      [token, email],
-      (updateErr) => {
-        if (updateErr) return res.status(500).json({ error: updateErr.message });
+    db.query("UPDATE user SET reset_token = ? WHERE email = ?", [token, email]);
 
-        const link = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const link = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    sendPasswordResetEmail(email, link);
 
-        console.log("Reset password link:", link);
+    return res.json({ message: "Password reset email sent." });
+    });
+  }
+  catch(err) {
+    res.status(500).json({ error: err.message });
+  }
 
-        sendPasswordResetEmail(email, link);
-
-        return res.json({
-          message: "Password reset email sent."
-        });
-      }
-    );
-  });
+  
 });
-
 
 module.exports = router;
